@@ -35,9 +35,18 @@ class GradleArtifactSearcher {
         val url = "https://api.bintray.com/search/packages/maven?${artifactInfo.q}"
         val connection = getConnection(url)
         val stream = getResponse(connection) ?: return result
-        val json = JsonSlurper().parse(stream) as List<Map<*, *>>
+        var json = JsonSlurper().parse(stream) as List<Map<*, *>>
+        val findById = json.filter { (it["system_ids"] as List<String>).contains(artifactInfo.id) }
+        if (findById.isNotEmpty()) {
+            json = findById
+        }
         for (any in json) {
-            for (id in any["system_ids"] as List<String>) {
+            val system_ids = any["system_ids"] as MutableList<String>
+            if (system_ids.contains(artifactInfo.id)) {
+                system_ids.clear()
+                system_ids.add(artifactInfo.id)
+            }
+            for (id in system_ids) {
                 val list = split(id)
                 val groupId: String
                 val artifactId: String
@@ -55,9 +64,16 @@ class GradleArtifactSearcher {
                 }
             }
         }
+        if (findById.size > 1 && findById.any { "spring" == it["owner"] }) {
+            result = result.sortedWith(Comparator<ArtifactInfo> { o1, o2 ->
+                compareVersion(o2.version, o1.version)
+            })
+        }
+
         artifactsCaches.put(artifactInfo.q, result)
         return result
     }
+
 
 }
 
