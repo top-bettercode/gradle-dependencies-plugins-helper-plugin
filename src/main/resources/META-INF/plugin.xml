@@ -19,15 +19,12 @@
     Support *.gradle,*.gradle.kts.<br/>
     Use jcenter API for Gradle queries.<br/>
     Support wildcard query *,? etc.<br/>
-    Support gradle plugins and dependencies Smart Code Completion.<br/>
     </li>
   </ul>
       ]]>
   </change-notes>
 
-  <idea-version since-build="162.1" until-build="173.*"/>
-
-  <!--<idea-version since-build="172.1" until-build="173.*"/>-->
+  <idea-version since-build="145.184.1"/>
 
   <extensions defaultExtensionNs="com.intellij">
     <completion.contributor language="Groovy"

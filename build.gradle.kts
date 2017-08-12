@@ -7,14 +7,12 @@ version = "0.0.1"
 intellij {
     pluginName = "Gradle Dependencies And Plugins Helper"
     updateSinceUntilBuild = false
-    version = "IC-2017.2.1"
-    //since-build 162.1
-//    version = "2016.2.1"
+//    version = "IC-2017.2.1"
+    version = "145.184.1"
     setPlugins("Groovy", "gradle", "Kotlin")
 
 //    publish {
 //        pluginId "YOUR_PLUGIN_ID"
-//        // (optional) apply from: "YOUR_CUSTOM_PROPERTIES_FILE.properties"
 //    }
 
 }
