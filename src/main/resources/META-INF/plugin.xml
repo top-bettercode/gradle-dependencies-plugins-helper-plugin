@@ -1,0 +1,50 @@
+<idea-plugin version="2">
+  <id>GradleDependenciesAndPluginsHelper</id>
+  <name>Gradle Dependencies And Plugins Helper</name>
+  <version>0.0.1</version>
+  <vendor email="piterwu@outlook.com"
+    url="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin">piterwu
+  </vendor>
+  <depends>org.jetbrains.plugins.gradle</depends>
+  <depends>org.intellij.groovy</depends>
+  <depends>org.jetbrains.kotlin</depends>
+
+  <description><![CDATA[
+      library is searched in Smart Code Completion by JCentral repository
+      ]]></description>
+
+  <change-notes><![CDATA[
+  <ul>
+    <li>0.0.1
+    Support *.gradle,*.gradle.kts.<br/>
+    Use jcenter API for Gradle queries.<br/>
+    Support wildcard query *,? etc.<br/>
+    Support gradle plugins and dependencies Smart Code Completion.<br/>
+    </li>
+  </ul>
+      ]]>
+  </change-notes>
+
+  <idea-version since-build="162.1" until-build="173.*"/>
+
+  <!--<idea-version since-build="172.1" until-build="173.*"/>-->
+
+  <extensions defaultExtensionNs="com.intellij">
+    <completion.contributor language="Groovy"
+      implementationClass="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.GradleDependenciesCompletionContributor"
+      order="first"/>
+    <completion.contributor language="kotlin"
+      implementationClass="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.GradleKtsDependenciesCompletionContributor"
+      order="first"/>
+    <completion.contributor language="Groovy"
+      implementationClass="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.GradlePluginsCompletionContributor"
+      order="first"/>
+    <completion.contributor language="kotlin"
+      implementationClass="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.GradlePluginsCompletionContributor"
+      order="first"/>
+
+    <documentationProvider
+      implementation="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.OpenJcenterOrMavenCentralProvider"
+      order="first"/>
+  </extensions>
+</idea-plugin>
