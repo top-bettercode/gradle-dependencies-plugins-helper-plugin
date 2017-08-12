@@ -107,7 +107,6 @@ class GradleDependenciesCompletionContributor : AbstractGradleCompletionContribu
                 } else
                     searchText = CompletionUtil.findReferenceOrAlphanumericPrefix(params)
                 val searchParam = ArtifactInfo(searchText)
-                show(content = searchParam.toString())
                 if (searchParam.id.length < 2)
                     return
                 val searchResult = artifactSearcher.search(searchParam)

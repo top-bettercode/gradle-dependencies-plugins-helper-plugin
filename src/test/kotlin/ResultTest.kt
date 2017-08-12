@@ -1,4 +1,5 @@
 
+import cn.bestwu.intellij.plugins.gradle.codeInsight.completion.compareVersion
 import groovy.json.JsonSlurper
 import org.jsoup.Jsoup
 import org.junit.Test
@@ -68,8 +69,24 @@ class ParseResultTest {
     }
 
     @Test
-    fun dd() {
-        println("'org.springframework.boot:spring-boot-starter-test'".trim('"','\''))
+    fun sortVersion() {
+        val versions = arrayListOf(
+                "1.3.0.ALPHA",
+                "1.3.0.SNAPSHOTS",
+                "1.3.0.RELEASE",
+                "1.3.0.BETA",
+                "1.3.0.RC1",
+                "1.3.0.RC2",
+                "1.3.0.M3",
+                "1.3.0.M4",
+                "1.3.0.M2",
+                "1.3.0.M5",
+                "1.3.0.M1"
+        )
+        versions.sortWith(kotlin.Comparator { o1, o2 ->
+            compareVersion(o1,o2)
+        })
+        println(versions)
     }
 
     //     find e

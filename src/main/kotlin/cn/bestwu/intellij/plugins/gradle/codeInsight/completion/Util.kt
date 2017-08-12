@@ -71,6 +71,9 @@ class VersionComparator(val index: Int) : Comparable<VersionComparator> {
     override fun compareTo(other: VersionComparator): Int = this.index - other.index
 }
 
+private val versionTails = arrayOf("SNAPSHOTS", "ALPHA", "BETA", "M", "RC", "RELEASE")
+private val versionTailRegex = "^(.*?)\\d*$".toRegex()
+
 /**
  * 比较版本信息
 
@@ -92,21 +95,19 @@ fun compareVersion(version1: String, version2: String): Int {
     val length = if (vl) version1s.size else version2s.size
 
     for (i in 0..length - 1) {
-        try {
-            val v2 = Integer.parseInt(version2s[i])
-            val v1 = Integer.parseInt(version1s[i])
-            if (v2 > v1) {
-                return -1
-            } else if (v2 < v1) {
-                return 1
-            }
-        } catch (e: NumberFormatException) {
+        val v2 = version2s[i].toIntOrNull() ?: versionTails.indexOf(version2s[i].replace(versionTailRegex, "$1").toUpperCase())
+        val v1 = version1s[i].toIntOrNull() ?: versionTails.indexOf(version1s[i].replace(versionTailRegex, "$1").toUpperCase())
+        if (v1 == -1 || v2 == -1) {
             val result = version1s[i].compareTo(version2s[i])
             if (result != 0) {
                 return result
             }
         }
-
+        if (v2 > v1) {
+            return -1
+        } else if (v2 < v1) {
+            return 1
+        }
         // 相等 比较下一组值
     }
 
