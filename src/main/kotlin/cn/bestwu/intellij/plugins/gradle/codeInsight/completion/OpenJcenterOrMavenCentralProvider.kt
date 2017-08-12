@@ -3,9 +3,8 @@ package cn.bestwu.intellij.plugins.gradle.codeInsight.completion
 import com.intellij.lang.documentation.DocumentationProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.psi.KtStringTemplateExpression
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals.GrLiteral
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals.GrStringContent
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElement
 
 class OpenJcenterOrMavenCentralProvider : DocumentationProvider {
 
@@ -23,13 +22,13 @@ class OpenJcenterOrMavenCentralProvider : DocumentationProvider {
     }
 
     override fun generateDoc(element: PsiElement, element1: PsiElement?): String? {
-        if (element is GrLiteral || element is GrStringContent || element is KtStringTemplateExpression) {
+        if (element is GroovyPsiElement || element is KtElement) {
             var e = element
             do {
                 e = e.parent ?: return null
             } while ("dependencies" != e.firstChild.text && "imports" != e.firstChild.text)
             if (element1 != null) {
-                val dependency = element.text.trim('"','\'')
+                val dependency = element.text.trim('"', '\'', '(', ')')
                 val mavenUrl = split(dependency).let {
                     if (it.size >= 2) {
                         GROUP_AND_ARTIFACT.format(it[0], it[1])
