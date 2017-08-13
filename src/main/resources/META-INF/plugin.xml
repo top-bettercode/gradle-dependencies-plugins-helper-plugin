@@ -10,7 +10,7 @@
   <depends>org.jetbrains.kotlin</depends>
 
   <description><![CDATA[
-      library is searched in Smart Code Completion by JCentral repository
+      This is an IntelliJ IDEA plugin for searching dependencies/plugins from JCentral/GradlePlugins inside Gradle projects.
       ]]></description>
 
   <change-notes><![CDATA[
