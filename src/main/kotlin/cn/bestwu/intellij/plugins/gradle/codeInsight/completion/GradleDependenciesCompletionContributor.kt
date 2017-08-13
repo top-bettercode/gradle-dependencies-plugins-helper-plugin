@@ -36,17 +36,17 @@ class GradleDependenciesCompletionContributor : AbstractGradleCompletionContribu
                 }
                 result.stopHere()
                 val searchText = CompletionUtil.findReferenceOrAlphanumericPrefix(params)
-                val searchParam: ArtifactInfo
+                val searchParam: SearchParam
                 if (GROUP_LABEL == parent.labelName) {
-                    searchParam = ArtifactInfo(searchText)
+                    searchParam = SearchParam(searchText)
                 } else if (NAME_LABEL == parent.labelName) {
                     val groupId = findNamedArgumentValue(parent.parent as GrNamedArgumentsOwner, GROUP_LABEL) ?: return
-                    searchParam = ArtifactInfo("$groupId:$searchText")
+                    searchParam = SearchParam(groupId, searchText)
                 } else if (VERSION_LABEL == parent.labelName) {
                     val namedArgumentsOwner = parent.parent as GrNamedArgumentsOwner
                     val groupId = findNamedArgumentValue(namedArgumentsOwner, GROUP_LABEL) ?: return
                     val artifactId = findNamedArgumentValue(namedArgumentsOwner, NAME_LABEL) ?: return
-                    searchParam = ArtifactInfo("$groupId:$artifactId")
+                    searchParam = SearchParam(groupId, artifactId)
                 } else {
                     return
                 }
@@ -106,7 +106,7 @@ class GradleDependenciesCompletionContributor : AbstractGradleCompletionContribu
                     searchText = params.position.text.substringBefore("IntellijIdeaRulezzz ")
                 } else
                     searchText = CompletionUtil.findReferenceOrAlphanumericPrefix(params)
-                val searchParam = ArtifactInfo(searchText)
+                val searchParam = SearchParam(searchText)
                 if (searchParam.id.length < 2)
                     return
                 val searchResult = artifactSearcher.search(searchParam)

@@ -19,52 +19,55 @@ fun show(title: String = "", content: String, type: NotificationType = Notificat
     Notifications.Bus.notify(notification)
 }
 
-class ArtifactInfo {
-    val groupId: String
-    val artifactId: String
-    val version: String
-    val repo: String
-    val owner: String
+class ArtifactInfo(groupId: String, artifactId: String, version: String = "", repo: String = "", owner: String = "") {
+    val groupId: String = groupId.trim()
+    val artifactId: String = artifactId.trim()
+    val version: String = version.trim()
+    val repo: String = repo.trim()
+    val owner: String = owner.trim()
     val id: String
     val presentableText: String
-    val q: String
-
-    constructor(groupId: String, artifactId: String, version: String = "", repo: String = "", owner: String = "") {
-        this.groupId = groupId.trim()
-        this.artifactId = artifactId.trim()
-        this.version = version.trim()
-        this.repo = repo.trim()
-        this.owner = owner.trim()
-        this.id = "${this.groupId}:${this.artifactId}"
-        this.presentableText = "${this.id}${if (this.version.isEmpty()) "" else ":${this.version}"}"
-        this.q = "g=${this.groupId}&a=${this.artifactId}"
-    }
-
-    constructor(src: String) {
-        this.repo = ""
-        this.owner = ""
-        this.presentableText = ""
-        val list = split(src)
-        if (list.size in (2..3)) {
-            this.groupId = list[0].trim()
-            this.artifactId = list[1].trim()
-            this.version = if (list.size == 3) list[2].trim() else ""
-            this.id = "${this.groupId}${if (this.artifactId.isEmpty()) "" else ":${this.artifactId}"}"
-            this.q = "g=*${this.groupId}*${if (this.artifactId.isEmpty()) "" else "&a=*${this.artifactId}*"}"
-        } else {
-            this.groupId = ""
-            this.artifactId = ""
-            this.version = ""
-            this.id = src.trim()
-            this.q = "q=*${src.trim()}*"
-        }
-    }
 
     override fun toString(): String {
-        return "ArtifactInfo(groupId='$groupId', artifactId='$artifactId', version='$version', id='$id', src='$q')"
+        return "ArtifactInfo(groupId='$groupId', artifactId='$artifactId', version='$version', id='$id')"
     }
 
     fun type() = "$repo${if ("jcenter" != repo) " By $owner" else ""}"
+
+    init {
+        this.id = "${this.groupId}:${this.artifactId}"
+        this.presentableText = "${this.id}${if (this.version.isEmpty()) "" else ":${this.version}"}"
+    }
+}
+
+class SearchParam {
+    val id: String
+    val q: String
+
+    constructor(text: String) {
+        val list = split(text)
+        if (list.size in (2..3)) {
+            val groupId = list[0].trim()
+            val artifactId = list[1].trim()
+            this.id = "$groupId${if (artifactId.isEmpty()) "" else ":$artifactId"}"
+            this.q = "g=*$groupId*${if (artifactId.isEmpty()) "" else "&a=*$artifactId*"}"
+        } else {
+            this.id = text.trim()
+            this.q = "q=*${text.trim()}*"
+        }
+    }
+
+    constructor(groupIdParam: String, artifactIdParam: String) {
+        val groupId = groupIdParam.trim()
+        val artifactId = artifactIdParam.trim()
+        this.id = "$groupId${if (artifactId.isEmpty()) "" else ":$artifactId"}"
+        this.q = "g=*$groupId*${if (artifactId.isEmpty()) "" else "&a=*$artifactId*"}"
+    }
+
+    override fun toString(): String {
+        return "SearchParam(id='$id', q='$q')"
+    }
+
 }
 
 class VersionComparator(val index: Int) : Comparable<VersionComparator> {

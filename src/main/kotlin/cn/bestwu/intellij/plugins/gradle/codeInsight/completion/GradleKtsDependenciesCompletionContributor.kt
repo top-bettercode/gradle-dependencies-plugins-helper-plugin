@@ -28,7 +28,7 @@ class GradleKtsDependenciesCompletionContributor : AbstractGradleCompletionContr
                                         result: CompletionResultSet) {
                 result.stopHere()
                 val searchText = params.position.text.substringBefore("IntellijIdeaRulezzz")
-                val searchParam = ArtifactInfo(searchText)
+                val searchParam = SearchParam(searchText)
                 if (searchParam.id.length < 2)
                     return
                 val searchResult = artifactSearcher.search(searchParam)

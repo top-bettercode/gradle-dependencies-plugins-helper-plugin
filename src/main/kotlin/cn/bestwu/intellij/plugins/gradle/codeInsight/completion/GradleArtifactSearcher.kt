@@ -26,25 +26,25 @@ class GradleArtifactSearcher {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun search(artifactInfo: ArtifactInfo): List<ArtifactInfo> {
-        var result = artifactsCaches[artifactInfo.id]
-        if (result != null) {
-            return result
+    fun search(searchParam: SearchParam): List<ArtifactInfo> {
+        val existResult = artifactsCaches[searchParam.q]
+        if (existResult != null) {
+            return existResult
         }
-        result = mutableListOf()
-        val url = "https://api.bintray.com/search/packages/maven?${artifactInfo.q}"
+        var result: MutableList<ArtifactInfo> = mutableListOf()
+        val url = "https://api.bintray.com/search/packages/maven?${searchParam.q}"
         val connection = getConnection(url)
         val stream = getResponse(connection) ?: return result
         var json = JsonSlurper().parse(stream) as List<Map<*, *>>
-        val findById = json.filter { (it["system_ids"] as List<String>).contains(artifactInfo.id) }
+        val findById = json.filter { (it["system_ids"] as List<String>).contains(searchParam.id) }
         if (findById.isNotEmpty()) {
             json = findById
         }
         for (any in json) {
             val system_ids = any["system_ids"] as MutableList<String>
-            if (system_ids.contains(artifactInfo.id)) {
+            if (system_ids.contains(searchParam.id)) {
                 system_ids.clear()
-                system_ids.add(artifactInfo.id)
+                system_ids.add(searchParam.id)
             }
             for (id in system_ids) {
                 val list = split(id)
@@ -57,7 +57,7 @@ class GradleArtifactSearcher {
                     groupId = id
                     artifactId = ""
                 }
-                if (artifactInfo.id == id) {
+                if (searchParam.id == id) {
                     ((any["versions"] as List<String>).mapTo(result) { ArtifactInfo(groupId, artifactId, it, any["repo"] as String, any["owner"] as String) })
                 } else {
                     result.add(ArtifactInfo(groupId, artifactId, "", any["repo"] as String, any["owner"] as String))
@@ -65,12 +65,12 @@ class GradleArtifactSearcher {
             }
         }
         if (findById.size > 1 && findById.any { "spring" == it["owner"] }) {
-            result = result.sortedWith(Comparator<ArtifactInfo> { o1, o2 ->
+            result = result.sortedWith(kotlin.Comparator<ArtifactInfo> { o1, o2 ->
                 compareVersion(o2.version, o1.version)
-            })
+            }).toMutableList()
         }
 
-        artifactsCaches.put(artifactInfo.q, result)
+        artifactsCaches.put(searchParam.q, result)
         return result
     }
 
