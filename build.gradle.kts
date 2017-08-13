@@ -1,3 +1,6 @@
+import org.gradle.kotlin.dsl.*
+import org.jetbrains.intellij.tasks.PublishTask
+
 plugins {
     kotlin("jvm")
     id("org.jetbrains.intellij") version "0.2.16"
@@ -10,11 +13,11 @@ intellij {
     version = "IC-2017.2.1"
 //    version = "145.184.1"
     setPlugins("Groovy", "gradle", "Kotlin")
+}
 
-//    publish {
-//        pluginId "YOUR_PLUGIN_ID"
-//    }
-
+tasks.withType(PublishTask::class.java){
+    username(project.property("intellij.publish.username"))
+    password(project.property("intellij.publish.password"))
 }
 
 repositories {
