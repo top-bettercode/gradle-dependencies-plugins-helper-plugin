@@ -1,6 +1,7 @@
 package cn.bestwu.intellij.plugins.gradle.codeInsight.completion
 
 import com.intellij.notification.*
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
 
 
@@ -15,9 +16,9 @@ private val group = NotificationGroup(
 
 internal var repoIcon = IconLoader.getIcon("/icons/repo.png")
 
-fun show(title: String = "", content: String, type: NotificationType = NotificationType.INFORMATION, listener: NotificationListener? = null) {
+fun show(project: Project, content: String, title: String = "", type: NotificationType = NotificationType.INFORMATION, listener: NotificationListener? = null) {
     val notification = group.createNotification(title, content, type, listener)
-    Notifications.Bus.notify(notification)
+    Notifications.Bus.notify(notification, project)
 }
 
 class ArtifactInfo(groupId: String, artifactId: String, version: String = "", repo: String = "", owner: String = "") {

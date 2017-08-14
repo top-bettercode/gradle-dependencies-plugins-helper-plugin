@@ -52,9 +52,9 @@ class GradleDependenciesCompletionContributor : AbstractGradleCompletionContribu
                 }
                 if (searchParam.id.length < 2)
                     return
-                val searchResult = artifactSearcher.search(searchParam)
+                val searchResult = artifactSearcher.search(searchParam, params.position.project)
                 if (searchResult.isEmpty()) {
-                    show("find dependencies fail", searchParam.failContent, NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
+                    show(params.position.project, searchParam.failContent, "find dependencies fail", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
                 }
 
                 var completionResultSet = result
@@ -110,9 +110,9 @@ class GradleDependenciesCompletionContributor : AbstractGradleCompletionContribu
                 val searchParam = SearchParam(searchText)
                 if (searchParam.id.length < 2)
                     return
-                val searchResult = artifactSearcher.search(searchParam)
+                val searchResult = artifactSearcher.search(searchParam, params.position.project)
                 if (searchResult.isEmpty()) {
-                    show("find dependencies fail", searchParam.failContent, NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
+                    show(params.position.project,  searchParam.failContent,"find dependencies fail", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
                 }
 
                 val resultSet = searchResult.distinctBy { it.presentableText }

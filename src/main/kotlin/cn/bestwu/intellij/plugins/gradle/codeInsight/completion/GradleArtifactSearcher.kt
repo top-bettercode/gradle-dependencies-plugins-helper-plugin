@@ -1,6 +1,7 @@
 package cn.bestwu.intellij.plugins.gradle.codeInsight.completion
 
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.project.Project
 import groovy.json.JsonSlurper
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -14,9 +15,9 @@ class GradleArtifactSearcher {
             return url.openConnection() as HttpURLConnection
         }
 
-        private fun getResponse(connection: HttpURLConnection): InputStream? {
+        private fun getResponse(connection: HttpURLConnection, project: Project): InputStream? {
             if (connection.responseCode != 200) {
-                show("find dependencies fail", "response:${connection.errorStream?.bufferedReader()?.readText() ?: connection.inputStream.bufferedReader().readText()}.", NotificationType.WARNING)
+                show(project, "response:${connection.errorStream?.bufferedReader()?.readText() ?: connection.inputStream.bufferedReader().readText()}.", "find dependencies fail", NotificationType.WARNING)
                 return null
             }
             return connection.inputStream
@@ -26,16 +27,16 @@ class GradleArtifactSearcher {
     }
 
 
-    fun search(searchParam: SearchParam): List<ArtifactInfo> {
+    fun search(searchParam: SearchParam, project: Project): List<ArtifactInfo> {
         val existResult = artifactsCaches[searchParam.q]
         if (existResult != null) {
             return existResult
         }
         val result: MutableList<ArtifactInfo>
         if (searchParam.advancedSearch.isNotEmpty()) {
-            result = searchByClassNameInMavenCentral(searchParam)
+            result = searchByClassNameInMavenCentral(searchParam, project)
         } else {
-            result = searchInJcenter(searchParam)
+            result = searchInJcenter(searchParam, project)
         }
 
         artifactsCaches.put(searchParam.q, result)
@@ -43,11 +44,11 @@ class GradleArtifactSearcher {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun searchByClassNameInMavenCentral(searchParam: SearchParam): MutableList<ArtifactInfo> {
+    private fun searchByClassNameInMavenCentral(searchParam: SearchParam, project: Project): MutableList<ArtifactInfo> {
         val result: MutableList<ArtifactInfo> = mutableListOf()
         val url = "http://search.maven.org/solrsearch/select?q=${searchParam.advancedSearch}:\"${searchParam.id}\"&core=gav&rows=30&wt=json"
         val connection = getConnection(url)
-        val stream = getResponse(connection) ?: return result
+        val stream = getResponse(connection, project) ?: return result
         val docs = ((JsonSlurper().parse(stream) as Map<*, *>)["response"] as Map<*, *>) ["docs"] as List<Map<*, *>>
         docs.forEach {
             result.add(ArtifactInfo(it["g"] as String, it["a"] as String, it["v"] as String, "mavenCentral", "Apache"))
@@ -56,12 +57,12 @@ class GradleArtifactSearcher {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun searchInJcenter(searchParam: SearchParam): MutableList<ArtifactInfo> {
+    private fun searchInJcenter(searchParam: SearchParam, project: Project): MutableList<ArtifactInfo> {
         var result: MutableList<ArtifactInfo> = mutableListOf()
 
         val url = "https://api.bintray.com/search/packages/maven?${searchParam.q}"
         val connection = getConnection(url)
-        val stream = getResponse(connection) ?: return result
+        val stream = getResponse(connection, project) ?: return result
         var jsonResult = JsonSlurper().parse(stream) as List<Map<*, *>>
         val findById = jsonResult.filter { (it["system_ids"] as List<String>).contains(searchParam.id) }
         if (findById.isNotEmpty()) {
