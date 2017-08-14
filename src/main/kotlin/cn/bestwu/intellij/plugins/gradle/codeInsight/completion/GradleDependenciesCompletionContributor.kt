@@ -54,7 +54,7 @@ class GradleDependenciesCompletionContributor : AbstractGradleCompletionContribu
                     return
                 val searchResult = artifactSearcher.search(searchParam)
                 if (searchResult.isEmpty()) {
-                    show("find dependencies fail", "<a href=\"https://bintray.com/search?query=${searchParam.id}\">search in jcenter</a><br/>", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
+                    show("find dependencies fail", searchParam.failContent, NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
                 }
 
                 var completionResultSet = result
@@ -99,29 +99,33 @@ class GradleDependenciesCompletionContributor : AbstractGradleCompletionContribu
                                         result: CompletionResultSet) {
                 val parent = params.position.parent
                 if (parent !is GrLiteral && parent !is GrStringContent) return
-
                 result.stopHere()
-                val searchText: String
+                var searchText: String
                 if (parent is GrStringContent) {
                     searchText = params.position.text.substringBefore("IntellijIdeaRulezzz ")
                 } else
                     searchText = CompletionUtil.findReferenceOrAlphanumericPrefix(params)
+                val text = trim(params.originalPosition?.text ?: "")
+                searchText = if (!text.startsWith("c:", true) && !text.startsWith("fc:", true)) searchText else text
                 val searchParam = SearchParam(searchText)
                 if (searchParam.id.length < 2)
                     return
                 val searchResult = artifactSearcher.search(searchParam)
                 if (searchResult.isEmpty()) {
-                    show("find dependencies fail", "<a href=\"https://bintray.com/search?query=${searchParam.id}\">search in jcenter</a><br/>", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
+                    show("find dependencies fail", searchParam.failContent, NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
                 }
 
                 val resultSet = searchResult.distinctBy { it.presentableText }
-                val completionResultSet = result.withRelevanceSorter(
+                var completionResultSet = result.withRelevanceSorter(
                         CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("gradleDependencyWeigher") {
                             override fun weigh(element: LookupElement): Comparable<*> {
                                 return VersionComparator(resultSet.indexOfFirst { it.presentableText == element.lookupString })
                             }
                         })
                 )
+                if (searchParam.advancedSearch.isNotEmpty()) {
+                    completionResultSet = completionResultSet.withPrefixMatcher(PrefixMatcher.ALWAYS_TRUE)
+                }
                 resultSet.forEach {
                     completionResultSet.addElement(LookupElementBuilder.create(it.presentableText).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true))
                 }

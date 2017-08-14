@@ -25,22 +25,49 @@ class GradleArtifactSearcher {
         private val artifactsCaches = HashMap<String, List<ArtifactInfo>>()
     }
 
-    @Suppress("UNCHECKED_CAST")
+
     fun search(searchParam: SearchParam): List<ArtifactInfo> {
         val existResult = artifactsCaches[searchParam.q]
         if (existResult != null) {
             return existResult
         }
+        val result: MutableList<ArtifactInfo>
+        if (searchParam.advancedSearch.isNotEmpty()) {
+            result = searchByClassNameInMavenCentral(searchParam)
+        } else {
+            result = searchInJcenter(searchParam)
+        }
+
+        artifactsCaches.put(searchParam.q, result)
+        return result
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun searchByClassNameInMavenCentral(searchParam: SearchParam): MutableList<ArtifactInfo> {
+        val result: MutableList<ArtifactInfo> = mutableListOf()
+        val url = "http://search.maven.org/solrsearch/select?q=${searchParam.advancedSearch}:\"${searchParam.id}\"&core=gav&rows=30&wt=json"
+        val connection = getConnection(url)
+        val stream = getResponse(connection) ?: return result
+        val docs = ((JsonSlurper().parse(stream) as Map<*, *>)["response"] as Map<*, *>) ["docs"] as List<Map<*, *>>
+        docs.forEach {
+            result.add(ArtifactInfo(it["g"] as String, it["a"] as String, it["v"] as String, "mavenCentral", "Apache"))
+        }
+        return result
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun searchInJcenter(searchParam: SearchParam): MutableList<ArtifactInfo> {
         var result: MutableList<ArtifactInfo> = mutableListOf()
+
         val url = "https://api.bintray.com/search/packages/maven?${searchParam.q}"
         val connection = getConnection(url)
         val stream = getResponse(connection) ?: return result
-        var json = JsonSlurper().parse(stream) as List<Map<*, *>>
-        val findById = json.filter { (it["system_ids"] as List<String>).contains(searchParam.id) }
+        var jsonResult = JsonSlurper().parse(stream) as List<Map<*, *>>
+        val findById = jsonResult.filter { (it["system_ids"] as List<String>).contains(searchParam.id) }
         if (findById.isNotEmpty()) {
-            json = findById
+            jsonResult = findById
         }
-        for (any in json) {
+        for (any in jsonResult) {
             val system_ids = any["system_ids"] as MutableList<String>
             if (system_ids.contains(searchParam.id)) {
                 system_ids.clear()
@@ -69,8 +96,6 @@ class GradleArtifactSearcher {
                 compareVersion(o2.version, o1.version)
             }).toMutableList()
         }
-
-        artifactsCaches.put(searchParam.q, result)
         return result
     }
 

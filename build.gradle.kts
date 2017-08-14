@@ -6,7 +6,7 @@ plugins {
     id("org.jetbrains.intellij") version "0.2.16"
 }
 group = "cn.bestwu"
-version = "0.0.1"
+version = "0.0.2"
 intellij {
     pluginName = "Gradle Dependencies And Plugins Helper"
     updateSinceUntilBuild = false

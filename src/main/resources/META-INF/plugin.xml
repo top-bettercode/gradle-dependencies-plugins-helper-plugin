@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>9928</id>
   <name>Gradle Dependencies And Plugins Helper</name>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <vendor email="piterwu@outlook.com"
     url="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin">piterwu
   </vendor>
@@ -11,11 +11,23 @@
 
   <description><![CDATA[
       This is an IntelliJ IDEA plugin for searching dependencies/plugins from JCentral/GradlePlugins inside Gradle projects.
+
+      <b>Features</b>
+      <ul>
+        <li>Support *.gradle,*.gradle.kts.</li>
+        <li>Use jcenter API for Gradle queries.</li>
+        <li>Use Gradle Plugins Search API for Gradle Plugins queries.</li>
+        <li>Support wildcard query *,? etc.</li>
+        <li>Support search by classname in mavenCentral search.</li>
+      </ul>
       ]]></description>
 
   <change-notes><![CDATA[
   <ul>
-    <li>0.0.1
+    <li>0.0.2<br/>
+    Support search by classname in mavenCentral search.
+    use "c:"(classname) or "fc:"( fully-qualified classname ) in dependencies/plugins script block
+    <li>0.0.1<br/>
     Support *.gradle,*.gradle.kts.<br/>
     Use jcenter API for Gradle queries.<br/>
     Support wildcard query *,? etc.<br/>

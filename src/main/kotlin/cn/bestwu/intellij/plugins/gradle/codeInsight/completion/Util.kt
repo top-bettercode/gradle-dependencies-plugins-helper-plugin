@@ -5,6 +5,7 @@ import com.intellij.openapi.util.IconLoader
 
 
 internal fun split(dependency: String) = Regex(":").split(dependency)
+internal fun trim(dependency: String) = dependency.trim('"', '\'', '(', ')')
 
 private val group = NotificationGroup(
         "GradleDependencies",
@@ -32,7 +33,7 @@ class ArtifactInfo(groupId: String, artifactId: String, version: String = "", re
         return "ArtifactInfo(groupId='$groupId', artifactId='$artifactId', version='$version', id='$id')"
     }
 
-    fun type() = "$repo${if ("jcenter" != repo) " By $owner" else ""}"
+    fun type() = "$repo${if ("jcenter" != repo && "mavenCentral" != repo) " By $owner" else ""}"
 
     init {
         this.id = "${this.groupId}:${this.artifactId}"
@@ -43,30 +44,49 @@ class ArtifactInfo(groupId: String, artifactId: String, version: String = "", re
 class SearchParam {
     val id: String
     val q: String
+    val advancedSearch: String
+    val failContent: String
 
     constructor(text: String) {
-        val list = split(text)
-        if (list.size in (2..3)) {
-            val groupId = list[0].trim()
-            val artifactId = list[1].trim()
-            this.id = "$groupId${if (artifactId.isEmpty()) "" else ":$artifactId"}"
-            this.q = "g=*$groupId*${if (artifactId.isEmpty()) "" else "&a=*$artifactId*"}"
+        if (text.startsWith("c:", true)) {
+            id = text.substringAfter("c:").trim()
+            q = text.trim()
+            advancedSearch = "c"
+            failContent = "<a href='http://search.maven.org/#search|gav|1|c:\"$id\"'>search in mavenCentral</a>"
+        } else if (text.startsWith("fc:", true)) {
+            id = text.substringAfter("fc:").trim()
+            q = text.trim()
+            advancedSearch = "fc"
+            failContent = "<a href='http://search.maven.org/#search|gav|1|fc:\"$id\"'>search in mavenCentral</a>"
         } else {
-            this.id = text.trim()
-            this.q = "q=*${text.trim()}*"
+            advancedSearch = ""
+            val list = split(text)
+            if (list.size in (2..3)) {
+                val groupId = list[0].trim()
+                val artifactId = list[1].trim()
+                this.id = "$groupId${if (artifactId.isEmpty()) "" else ":$artifactId"}"
+                this.q = "g=*$groupId*${if (artifactId.isEmpty()) "" else "&a=*$artifactId*"}"
+            } else {
+                this.id = text.trim()
+                this.q = "q=*${text.trim()}*"
+            }
+            failContent = "<a href='https://bintray.com/search?query=$id'>search in jcenter</a>"
         }
     }
 
     constructor(groupIdParam: String, artifactIdParam: String) {
+        advancedSearch = ""
         val groupId = groupIdParam.trim()
         val artifactId = artifactIdParam.trim()
         this.id = "$groupId${if (artifactId.isEmpty()) "" else ":$artifactId"}"
         this.q = "g=*$groupId*${if (artifactId.isEmpty()) "" else "&a=*$artifactId*"}"
+        failContent = "<a href='https://bintray.com/search?query=$id'>search in jcenter</a>"
     }
 
     override fun toString(): String {
-        return "SearchParam(id='$id', q='$q')"
+        return "SearchParam(id='$id', q='$q', advancedSearch='$advancedSearch', failContent='$failContent')"
     }
+
 
 }
 

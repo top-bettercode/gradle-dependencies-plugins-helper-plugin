@@ -8,11 +8,6 @@ import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElement
 
 class OpenJcenterOrMavenCentralProvider : DocumentationProvider {
 
-    companion object {
-        private const val GROUP_AND_ARTIFACT: String = "http://search.maven.org/#search|gav|1|g:\"%s\" AND a:\"%s\""
-        private const val GROUP: String = "http://search.maven.org/#search|gav|1|g:\"%s\""
-    }
-
     override fun getQuickNavigateInfo(element: PsiElement?, element1: PsiElement?): String? {
         return null
     }
@@ -28,15 +23,20 @@ class OpenJcenterOrMavenCentralProvider : DocumentationProvider {
                 e = e.parent ?: return null
             } while ("dependencies" != e.firstChild.text && "imports" != e.firstChild.text)
             if (element1 != null) {
-                val dependency = element.text.trim('"', '\'', '(', ')')
+                val dependency = trim(element.text)
                 val mavenUrl = split(dependency).let {
                     if (it.size >= 2) {
-                        GROUP_AND_ARTIFACT.format(it[0], it[1])
+                        if ("c" == it[0]) {
+                            return "<a href='http://search.maven.org/#search|gav|1|c:\"${it[1]}\"'>search in mavenCentral</a><br/>"
+                        } else if ("fc" == it[0]) {
+                            return "<a href='http://search.maven.org/#search|gav|1|fc:\"${it[1]}\"'>search in mavenCentral</a><br/>"
+                        } else
+                            "http://search.maven.org/#search|gav|1|g:\"${it[0]}\" AND a:\"${it[1]}\""
                     } else {
-                        GROUP.format(it[0])
+                        "http://search.maven.org/#search|gav|1|g:\"${it[0]}\""
                     }
                 }
-                return "<a href=\"https://bintray.com/search?query=$dependency\">search in jcenter</a><br/>" +
+                return "<a href='https://bintray.com/search?query=$dependency'>search in jcenter</a><br/>" +
                         "<a href='$mavenUrl'>search in mavenCentral</a><br/>"
             }
         }
