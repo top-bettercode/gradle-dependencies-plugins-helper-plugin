@@ -10,13 +10,13 @@
   <depends>org.jetbrains.kotlin</depends>
 
   <description><![CDATA[
-      This is an IntelliJ IDEA plugin for searching dependencies/plugins from JCentral/GradlePlugins inside Gradle projects.
+      This is an IntelliJ IDEA plugin for searching dependencies/plugins from JCentral/GradlePlugins inside Gradle projects.<br/><br/>
 
       <b>Features</b>
       <ul>
         <li>Support *.gradle,*.gradle.kts.</li>
         <li>Use jcenter API for Gradle queries.</li>
-        <li>Use Gradle Plugins Search API for Gradle Plugins queries.</li>
+        <li>Use Gradle Plugins Search for Gradle Plugins queries.</li>
         <li>Support wildcard query *,? etc.</li>
         <li>Support search by classname in mavenCentral search.</li>
       </ul>
@@ -25,11 +25,15 @@
   <change-notes><![CDATA[
   <ul>
     <li>0.0.2<br/>
-    Support search by classname in mavenCentral search.
-    use "c:"(classname) or "fc:"( fully-qualified classname ) in dependencies/plugins script block
+    Support search by classname in mavenCentral search.<br/>
+    use "c:"(classname) or "fc:"( fully-qualified classname ) in dependencies/plugins script block<br/>
+    example: <br/>
+    &nbsp; &nbsp; compile("fc:org.junit.Test")<br/>
+    &nbsp; &nbsp; compile("c:Junit")<br/>
     <li>0.0.1<br/>
     Support *.gradle,*.gradle.kts.<br/>
     Use jcenter API for Gradle queries.<br/>
+    Use Gradle Plugins Search for Gradle Plugins queries.<br/>
     Support wildcard query *,? etc.<br/>
     </li>
   </ul>
