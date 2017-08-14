@@ -46,7 +46,7 @@ class GradleArtifactSearcher {
     @Suppress("UNCHECKED_CAST")
     private fun searchByClassNameInMavenCentral(searchParam: SearchParam, project: Project): MutableList<ArtifactInfo> {
         val result: MutableList<ArtifactInfo> = mutableListOf()
-        val url = "http://search.maven.org/solrsearch/select?q=${searchParam.advancedSearch}:\"${searchParam.id}\"&core=gav&rows=30&wt=json"
+        val url = "http://search.maven.org/solrsearch/select?q=${searchParam.advancedSearch}:\"${searchParam.id}\"&core=gav&rows=50&wt=json"
         val connection = getConnection(url)
         val stream = getResponse(connection, project) ?: return result
         val docs = ((JsonSlurper().parse(stream) as Map<*, *>)["response"] as Map<*, *>) ["docs"] as List<Map<*, *>>
