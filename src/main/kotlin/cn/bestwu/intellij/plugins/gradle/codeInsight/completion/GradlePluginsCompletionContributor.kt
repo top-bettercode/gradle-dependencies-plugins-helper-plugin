@@ -14,11 +14,10 @@ import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtParenthesizedExpression
-import org.jetbrains.plugins.gradle.codeInsight.AbstractGradleCompletionContributor
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals.GrLiteral
 import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.path.GrMethodCallExpressionImpl
 
-class GradlePluginsCompletionContributor : AbstractGradleCompletionContributor() {
+class GradlePluginsCompletionContributor : CompletionContributor() {
 
     init {
         extend(CompletionType.SMART,
@@ -37,6 +36,8 @@ class GradlePluginsCompletionContributor : AbstractGradleCompletionContributor()
                 , CompletionPluginsCompletionProvider())
 
     }
+
+    override fun duringCompletion(context: CompletionInitializationContext) = contributorDuringCompletion(context)
 
     private class CompletionPluginsCompletionProvider : CompletionProvider<CompletionParameters>() {
         companion object {

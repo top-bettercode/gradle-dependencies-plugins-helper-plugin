@@ -1,5 +1,7 @@
 package cn.bestwu.intellij.plugins.gradle.codeInsight.completion
 
+import com.intellij.codeInsight.completion.CompletionInitializationContext
+import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.notification.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
@@ -140,4 +142,36 @@ fun compareVersion(version1: String, version2: String): Int {
     else if (version1s.size > version2s.size)
         return 1
     return 0
+}
+
+fun contributorBeforeCompletion(context: CompletionInitializationContext) {
+    if (context.completionType == CompletionType.SMART) {
+        val offset = context.caret.offset
+        val text = context.editor.document.text
+        var idStart = offset
+        do {
+            idStart--
+            if ('\n' == text[idStart] || idStart == -1) {
+                return
+            }
+        } while ('"' != text[idStart] && '\'' != text[idStart])
+        idStart++
+        if (text.substring(idStart, idStart + 2) == "c:" || text.substring(idStart, idStart + 3) == "fc:")
+            context.caret.moveToOffset(idStart)
+    }
+}
+
+fun contributorDuringCompletion(context: CompletionInitializationContext) {
+    if (context.completionType == CompletionType.SMART) {
+        val offset = context.caret.offset
+        val text = context.editor.document.charsSequence
+        var idEnd = offset
+        while ('"' != text[idEnd] && '\'' != text[idEnd]) {
+            idEnd++
+            if ('\n' == text[idEnd] || idEnd == text.length) {
+                return
+            }
+        }
+        context.offsetMap.addOffset(CompletionInitializationContext.IDENTIFIER_END_OFFSET, idEnd)
+    }
 }

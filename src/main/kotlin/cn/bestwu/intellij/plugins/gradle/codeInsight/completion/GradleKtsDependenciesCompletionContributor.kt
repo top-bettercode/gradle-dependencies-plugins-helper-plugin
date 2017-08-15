@@ -32,11 +32,10 @@ class GradleKtsDependenciesCompletionContributor : AbstractGradleCompletionContr
                 val searchParam = SearchParam(searchText)
                 if (searchParam.id.length < 2)
                     return
-                val searchResult = artifactSearcher.search(searchParam,params.position.project)
+                val searchResult = artifactSearcher.search(searchParam, params.position.project)
                 if (searchResult.isEmpty()) {
-                    show(params.position.project,  searchParam.failContent,"find dependencies fail", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
+                    show(params.position.project, searchParam.failContent, "find dependencies fail", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
                 }
-
                 val resultSet = searchResult.distinctBy { it.presentableText }
                 var completionResultSet = result.withRelevanceSorter(
                         CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("gradleDependencyWeigher") {
@@ -54,6 +53,11 @@ class GradleKtsDependenciesCompletionContributor : AbstractGradleCompletionContr
             }
         })
     }
+
+    override fun beforeCompletion(context: CompletionInitializationContext) = contributorBeforeCompletion(context)
+
+
+    override fun duringCompletion(context: CompletionInitializationContext) = contributorDuringCompletion(context)
 
     companion object {
         private val DEPENDENCIES_SCRIPT_BLOCK = "dependencies"

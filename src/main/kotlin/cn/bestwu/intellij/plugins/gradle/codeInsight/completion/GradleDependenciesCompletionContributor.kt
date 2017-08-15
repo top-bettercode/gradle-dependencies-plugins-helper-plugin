@@ -133,6 +133,11 @@ class GradleDependenciesCompletionContributor : AbstractGradleCompletionContribu
         })
     }
 
+    override fun beforeCompletion(context: CompletionInitializationContext) = contributorBeforeCompletion(context)
+
+
+    override fun duringCompletion(context: CompletionInitializationContext) = contributorDuringCompletion(context)
+
     companion object {
         private val GROUP_LABEL = "group"
         private val NAME_LABEL = "name"

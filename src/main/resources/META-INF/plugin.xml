@@ -30,6 +30,8 @@
     example: <br/>
     &nbsp; &nbsp; compile("fc:org.junit.Test")<br/>
     &nbsp; &nbsp; compile("c:Junit")<br/>
+    note:<br/>
+    &nbsp; &nbsp;Press Tab to replace the characters to the right from the caret.
     <li>0.0.1<br/>
     Support *.gradle,*.gradle.kts.<br/>
     Use jcenter API for Gradle queries.<br/>
