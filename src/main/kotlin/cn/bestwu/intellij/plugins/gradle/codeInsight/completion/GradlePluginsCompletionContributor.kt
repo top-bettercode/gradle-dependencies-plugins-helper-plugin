@@ -18,6 +18,9 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals
 import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.path.GrMethodCallExpressionImpl
 
 class GradlePluginsCompletionContributor : CompletionContributor() {
+    companion object {
+        val regex = "^id *\\(? *[\"'](.*)[\"'] *\\)? *version.*$".toRegex()
+    }
 
     init {
         extend(CompletionType.SMART,
@@ -40,9 +43,6 @@ class GradlePluginsCompletionContributor : CompletionContributor() {
     override fun duringCompletion(context: CompletionInitializationContext) = contributorDuringCompletion(context)
 
     private class CompletionPluginsCompletionProvider : CompletionProvider<CompletionParameters>() {
-        companion object {
-            private val regex = "^id *\\(? *[\"'](.*)[\"'] *\\)? *version.*$".toRegex()
-        }
 
         val pluginsSearcher = GradlePluginsSearcher()
 
