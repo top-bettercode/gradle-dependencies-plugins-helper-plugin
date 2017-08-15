@@ -169,15 +169,14 @@ class GradleArtifactSearcher {
         if (existResult != null) {
             return existResult
         }
-        val result: MutableList<ArtifactInfo>
+        var result: MutableList<ArtifactInfo>
         if (searchParam.advancedSearch.isNotEmpty()) {
             result = searchByClassNameInNexus(searchParam, project)
-//            result = searchByClassNameInMavenCentral(searchParam, project)
+            if (result.isEmpty())
+                result = searchByClassNameInMavenCentral(searchParam, project)
         } else {
             result = searchInNexus(searchParam, project)
 //            result = searchInJcenter(searchParam, project)
-//            if (result.isEmpty())
-//                result = searchInMavenCentral(searchParam, project)
         }
         artifactsCaches.put(searchParam.q, result)
         return result
