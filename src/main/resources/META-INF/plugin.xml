@@ -25,6 +25,7 @@
   <change-notes><![CDATA[
   <ul>
     <li>0.0.2<br/>
+    Add Nexus search option.<br/>
     Support search by classname in mavenCentral search.<br/>
     use "c:"(classname) or "fc:"( fully-qualified classname ) in dependencies/plugins script block<br/>
     example: <br/>
