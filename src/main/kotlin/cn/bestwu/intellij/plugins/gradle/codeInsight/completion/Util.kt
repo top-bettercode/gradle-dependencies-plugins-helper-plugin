@@ -26,11 +26,15 @@ fun show(project: Project, content: String, title: String = "", type: Notificati
 class ArtifactInfo(groupId: String, artifactId: String, version: String = "", repo: String = "", owner: String = "") {
     val groupId: String = groupId.trim()
     val artifactId: String = artifactId.trim()
-    val version: String = version.trim()
+    var version: String = version.trim()
+        set(value) {
+            field = value
+            this.presentableText = "${this.id}${if (this.version.isEmpty()) "" else ":${this.version}"}"
+        }
     val repo: String = repo.trim()
     val owner: String = owner.trim()
     val id: String
-    val presentableText: String
+    var presentableText: String
 
     override fun toString(): String {
         return "ArtifactInfo(groupId='$groupId', artifactId='$artifactId', version='$version', id='$id')"
@@ -47,6 +51,7 @@ class ArtifactInfo(groupId: String, artifactId: String, version: String = "", re
 class SearchParam {
     val id: String
     val q: String
+    val mq: String
     val advancedSearch: String
     val failContent: String
 
@@ -54,11 +59,13 @@ class SearchParam {
         if (text.startsWith("c:", true)) {
             id = text.substringAfter("c:").trim()
             q = text.trim()
+            mq = text.trim()
             advancedSearch = "c"
             failContent = "<a href='http://search.maven.org/#search|gav|1|c:\"$id\"'>search in mavenCentral</a>"
         } else if (text.startsWith("fc:", true)) {
             id = text.substringAfter("fc:").trim()
             q = text.trim()
+            mq = text.trim()
             advancedSearch = "fc"
             failContent = "<a href='http://search.maven.org/#search|gav|1|fc:\"$id\"'>search in mavenCentral</a>"
         } else {
@@ -68,10 +75,12 @@ class SearchParam {
                 val groupId = list[0].trim()
                 val artifactId = list[1].trim()
                 this.id = "$groupId${if (artifactId.isEmpty()) "" else ":$artifactId"}"
-                this.q = "g=*$groupId*${if (artifactId.isEmpty()) "" else "&a=*$artifactId*"}"
+                this.q = "g=$groupId${if (artifactId.isEmpty()) "*" else "&a=$artifactId*"}"
+                this.mq = "g:\"$groupId\"${if (artifactId.isEmpty()) "" else "+AND+a:\"$artifactId\""}"
             } else {
                 this.id = text.trim()
-                this.q = "q=*${text.trim()}*"
+                this.q = "q=${text.trim()}*"
+                this.mq = "a:\"${text.trim()}\""
             }
             failContent = "<a href='https://bintray.com/search?query=$id'>search in jcenter</a>"
         }
@@ -82,7 +91,8 @@ class SearchParam {
         val groupId = groupIdParam.trim()
         val artifactId = artifactIdParam.trim()
         this.id = "$groupId${if (artifactId.isEmpty()) "" else ":$artifactId"}"
-        this.q = "g=*$groupId*${if (artifactId.isEmpty()) "" else "&a=*$artifactId*"}"
+        this.q = "g=$groupId${if (artifactId.isEmpty()) "*" else "&a=$artifactId*"}"
+        this.mq = "g:\"$groupId\"${if (artifactId.isEmpty()) "" else "+AND+a:\"$artifactId\""}"
         failContent = "<a href='https://bintray.com/search?query=$id'>search in jcenter</a>"
     }
 

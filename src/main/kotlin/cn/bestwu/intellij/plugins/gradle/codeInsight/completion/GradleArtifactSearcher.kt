@@ -10,6 +10,8 @@ import java.util.*
 
 class GradleArtifactSearcher {
     companion object {
+        private val regex = Regex("\\{\"id\":\"(.*?):(.*?):(.*?)\",")
+
         private fun getConnection(spec: String): HttpURLConnection {
             val url = URL(spec)
             return url.openConnection() as HttpURLConnection
@@ -37,21 +39,44 @@ class GradleArtifactSearcher {
             result = searchByClassNameInMavenCentral(searchParam, project)
         } else {
             result = searchInJcenter(searchParam, project)
+//            if (result.isEmpty())
+//                result = searchInMavenCentral(searchParam, project)
         }
-
         artifactsCaches.put(searchParam.q, result)
         return result
     }
 
+
     @Suppress("UNCHECKED_CAST")
     private fun searchByClassNameInMavenCentral(searchParam: SearchParam, project: Project): MutableList<ArtifactInfo> {
         val result: MutableList<ArtifactInfo> = mutableListOf()
-        val url = "http://search.maven.org/solrsearch/select?q=${searchParam.advancedSearch}:\"${searchParam.id}\"&core=gav&rows=50&wt=json"
+        val url = "http://search.maven.org/solrsearch/select?q=${searchParam.advancedSearch}:\"${searchParam.id}\"&core=gav&rows=1000&wt=json"
         val connection = getConnection(url)
         val stream = getResponse(connection, project) ?: return result
-        val docs = ((JsonSlurper().parse(stream) as Map<*, *>)["response"] as Map<*, *>) ["docs"] as List<Map<*, *>>
-        docs.forEach {
-            result.add(ArtifactInfo(it["g"] as String, it["a"] as String, it["v"] as String, "mavenCentral", "Apache"))
+        regex.findAll(stream.bufferedReader().readText()).forEach {
+            val artifactInfo = ArtifactInfo(it.groupValues[1], it.groupValues[2], it.groupValues[3], "mavenCentral", "Apache")
+            val exist = result.find { it.id == artifactInfo.id }
+            if (exist != null) {
+                if (compareVersion(exist.version, artifactInfo.version) < 0) {
+                    exist.version = artifactInfo.version
+                }
+            } else {
+                result.add(artifactInfo)
+            }
+        }
+
+        return result
+    }
+
+    @Suppress("UNCHECKED_CAST", "unused")
+    private fun searchInMavenCentral(searchParam: SearchParam, project: Project): MutableList<ArtifactInfo> {
+        val result: MutableList<ArtifactInfo> = mutableListOf()
+        val url = "http://search.maven.org/solrsearch/select?q=${searchParam.mq}&rows=50&core=gav&wt=json"
+        val connection = getConnection(url)
+        val stream = getResponse(connection, project) ?: return result
+        regex.findAll(stream.bufferedReader().readText()).forEach {
+            val artifactInfo = ArtifactInfo(it.groupValues[1], it.groupValues[2], it.groupValues[3], "mavenCentral", "Apache")
+            result.add(artifactInfo)
         }
         return result
     }
