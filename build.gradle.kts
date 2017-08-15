@@ -12,7 +12,7 @@ intellij {
     updateSinceUntilBuild = false
     version = "IC-2017.2.1"
 //    version = "145.184.1"
-    setPlugins("Groovy", "gradle", "Kotlin")
+    setPlugins("Groovy", "gradle", "Kotlin","maven")
 }
 
 tasks.withType(PublishTask::class.java){

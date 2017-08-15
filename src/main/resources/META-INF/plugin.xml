@@ -46,6 +46,11 @@
   <idea-version since-build="145.184.1"/>
 
   <extensions defaultExtensionNs="com.intellij">
+    <postStartupActivity
+      implementation="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.GradleProjectStartupActivity"/>
+    <externalSystemTaskNotificationListener
+      implementation="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.GradleMavenProjectImportNotificationListener"/>
+
     <completion.contributor language="Groovy"
       implementationClass="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.GradleDependenciesCompletionContributor"
       order="first"/>
@@ -63,4 +68,5 @@
       implementation="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.OpenJcenterOrMavenCentralProvider"
       order="first"/>
   </extensions>
+
 </idea-plugin>

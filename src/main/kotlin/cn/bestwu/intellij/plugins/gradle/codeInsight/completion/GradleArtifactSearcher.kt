@@ -3,6 +3,8 @@ package cn.bestwu.intellij.plugins.gradle.codeInsight.completion
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import groovy.json.JsonSlurper
+import org.jetbrains.idea.maven.indices.MavenArtifactSearcher
+import org.jetbrains.plugins.gradle.integrations.maven.MavenRepositoriesHolder
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
@@ -175,7 +177,9 @@ class GradleArtifactSearcher {
             if (result.isEmpty())
                 result = searchByClassNameInMavenCentral(searchParam, project)
         } else {
-            result = searchInNexus(searchParam, project)
+
+            result = searchInMavenRepositories(searchParam, project)
+//            result = searchInNexus(searchParam, project)
 //            result = searchInJcenter(searchParam, project)
         }
         artifactsCaches.put(searchParam.q, result)
@@ -219,6 +223,19 @@ class GradleArtifactSearcher {
             }
         }
 
+        return result
+    }
+
+    private fun searchInMavenRepositories(searchParam: SearchParam, project: Project): MutableList<ArtifactInfo> {
+        val result: MutableList<ArtifactInfo> = mutableListOf()
+        MavenRepositoriesHolder.getInstance(project).checkNotIndexedRepositories()
+        val searcher = MavenArtifactSearcher()
+        val searchResults = searcher.search(project, searchParam.id, 1000)
+        for (searchResult in searchResults) {
+            for (artifactInfo in searchResult.versions) {
+                result.add(ArtifactInfo(artifactInfo.groupId, artifactInfo.artifactId, artifactInfo.version, "mavenCentral", "Apache"))
+            }
+        }
         return result
     }
 
