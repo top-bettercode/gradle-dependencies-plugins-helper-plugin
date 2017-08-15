@@ -36,9 +36,11 @@ class GradleArtifactSearcher {
         }
         val result: MutableList<ArtifactInfo>
         if (searchParam.advancedSearch.isNotEmpty()) {
-            result = searchByClassNameInMavenCentral(searchParam, project)
+            result = searchByClassNameInNexus(searchParam, project)
+//            result = searchByClassNameInMavenCentral(searchParam, project)
         } else {
-            result = searchInJcenter(searchParam, project)
+            result = searchInNexus(searchParam, project)
+//            result = searchInJcenter(searchParam, project)
 //            if (result.isEmpty())
 //                result = searchInMavenCentral(searchParam, project)
         }
@@ -63,6 +65,40 @@ class GradleArtifactSearcher {
             } else {
                 result.add(artifactInfo)
             }
+        }
+
+        return result
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun searchByClassNameInNexus(searchParam: SearchParam, project: Project): MutableList<ArtifactInfo> {
+        val result: MutableList<ArtifactInfo> = mutableListOf()
+        val url = "http://maven.aliyun.com/nexus/service/local/lucene/search?repositoryId=central&cn=${searchParam.id}"
+        val connection = getConnection(url)
+        connection.setRequestProperty("Accept", "application/json")
+        val stream = getResponse(connection, project) ?: return result
+        val jsonResult = (JsonSlurper().parse(stream) as Map<*, *>)["data"] as List<Map<*, *>>
+        jsonResult.forEach {
+            val artifactInfo = ArtifactInfo(it["groupId"] as String, it["artifactId"] as String, it["latestRelease"] as String, "mavenCentral", "Apache")
+            if (!result.any { it.id == artifactInfo.id }) {
+                result.add(artifactInfo)
+            }
+        }
+
+        return result
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun searchInNexus(searchParam: SearchParam, project: Project): MutableList<ArtifactInfo> {
+        val result: MutableList<ArtifactInfo> = mutableListOf()
+        val url = "http://maven.aliyun.com/nexus/service/local/lucene/search?repositoryId=central&${searchParam.nq}"
+        val connection = getConnection(url)
+        connection.setRequestProperty("Accept", "application/json")
+        val stream = getResponse(connection, project) ?: return result
+        val jsonResult = (JsonSlurper().parse(stream) as Map<*, *>)["data"] as List<Map<*, *>>
+        jsonResult.forEach {
+            val artifactInfo = ArtifactInfo(it["groupId"] as String, it["artifactId"] as String, it["version"] as String, "mavenCentral", "Apache")
+            result.add(artifactInfo)
         }
 
         return result

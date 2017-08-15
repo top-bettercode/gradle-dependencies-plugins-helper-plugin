@@ -1,9 +1,10 @@
-
 import cn.bestwu.intellij.plugins.gradle.codeInsight.completion.ArtifactInfo
 import cn.bestwu.intellij.plugins.gradle.codeInsight.completion.compareVersion
 import groovy.json.JsonSlurper
 import org.jsoup.Jsoup
 import org.junit.Test
+import java.net.HttpURLConnection
+import java.net.URL
 import java.util.*
 
 /**
@@ -42,7 +43,7 @@ class ParseResultTest {
     @Test
     fun parsePluginsVersion() {
         val plugin = Jsoup.connect("https://plugins.gradle.org/plugin/org.springframework.boot").get()
-        println(plugin.select(".version-info h3").text().replace("^Version (.*) \\(latest\\)$".toRegex(),"$1"))
+        println(plugin.select(".version-info h3").text().replace("^Version (.*) \\(latest\\)$".toRegex(), "$1"))
         val elements = plugin.select(".other-versions li")
 
         for (version in elements.map { it.select("a").text() }) {
@@ -52,20 +53,20 @@ class ParseResultTest {
 
 
     @Test
-    fun regexVersion(){
+    fun regexVersion() {
         val regex = "^id *\\(? *[\"'](.*)[\"'] *\\)? *version.*$".toRegex()
-        println("id(\"org.springframework.boot\") version( \"1.5.6.RELEASE\")".replace(regex,"$1"))
-        println("id \"org.springframework.boot\" version( \"1.5.6.RELEASE\")".replace(regex,"$1"))
-        println("id \"org.springframework.boot\" version \"1.5.6.RELEASE\"".replace(regex,"$1"))
-        println("id('org.springframework.boot') version( '1.5.6.RELEASE')".replace(regex,"$1"))
-        println("id 'org.springframework.boot' version( '1.5.6.RELEASE')".replace(regex,"$1"))
-        println("id 'org.springframework.boot' version '1.5.6.RELEASE'".replace(regex,"$1"))
-        println("id(\"org.springframework.boot\") version (\"1.5.6.RELEASE\")".replace(regex,"$1"))
-        println("id(\"org.springframework.boot\") version \"1.5.6.RELEASE\"".replace(regex,"$1"))
+        println("id(\"org.springframework.boot\") version( \"1.5.6.RELEASE\")".replace(regex, "$1"))
+        println("id \"org.springframework.boot\" version( \"1.5.6.RELEASE\")".replace(regex, "$1"))
+        println("id \"org.springframework.boot\" version \"1.5.6.RELEASE\"".replace(regex, "$1"))
+        println("id('org.springframework.boot') version( '1.5.6.RELEASE')".replace(regex, "$1"))
+        println("id 'org.springframework.boot' version( '1.5.6.RELEASE')".replace(regex, "$1"))
+        println("id 'org.springframework.boot' version '1.5.6.RELEASE'".replace(regex, "$1"))
+        println("id(\"org.springframework.boot\") version (\"1.5.6.RELEASE\")".replace(regex, "$1"))
+        println("id(\"org.springframework.boot\") version \"1.5.6.RELEASE\"".replace(regex, "$1"))
     }
 
     @Test
-    fun GrRegex(){
+    fun GrRegex() {
         println("org.springframework.boot:sprIntellijIdeaRulezzz ing-boot-dependencies".substringBefore("IntellijIdeaRulezzz "))
     }
 
@@ -85,7 +86,7 @@ class ParseResultTest {
                 "1.3.0.M1"
         )
         versions.sortWith(kotlin.Comparator { o1, o2 ->
-            compareVersion(o1,o2)
+            compareVersion(o1, o2)
         })
         println(versions)
     }
@@ -99,7 +100,23 @@ class ParseResultTest {
         }
     }
 
-    //     find e
+    @Suppress("UNCHECKED_CAST")
+    @Test
+    fun searchInNexus() {
+        val url = "http://maven.aliyun.com/nexus/service/local/lucene/search?repositoryId=central&cn=org.junit.Test"
+//        val url = "http://maven.aliyun.com/nexus/service/local/lucene/search?repositoryId=central&g=junit&a=junit"
+        val connection = URL(url).openConnection() as HttpURLConnection
+        connection.setRequestProperty("Accept", "application/json")
+        val stream = connection.inputStream ?: return
+//        println(stream.bufferedReader().readText())
+        val jsonResult = (JsonSlurper().parse(stream) as Map<*, *>)["data"] as List<Map<*, *>>
+        jsonResult.forEach {
+            val artifactInfo = ArtifactInfo(it["groupId"] as String, it["artifactId"] as String, it["latestRelease"] as String, "mavenCentral", "Apache")
+            println(artifactInfo)
+        }
+        println(jsonResult.size)
+    }
+//     find e
 //var e = element
 //    var i = 0
 //    do {

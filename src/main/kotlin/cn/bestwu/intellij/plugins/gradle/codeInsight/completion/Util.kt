@@ -52,6 +52,7 @@ class SearchParam {
     val id: String
     val q: String
     val mq: String
+    val nq: String
     val advancedSearch: String
     val failContent: String
 
@@ -60,12 +61,14 @@ class SearchParam {
             id = text.substringAfter("c:").trim()
             q = text.trim()
             mq = text.trim()
+            nq = text.trim()
             advancedSearch = "c"
             failContent = "<a href='http://search.maven.org/#search|gav|1|c:\"$id\"'>search in mavenCentral</a>"
         } else if (text.startsWith("fc:", true)) {
             id = text.substringAfter("fc:").trim()
             q = text.trim()
             mq = text.trim()
+            nq = text.trim()
             advancedSearch = "fc"
             failContent = "<a href='http://search.maven.org/#search|gav|1|fc:\"$id\"'>search in mavenCentral</a>"
         } else {
@@ -77,10 +80,12 @@ class SearchParam {
                 this.id = "$groupId${if (artifactId.isEmpty()) "" else ":$artifactId"}"
                 this.q = "g=$groupId${if (artifactId.isEmpty()) "*" else "&a=$artifactId*"}"
                 this.mq = "g:\"$groupId\"${if (artifactId.isEmpty()) "" else "+AND+a:\"$artifactId\""}"
+                this.nq = "g=$groupId${if (artifactId.isEmpty()) "" else "&a=$artifactId"}"
             } else {
                 this.id = text.trim()
                 this.q = "q=${text.trim()}*"
                 this.mq = "a:\"${text.trim()}\""
+                this.nq = "q=${text.trim()}"
             }
             failContent = "<a href='https://bintray.com/search?query=$id'>search in jcenter</a>"
         }
@@ -93,6 +98,7 @@ class SearchParam {
         this.id = "$groupId${if (artifactId.isEmpty()) "" else ":$artifactId"}"
         this.q = "g=$groupId${if (artifactId.isEmpty()) "*" else "&a=$artifactId*"}"
         this.mq = "g:\"$groupId\"${if (artifactId.isEmpty()) "" else "+AND+a:\"$artifactId\""}"
+        this.nq = "g=$groupId${if (artifactId.isEmpty()) "" else "&a=$artifactId"}"
         failContent = "<a href='https://bintray.com/search?query=$id'>search in jcenter</a>"
     }
 
