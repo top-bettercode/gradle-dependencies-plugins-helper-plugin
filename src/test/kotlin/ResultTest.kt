@@ -1,5 +1,5 @@
 import cn.bestwu.intellij.plugins.gradle.codeInsight.completion.ArtifactInfo
-import cn.bestwu.intellij.plugins.gradle.codeInsight.completion.compareVersion
+import cn.bestwu.intellij.plugins.gradle.codeInsight.completion.GradleArtifactSearcher
 import groovy.json.JsonSlurper
 import org.jsoup.Jsoup
 import org.junit.Test
@@ -86,7 +86,7 @@ class ParseResultTest {
                 "1.3.0.M1"
         )
         versions.sortWith(kotlin.Comparator { o1, o2 ->
-            compareVersion(o1, o2)
+            GradleArtifactSearcher().compareVersion(o1, o2)
         })
         println(versions)
     }
@@ -103,7 +103,8 @@ class ParseResultTest {
     @Suppress("UNCHECKED_CAST")
     @Test
     fun searchInNexus() {
-        val url = "http://maven.aliyun.com/nexus/service/local/lucene/search?repositoryId=central&cn=org.junit.Test"
+        val url = "http://127.0.0.1:8083/nexus/service/local/lucene/search?repositoryId=central&cn=org.junit.Test"
+//        val url = "http://maven.aliyun.com/nexus/service/local/lucene/search?repositoryId=central&cn=org.junit.Test"
 //        val url = "http://maven.aliyun.com/nexus/service/local/lucene/search?repositoryId=central&g=junit&a=junit"
         val connection = URL(url).openConnection() as HttpURLConnection
         connection.setRequestProperty("Accept", "application/json")
@@ -111,7 +112,7 @@ class ParseResultTest {
 //        println(stream.bufferedReader().readText())
         val jsonResult = (JsonSlurper().parse(stream) as Map<*, *>)["data"] as List<Map<*, *>>
         jsonResult.forEach {
-            val artifactInfo = ArtifactInfo(it["groupId"] as String, it["artifactId"] as String, it["latestRelease"] as String, "mavenCentral", "Apache")
+            val artifactInfo = ArtifactInfo(it["groupId"] as String, it["artifactId"] as String, it["version"] as String, "mavenCentral", "Apache")
             println(artifactInfo)
         }
         println(jsonResult.size)
