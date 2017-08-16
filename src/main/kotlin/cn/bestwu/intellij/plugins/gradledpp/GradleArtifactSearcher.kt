@@ -192,11 +192,14 @@ class GradleArtifactSearcher {
                 result = searchByClassNameInMavenCentral(searchParam, project)
             }
         } else {
-//            result = searchInMavenIndexs(searchParam, project)
-            if (Settings.getInstance(project).useNexus)
-                result = searchInNexus(searchParam, project)
-            else
-                result = searchInJcenter(searchParam, project)
+            if (Settings.getInstance(project).useMavenIndex) {
+                result = searchInMavenIndexes(searchParam, project)
+            } else {
+                if (Settings.getInstance(project).useNexus)
+                    result = searchInNexus(searchParam, project)
+                else
+                    result = searchInJcenter(searchParam, project)
+            }
         }
         artifactsCaches.put(searchParam.q, result)
         return result
