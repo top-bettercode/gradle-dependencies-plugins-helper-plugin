@@ -50,7 +50,11 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
         if (ApplicationManager.getApplication().isUnitTestMode) return
 
 //        val remoteRepository = MavenRemoteRepository("my", null, "http://127.0.0.1:8081/remote-repos/", null, null, null)
-        MavenRepositoriesHolder.getInstance(myProject).update(setOf( mavenCentralRemoteRepository))
+        val repositoriesHolder = MavenRepositoriesHolder.getInstance(myProject)
+        val remoteRepositories = mutableSetOf<MavenRemoteRepository>()
+        remoteRepositories.addAll(repositoriesHolder.remoteRepositories)
+        remoteRepositories.add(mavenCentralRemoteRepository)
+        repositoriesHolder.update(remoteRepositories)
         MavenProjectIndicesManager.getInstance(myProject).scheduleUpdateIndicesList(Consumer<List<MavenIndex>> { indexes ->
             if (myProject.isDisposed) return@Consumer
 
@@ -58,11 +62,11 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
                     .filter({ index ->
                         index.updateTimestamp == -1L &&
                                 index.failureMessage == null &&
-                                MavenRepositoriesHolder.getInstance(myProject).contains(index.repositoryPathOrUrl)
+                                repositoriesHolder.contains(index.repositoryPathOrUrl)
                     })
                     .map(MavenIndex::getRepositoryPathOrUrl)
                     .collect(Collectors.toList<String>())
-            MavenRepositoriesHolder.getInstance(myProject).updateNotIndexedUrls(repositoriesWithEmptyIndex)
+            repositoriesHolder.updateNotIndexedUrls(repositoriesWithEmptyIndex)
         })
     }
 

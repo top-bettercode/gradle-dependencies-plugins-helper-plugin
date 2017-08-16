@@ -5,8 +5,8 @@
   <vendor email="piterwu@outlook.com"
     url="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin">piterwu
   </vendor>
+  <depends>org.jetbrains.idea.maven</depends>
   <depends>org.jetbrains.plugins.gradle</depends>
-  <depends>org.jetbrains.plugins.maven</depends>
   <depends>org.intellij.groovy</depends>
   <depends>org.jetbrains.kotlin</depends>
 

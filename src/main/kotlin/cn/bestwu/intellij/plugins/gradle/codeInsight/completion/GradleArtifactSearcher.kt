@@ -4,6 +4,8 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import groovy.json.JsonSlurper
 import org.jetbrains.idea.maven.indices.MavenArtifactSearcher
+import org.jetbrains.idea.maven.indices.MavenProjectIndicesManager
+import org.jetbrains.idea.maven.model.MavenArtifactInfo
 import org.jetbrains.plugins.gradle.integrations.maven.MavenRepositoriesHolder
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -37,6 +39,8 @@ class ArtifactInfo(groupId: String, artifactId: String, version: String = "", re
 }
 
 class SearchParam {
+    val groupId: String
+    val artifactId: String
     val id: String
     val q: String
     val mq: String
@@ -46,6 +50,8 @@ class SearchParam {
 
     constructor(text: String) {
         if (text.startsWith("c:", true)) {
+            groupId = ""
+            artifactId = ""
             id = text.substringAfter("c:").trim()
             q = text.trim()
             mq = text.trim()
@@ -53,6 +59,8 @@ class SearchParam {
             advancedSearch = "c"
             failContent = "<a href='http://search.maven.org/#search|gav|1|c:\"$id\"'>search in mavenCentral</a>"
         } else if (text.startsWith("fc:", true)) {
+            groupId = ""
+            artifactId = ""
             id = text.substringAfter("fc:").trim()
             q = text.trim()
             mq = text.trim()
@@ -63,13 +71,15 @@ class SearchParam {
             advancedSearch = ""
             val list = split(text)
             if (list.size in (2..3)) {
-                val groupId = list[0].trim()
-                val artifactId = list[1].trim()
+                groupId = list[0].trim()
+                artifactId = list[1].trim()
                 this.id = "$groupId${if (artifactId.isEmpty()) "" else ":$artifactId"}"
                 this.q = "g=$groupId${if (artifactId.isEmpty()) "*" else "&a=$artifactId*"}"
                 this.mq = "g:\"$groupId\"${if (artifactId.isEmpty()) "" else "+AND+a:\"$artifactId\""}"
                 this.nq = "g=$groupId${if (artifactId.isEmpty()) "" else "&a=$artifactId"}"
             } else {
+                groupId = ""
+                artifactId = ""
                 this.id = text.trim()
                 this.q = "q=${text.trim()}*"
                 this.mq = "a:\"${text.trim()}\""
@@ -81,8 +91,8 @@ class SearchParam {
 
     constructor(groupIdParam: String, artifactIdParam: String) {
         advancedSearch = ""
-        val groupId = groupIdParam.trim()
-        val artifactId = artifactIdParam.trim()
+        groupId = groupIdParam.trim()
+        artifactId = artifactIdParam.trim()
         this.id = "$groupId${if (artifactId.isEmpty()) "" else ":$artifactId"}"
         this.q = "g=$groupId${if (artifactId.isEmpty()) "*" else "&a=$artifactId*"}"
         this.mq = "g:\"$groupId\"${if (artifactId.isEmpty()) "" else "+AND+a:\"$artifactId\""}"
@@ -178,7 +188,7 @@ class GradleArtifactSearcher {
                 result = searchByClassNameInMavenCentral(searchParam, project)
         } else {
 
-            result = searchInMavenRepositories(searchParam, project)
+            result = searchInMavenIndexs(searchParam, project)
 //            result = searchInNexus(searchParam, project)
 //            result = searchInJcenter(searchParam, project)
         }
@@ -226,16 +236,38 @@ class GradleArtifactSearcher {
         return result
     }
 
-    private fun searchInMavenRepositories(searchParam: SearchParam, project: Project): MutableList<ArtifactInfo> {
+    private fun searchInMavenIndexs(searchParam: SearchParam, project: Project): MutableList<ArtifactInfo> {
         val result: MutableList<ArtifactInfo> = mutableListOf()
         MavenRepositoriesHolder.getInstance(project).checkNotIndexedRepositories()
-        val searcher = MavenArtifactSearcher()
-        val searchResults = searcher.search(project, searchParam.id, 1000)
-        for (searchResult in searchResults) {
-            for (artifactInfo in searchResult.versions) {
-                result.add(ArtifactInfo(artifactInfo.groupId, artifactInfo.artifactId, artifactInfo.version, "mavenCentral", "Apache"))
+        val m = MavenProjectIndicesManager.getInstance(project)
+        if (searchParam.groupId.isNotEmpty()) {
+            if (searchParam.artifactId.isEmpty())
+                m.groupIds.mapTo(result) { ArtifactInfo(it, "", "", "mavenCentral", "Apache") }
+            else {
+                m.getArtifactIds(searchParam.groupId).forEach {
+                    if (it == searchParam.artifactId) {
+                        m.getVersions(searchParam.groupId, it).sortedWith(kotlin.Comparator<String> { o1, o2 ->
+                            compareVersion(o2, o1)
+                        }).forEach { version ->
+                            result.add(ArtifactInfo(searchParam.groupId, it, version, "mavenCentral", "Apache"))
+                        }
+                    } else {
+                        result.add(ArtifactInfo(searchParam.groupId, it, "", "mavenCentral", "Apache"))
+                    }
+                }
             }
+        } else {
+            val searcher = MavenArtifactSearcher()
+            val searchResults = searcher.search(project, searchParam.id, 1000)
+            searchResults
+                    .flatMap {
+                        it.versions.sortedWith(kotlin.Comparator<MavenArtifactInfo> { o1, o2 ->
+                            compareVersion(o2.version, o1.version)
+                        })
+                    }
+                    .mapTo(result) { ArtifactInfo(it.groupId, it.artifactId, it.version, "mavenCentral", "Apache") }
         }
+
         return result
     }
 
