@@ -11,7 +11,7 @@ intellij {
     pluginName = "Gradle Dependencies And Plugins Helper"
     updateSinceUntilBuild = false
     version = "IC-2017.2.1"
-//    version = "145.184.1"
+//    version = "145.258.11"
     setPlugins("Groovy", "gradle", "Kotlin", "maven")
 }
 

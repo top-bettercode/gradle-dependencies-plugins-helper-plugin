@@ -1,3 +1,4 @@
+
 import cn.bestwu.intellij.plugins.gradle.codeInsight.completion.ArtifactInfo
 import cn.bestwu.intellij.plugins.gradle.codeInsight.completion.GradleArtifactSearcher
 import groovy.json.JsonSlurper
@@ -117,7 +118,17 @@ class ParseResultTest {
         }
         println(jsonResult.size)
     }
-//     find e
+
+    @Test
+    fun local() {
+        println(Locale.getDefault())
+        println(Locale.CHINESE)
+        println(Locale.getDefault()== Locale.CHINA)
+        println(Locale.getDefault()== Locale.CHINESE)
+        println(Locale.getDefault()== Locale.SIMPLIFIED_CHINESE)
+    }
+
+    //     find e
 //var e = element
 //    var i = 0
 //    do {

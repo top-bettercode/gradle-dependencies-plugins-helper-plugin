@@ -1,5 +1,6 @@
 package cn.bestwu.intellij.plugins.gradle.codeInsight.completion
 
+import cn.bestwu.intellij.plugins.gradle.codeInsight.completion.config.Settings
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import groovy.json.JsonSlurper
@@ -183,14 +184,19 @@ class GradleArtifactSearcher {
         }
         var result: MutableList<ArtifactInfo>
         if (searchParam.advancedSearch.isNotEmpty()) {
-            result = searchByClassNameInNexus(searchParam, project)
-            if (result.isEmpty())
+            if (Settings.getInstance(project).useNexus) {
+                result = searchByClassNameInNexus(searchParam, project)
+                if (result.isEmpty())
+                    result = searchByClassNameInMavenCentral(searchParam, project)
+            } else {
                 result = searchByClassNameInMavenCentral(searchParam, project)
+            }
         } else {
-
-            result = searchInMavenIndexs(searchParam, project)
-//            result = searchInNexus(searchParam, project)
-//            result = searchInJcenter(searchParam, project)
+//            result = searchInMavenIndexs(searchParam, project)
+            if (Settings.getInstance(project).useNexus)
+                result = searchInNexus(searchParam, project)
+            else
+                result = searchInJcenter(searchParam, project)
         }
         artifactsCaches.put(searchParam.q, result)
         return result
@@ -221,7 +227,7 @@ class GradleArtifactSearcher {
     @Suppress("UNCHECKED_CAST")
     private fun searchByClassNameInNexus(searchParam: SearchParam, project: Project): MutableList<ArtifactInfo> {
         val result: MutableList<ArtifactInfo> = mutableListOf()
-        val url = "http://maven.aliyun.com/nexus/service/local/lucene/search?repositoryId=central&cn=${searchParam.id}"
+        val url = "${Settings.getInstance(project).nexusSearchUrl}?repositoryId=central&cn=${searchParam.id}"
         val connection = getConnection(url)
         connection.setRequestProperty("Accept", "application/json")
         val stream = getResponse(connection, project) ?: return result
@@ -236,7 +242,7 @@ class GradleArtifactSearcher {
         return result
     }
 
-    private fun searchInMavenIndexs(searchParam: SearchParam, project: Project): MutableList<ArtifactInfo> {
+    private fun searchInMavenIndexes(searchParam: SearchParam, project: Project): MutableList<ArtifactInfo> {
         val result: MutableList<ArtifactInfo> = mutableListOf()
         MavenRepositoriesHolder.getInstance(project).checkNotIndexedRepositories()
         val m = MavenProjectIndicesManager.getInstance(project)

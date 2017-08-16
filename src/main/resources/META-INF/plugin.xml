@@ -26,6 +26,7 @@
   <change-notes><![CDATA[
   <ul>
     <li>0.0.2<br/>
+    Add Maven Index search option.<br/>
     Add Nexus search option.<br/>
     Support search by classname in mavenCentral search.<br/>
     use "c:"(classname) or "fc:"( fully-qualified classname ) in dependencies/plugins script block<br/>
@@ -44,7 +45,7 @@
       ]]>
   </change-notes>
 
-  <idea-version since-build="145.184.1"/>
+  <idea-version since-build="145.258.11"/>
 
   <extensions defaultExtensionNs="com.intellij">
     <postStartupActivity
@@ -68,6 +69,13 @@
     <documentationProvider
       implementation="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.OpenJcenterOrMavenCentralProvider"
       order="first"/>
+
+    <projectConfigurable
+      instance="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.config.GDPHConfigurable"/>
+    <projectService
+      serviceInterface="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.config.Settings"
+      serviceImplementation="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.config.Settings"/>
+
   </extensions>
 
 </idea-plugin>

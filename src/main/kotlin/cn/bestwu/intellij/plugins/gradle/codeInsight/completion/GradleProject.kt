@@ -1,5 +1,6 @@
 package cn.bestwu.intellij.plugins.gradle.codeInsight.completion
 
+import cn.bestwu.intellij.plugins.gradle.codeInsight.completion.config.Settings
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter
@@ -27,47 +28,45 @@ import java.util.stream.Collectors
 
 
 class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
-    private val mavenCentralRemoteRepository: MavenRemoteRepository
     private var myProject: Project = project
     private var myDumbService: DumbService
 
+
+    companion object {
+        fun performTask(project: Project, remoteRepositories: MutableSet<MavenRemoteRepository>) {
+            if (project.isDisposed) return
+            if (ApplicationManager.getApplication().isUnitTestMode) return
+
+            val repositoriesHolder = MavenRepositoriesHolder.getInstance(project)
+//            remoteRepositories.addAll(repositoriesHolder.remoteRepositories)
+            repositoriesHolder.update(remoteRepositories)
+            MavenProjectIndicesManager.getInstance(project).scheduleUpdateIndicesList(Consumer<List<MavenIndex>> { indexes ->
+                if (project.isDisposed) return@Consumer
+
+                val repositoriesWithEmptyIndex = indexes.stream()
+                        .filter({ index ->
+                            index.updateTimestamp == -1L &&
+                                    index.failureMessage == null &&
+                                    repositoriesHolder.contains(index.repositoryPathOrUrl)
+                        })
+                        .map(MavenIndex::getRepositoryPathOrUrl)
+                        .collect(Collectors.toList<String>())
+                repositoriesHolder.updateNotIndexedUrls(repositoriesWithEmptyIndex)
+            })
+        }
+    }
+
     init {
         myDumbService = DumbService.getInstance(myProject)
-        mavenCentralRemoteRepository = MavenRemoteRepository("central", null, "https://repo1.maven.org/maven2/", null, null, null)
     }
 
     @Throws(ProcessCanceledException::class)
     override fun runBackgroundProcess(indicator: ProgressIndicator): ReadTask.Continuation {
         return myDumbService.runReadActionInSmartMode<ReadTask.Continuation> {
             Continuation({
-                performTask()
+                performTask(myProject, Settings.getInstance(myProject).remoteRepositories.toMutableSet())
             })
         }
-    }
-
-    private fun performTask() {
-        if (myProject.isDisposed) return
-        if (ApplicationManager.getApplication().isUnitTestMode) return
-
-//        val remoteRepository = MavenRemoteRepository("my", null, "http://127.0.0.1:8081/remote-repos/", null, null, null)
-        val repositoriesHolder = MavenRepositoriesHolder.getInstance(myProject)
-        val remoteRepositories = mutableSetOf<MavenRemoteRepository>()
-        remoteRepositories.addAll(repositoriesHolder.remoteRepositories)
-        remoteRepositories.add(mavenCentralRemoteRepository)
-        repositoriesHolder.update(remoteRepositories)
-        MavenProjectIndicesManager.getInstance(myProject).scheduleUpdateIndicesList(Consumer<List<MavenIndex>> { indexes ->
-            if (myProject.isDisposed) return@Consumer
-
-            val repositoriesWithEmptyIndex = indexes.stream()
-                    .filter({ index ->
-                        index.updateTimestamp == -1L &&
-                                index.failureMessage == null &&
-                                repositoriesHolder.contains(index.repositoryPathOrUrl)
-                    })
-                    .map(MavenIndex::getRepositoryPathOrUrl)
-                    .collect(Collectors.toList<String>())
-            repositoriesHolder.updateNotIndexedUrls(repositoriesWithEmptyIndex)
-        })
     }
 
     override fun onCanceled(indicator: ProgressIndicator) {
@@ -81,7 +80,7 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
 class GradleProjectStartupActivity : StartupActivity {
 
     override fun runActivity(project: Project) {
-        if (ApplicationManager.getApplication().isUnitTestMode) return
+        if (ApplicationManager.getApplication().isUnitTestMode || !Settings.getInstance(project).useMavenIndex) return
         ProgressIndicatorUtils.scheduleWithWriteActionPriority(ImportMavenRepositoriesTask(project))
     }
 }
@@ -91,7 +90,8 @@ class GradleMavenProjectImportNotificationListener : ExternalSystemTaskNotificat
     override fun onSuccess(id: ExternalSystemTaskId) {
         if (GradleConstants.SYSTEM_ID.id == id.projectSystemId.id && id.type == ExternalSystemTaskType.RESOLVE_PROJECT) {
             val project = id.findProject() ?: return
-            ProgressIndicatorUtils.scheduleWithWriteActionPriority(ImportMavenRepositoriesTask(project))
+            if (Settings.getInstance(project).useMavenIndex)
+                ProgressIndicatorUtils.scheduleWithWriteActionPriority(ImportMavenRepositoriesTask(project))
         }
     }
 }
