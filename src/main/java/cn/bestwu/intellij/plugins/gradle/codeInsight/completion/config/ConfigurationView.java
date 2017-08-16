@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.jetbrains.idea.maven.model.MavenRemoteRepository;
@@ -18,7 +19,8 @@ public class ConfigurationView {
   private JPanel dpPanel;
   private JPanel mavenIndexPanel;
   private JCheckBox useMavenIndex;
-//  private JButton addRemoteRepo;
+  private JLabel showtip;
+  //  private JButton addRemoteRepo;
   private Set<MavenRemoteRepository> remoteRepositories = new HashSet<>();
 
   public ConfigurationView() {

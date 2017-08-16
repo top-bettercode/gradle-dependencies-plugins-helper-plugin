@@ -33,12 +33,21 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
 
 
     companion object {
-        fun performTask(project: Project, remoteRepositories: MutableSet<MavenRemoteRepository>) {
+        fun performTask(project: Project) {
             if (project.isDisposed) return
             if (ApplicationManager.getApplication().isUnitTestMode) return
-
             val repositoriesHolder = MavenRepositoriesHolder.getInstance(project)
-//            remoteRepositories.addAll(repositoriesHolder.remoteRepositories)
+            val settings = Settings.getInstance(project)
+            val remoteRepositories: MutableSet<MavenRemoteRepository>
+            if (settings.useMavenIndex) {
+                remoteRepositories = settings.remoteRepositories
+                if (settings.originRemoteRepositories == null) {
+                    settings.originRemoteRepositories = repositoriesHolder.remoteRepositories
+                    remoteRepositories.addAll(repositoriesHolder.remoteRepositories)
+                }
+            } else {
+                remoteRepositories = settings.originRemoteRepositories?.toMutableSet() ?: mutableSetOf()
+            }
             repositoriesHolder.update(remoteRepositories)
             MavenProjectIndicesManager.getInstance(project).scheduleUpdateIndicesList(Consumer<List<MavenIndex>> { indexes ->
                 if (project.isDisposed) return@Consumer
@@ -53,6 +62,7 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
                         .collect(Collectors.toList<String>())
                 repositoriesHolder.updateNotIndexedUrls(repositoriesWithEmptyIndex)
             })
+
         }
     }
 
@@ -64,7 +74,7 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
     override fun runBackgroundProcess(indicator: ProgressIndicator): ReadTask.Continuation {
         return myDumbService.runReadActionInSmartMode<ReadTask.Continuation> {
             Continuation({
-                performTask(myProject, Settings.getInstance(myProject).remoteRepositories.toMutableSet())
+                performTask(myProject)
             })
         }
     }

@@ -51,11 +51,7 @@ class GDPHConfigurable(val project: Project) : Configurable {
         settings.useMavenIndex = view!!.useMavenIndex
         settings.nexusSearchUrl = view!!.nexusSearchUrlField
         settings.remoteRepositories = view!!.remoteRepositories
-        if (settings.useMavenIndex) {
-            ImportMavenRepositoriesTask.performTask(project, settings.remoteRepositories)
-        } else {
-            ImportMavenRepositoriesTask.performTask(project, mutableSetOf())
-        }
+        ImportMavenRepositoriesTask.performTask(project)
     }
 
     override fun reset() {

@@ -11,7 +11,7 @@ import java.util.*
         name = "GDPHConfig",
         storages = arrayOf(Storage("gdph.xml"))
 )
-class Settings(var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useMavenIndex: Boolean = Settings.useMavenIndex, var remoteRepositories: MutableSet<MavenRemoteRepository> = Settings.remoteRepositories) : PersistentStateComponent<Settings> {
+class Settings(var originRemoteRepositories: Set<MavenRemoteRepository>? = null, var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useMavenIndex: Boolean = Settings.useMavenIndex, var remoteRepositories: MutableSet<MavenRemoteRepository> = Settings.remoteRepositories) : PersistentStateComponent<Settings> {
     override fun loadState(state: Settings?) {
         this.useNexus = state?.useNexus ?: Settings.useNexus
         this.useMavenIndex = state?.useMavenIndex ?: Settings.useMavenIndex
