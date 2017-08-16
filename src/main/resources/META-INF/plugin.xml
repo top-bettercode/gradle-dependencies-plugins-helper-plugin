@@ -20,6 +20,7 @@
         <li>Use Gradle Plugins Search for Gradle Plugins queries.</li>
         <li>Support wildcard query *,? etc.</li>
         <li>Support search by classname in mavenCentral search.</li>
+        <li>Support Maven Index search option and Nexus search option.</li>
       </ul>
       ]]></description>
 
