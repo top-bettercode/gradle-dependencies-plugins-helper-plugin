@@ -3,15 +3,16 @@ package cn.bestwu.intellij.plugins.gradle.codeInsight.completion.config
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.StoragePathMacros
 import com.intellij.openapi.project.Project
-import org.jetbrains.idea.maven.model.MavenRemoteRepository
 import java.util.*
 
+
 @com.intellij.openapi.components.State(
-        name = "GDPHConfig",
-        storages = arrayOf(Storage("gdph.xml"))
+        name = "gdphConfig",
+        storages = arrayOf(Storage(StoragePathMacros.WORKSPACE_FILE))
 )
-class Settings(var originRemoteRepositories: Set<MavenRemoteRepository>? = null, var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useMavenIndex: Boolean = Settings.useMavenIndex, var remoteRepositories: MutableSet<MavenRemoteRepository> = Settings.remoteRepositories) : PersistentStateComponent<Settings> {
+class Settings(var originRemoteRepositories: Set<String>? = null, var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useMavenIndex: Boolean = Settings.useMavenIndex, var remoteRepositories: MutableSet<String> = Settings.remoteRepositories) : PersistentStateComponent<Settings> {
     override fun loadState(state: Settings?) {
         this.useNexus = state?.useNexus ?: Settings.useNexus
         this.useMavenIndex = state?.useMavenIndex ?: Settings.useMavenIndex
@@ -27,8 +28,8 @@ class Settings(var originRemoteRepositories: Set<MavenRemoteRepository>? = null,
         val useNexus: Boolean = Locale.getDefault() == Locale.CHINA
         val useMavenIndex: Boolean = false
         val nexusSearchUrl: String = "http://maven.aliyun.com/nexus/service/local/lucene/search"
-        val mavenCentralRemoteRepository = MavenRemoteRepository("central", null, "https://repo1.maven.org/maven2/", null, null, null)
-        val remoteRepositories = mutableSetOf<MavenRemoteRepository>(mavenCentralRemoteRepository)
+        val mavenCentralRemoteRepository = "https://repo1.maven.org/maven2/"
+        val remoteRepositories = mutableSetOf(mavenCentralRemoteRepository)
 
         fun getInstance(project: Project): Settings {
             return ServiceManager.getService(project, Settings::class.java)

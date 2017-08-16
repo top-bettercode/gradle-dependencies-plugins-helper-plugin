@@ -15,7 +15,6 @@ import com.intellij.openapi.startup.StartupActivity
 import com.intellij.util.Consumer
 import org.jetbrains.idea.maven.indices.MavenIndex
 import org.jetbrains.idea.maven.indices.MavenProjectIndicesManager
-import org.jetbrains.idea.maven.model.MavenRemoteRepository
 import org.jetbrains.plugins.gradle.integrations.maven.MavenRepositoriesHolder
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.util.stream.Collectors
@@ -38,17 +37,18 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
             if (ApplicationManager.getApplication().isUnitTestMode) return
             val repositoriesHolder = MavenRepositoriesHolder.getInstance(project)
             val settings = Settings.getInstance(project)
-            val remoteRepositories: MutableSet<MavenRemoteRepository>
+            val remoteRepositories: MutableSet<String>
             if (settings.useMavenIndex) {
                 remoteRepositories = settings.remoteRepositories
                 if (settings.originRemoteRepositories == null) {
-                    settings.originRemoteRepositories = repositoriesHolder.remoteRepositories
-                    remoteRepositories.addAll(repositoriesHolder.remoteRepositories)
+                    val mutableSet = repositoriesHolder.remoteRepositories.map { it.url }.toMutableSet()
+                    settings.originRemoteRepositories = mutableSet
+                    remoteRepositories.addAll(mutableSet)
                 }
             } else {
                 remoteRepositories = settings.originRemoteRepositories?.toMutableSet() ?: mutableSetOf()
             }
-            repositoriesHolder.update(remoteRepositories)
+            repositoriesHolder.update(remoteRepositories.map { it.toMavenRemoteRepository() }.toMutableSet())
             MavenProjectIndicesManager.getInstance(project).scheduleUpdateIndicesList(Consumer<List<MavenIndex>> { indexes ->
                 if (project.isDisposed) return@Consumer
 

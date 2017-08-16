@@ -5,7 +5,9 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.notification.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
+import org.jetbrains.idea.maven.model.MavenRemoteRepository
 
+internal fun String.toMavenRemoteRepository() = MavenRemoteRepository(this, null, this, null, null, null)
 
 internal fun split(dependency: String) = Regex(":").split(dependency)
 internal fun trim(dependency: String) = dependency.trim('"', '\'', '(', ')')
@@ -18,18 +20,18 @@ private val group = NotificationGroup(
 
 internal var repoIcon = IconLoader.getIcon("/icons/repo.png")
 
-fun show(project: Project, content: String, title: String = "", type: NotificationType = NotificationType.INFORMATION, listener: NotificationListener? = null) {
+internal fun show(project: Project, content: String, title: String = "", type: NotificationType = NotificationType.INFORMATION, listener: NotificationListener? = null) {
     val notification = group.createNotification(title, content, type, listener)
     Notifications.Bus.notify(notification, project)
 }
 
 
-class VersionComparator(val index: Int) : Comparable<VersionComparator> {
+internal class VersionComparator(val index: Int) : Comparable<VersionComparator> {
     override fun compareTo(other: VersionComparator): Int = this.index - other.index
 }
 
 
-fun contributorBeforeCompletion(context: CompletionInitializationContext) {
+internal fun contributorBeforeCompletion(context: CompletionInitializationContext) {
     if (context.completionType == CompletionType.SMART) {
         val offset = context.caret.offset
         val text = context.editor.document.text
@@ -46,7 +48,7 @@ fun contributorBeforeCompletion(context: CompletionInitializationContext) {
     }
 }
 
-fun contributorDuringCompletion(context: CompletionInitializationContext) {
+internal fun contributorDuringCompletion(context: CompletionInitializationContext) {
     if (context.completionType == CompletionType.SMART) {
         val offset = context.caret.offset
         val text = context.editor.document.charsSequence

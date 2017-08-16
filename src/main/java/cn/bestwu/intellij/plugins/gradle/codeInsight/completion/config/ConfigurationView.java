@@ -7,7 +7,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import org.jetbrains.idea.maven.model.MavenRemoteRepository;
 
 
 public class ConfigurationView {
@@ -21,7 +20,7 @@ public class ConfigurationView {
   private JCheckBox useMavenIndex;
   private JLabel showtip;
   //  private JButton addRemoteRepo;
-  private Set<MavenRemoteRepository> remoteRepositories = new HashSet<>();
+  private Set<String> remoteRepositories = new HashSet<>();
 
   public ConfigurationView() {
     useNexus.addActionListener(
@@ -29,10 +28,10 @@ public class ConfigurationView {
 //    useMavenIndex.addActionListener(
 //        actionEvent -> addRemoteRepo.setEnabled(useMavenIndex.isSelected()));
 //    addRemoteRepo.addActionListener(e -> {
-//      final RemoteRepositoryEditor repositoryEditor = new RemoteRepositoryEditor(
+//      final StringEditor repositoryEditor = new StringEditor(
 //          "Add Maven Remote Repository", "", "", new EditValidator());
 //      if (repositoryEditor.showAndGet()) {
-//        remoteRepositories.add(new MavenRemoteRepository(repositoryEditor.getName(), null,
+//        remoteRepositories.add(new MavenString(repositoryEditor.getName(), null,
 //            repositoryEditor.getValue(), null, null, null));
 //      }
 //    });
@@ -61,12 +60,12 @@ public class ConfigurationView {
   }
 
 
-  public Set<MavenRemoteRepository> getRemoteRepositories() {
+  public Set<String> getRemoteRepositories() {
     return remoteRepositories;
   }
 
   public void setRemoteRepositories(
-      Set<MavenRemoteRepository> remoteRepositories) {
+      Set<String> remoteRepositories) {
     this.remoteRepositories = remoteRepositories;
   }
 
