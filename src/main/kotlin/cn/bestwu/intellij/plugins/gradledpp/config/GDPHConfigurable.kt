@@ -30,7 +30,7 @@ class GDPHConfigurable(val project: Project) : Configurable {
         view!!.resetButton.addActionListener {
             view!!.useNexus = Settings.useNexus
             view!!.useMavenIndex = Settings.useMavenIndex
-            view!!.nexusSearchUrlField = Settings.nexusSearchUrl
+            view!!.nexusSearchUrl = Settings.nexusSearchUrl
             view!!.remoteRepositories = Settings.remoteRepositories
         }
 
@@ -41,7 +41,7 @@ class GDPHConfigurable(val project: Project) : Configurable {
 
     override fun isModified(): Boolean {
         val settings = Settings.getInstance(project)
-        return settings.useNexus != view!!.useNexus || settings.useMavenIndex != view!!.useMavenIndex || settings.nexusSearchUrl != view!!.nexusSearchUrlField || settings.remoteRepositories == view!!.remoteRepositories
+        return settings.useNexus != view!!.useNexus || settings.useMavenIndex != view!!.useMavenIndex || settings.nexusSearchUrl != view!!.nexusSearchUrl || settings.remoteRepositories != view!!.remoteRepositories
     }
 
     @Throws(ConfigurationException::class)
@@ -49,7 +49,7 @@ class GDPHConfigurable(val project: Project) : Configurable {
         val settings = Settings.getInstance(project)
         settings.useNexus = view!!.useNexus
         settings.useMavenIndex = view!!.useMavenIndex
-        settings.nexusSearchUrl = view!!.nexusSearchUrlField
+        settings.nexusSearchUrl = view!!.nexusSearchUrl
         settings.remoteRepositories = view!!.remoteRepositories
         ImportMavenRepositoriesTask.performTask(project)
     }
@@ -58,7 +58,7 @@ class GDPHConfigurable(val project: Project) : Configurable {
         val settings = Settings.getInstance(project)
         view!!.useNexus = settings.useNexus
         view!!.useMavenIndex = settings.useMavenIndex
-        view!!.nexusSearchUrlField = settings.nexusSearchUrl
+        view!!.nexusSearchUrl = settings.nexusSearchUrl
         view!!.remoteRepositories = settings.remoteRepositories
     }
 

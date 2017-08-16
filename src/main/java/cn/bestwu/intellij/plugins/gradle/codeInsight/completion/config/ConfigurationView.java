@@ -42,12 +42,12 @@ public class ConfigurationView {
   }
 
 
-  public String getNexusSearchUrlField() {
+  public String getNexusSearchUrl() {
     return nexusSearchUrlField.getText();
   }
 
-  public void setNexusSearchUrlField(String nexusSearchUrlField) {
-    this.nexusSearchUrlField.setText(nexusSearchUrlField);
+  public void setNexusSearchUrl(String nexusSearchUrl) {
+    this.nexusSearchUrlField.setText(nexusSearchUrl);
   }
 
   public boolean getUseNexus() {
