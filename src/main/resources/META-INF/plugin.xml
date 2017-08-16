@@ -3,7 +3,24 @@
   <name>Gradle Dependencies And Plugins Helper</name>
   <version>0.0.2</version>
   <vendor email="piterwu@outlook.com"
-    url="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin">piterwu
+    url="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin"><![CDATA[
+  piterwu</li></li>
+  <b>Donate:</b></li>
+  <table>
+    <tr>
+      <td>alipay</td>
+      <td>weixinpay</td>
+    </tr>
+    <tr>
+      <td><img width="175" height="175"
+               src="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin/blob/master/donate/alipay.png?raw=true"/>
+      </td>
+      <td><img width="175" height="175"
+               src="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin/blob/master/donate/wechatpay.png?raw=true"/>
+      </td>
+    </tr>
+  </table>
+    ]]>
   </vendor>
   <depends>org.jetbrains.idea.maven</depends>
   <depends>org.jetbrains.plugins.gradle</depends>
@@ -26,22 +43,22 @@
 
   <change-notes><![CDATA[
   <ul>
-    <li>0.0.2<br/>
-    Add Maven Index search option.<br/>
-    Add Nexus search option.<br/>
-    Support search by classname in mavenCentral search.<br/>
-    use "c:"(classname) or "fc:"( fully-qualified classname ) in dependencies/plugins script block<br/>
-    example: <br/>
-    &nbsp; &nbsp; compile("fc:org.junit.Test")<br/>
-    &nbsp; &nbsp; compile("c:Junit")<br/>
-    note:<br/>
-    &nbsp; &nbsp;Press Tab to replace the characters to the right from the caret.
-    <li>0.0.1<br/>
-    Support *.gradle,*.gradle.kts.<br/>
-    Use jcenter API for Gradle queries.<br/>
-    Use Gradle Plugins Search for Gradle Plugins queries.<br/>
-    Support wildcard query *,? etc.<br/>
-    </li>
+   <b>0.0.2</b><br/><br/>
+   <li>Add Maven Index search option.</li>
+   <li>Add Nexus search option.</li>
+   <li>Support search by classname in mavenCentral search.<br/>
+   use "c:"(classname) or "fc:"( fully-qualified classname ) in dependencies/plugins script block<br/>
+   example: <br/>
+   &nbsp; &nbsp; compile("fc:org.junit.Test")<br/>
+   &nbsp; &nbsp; compile("c:Junit")<br/>
+   note:<br/>
+   &nbsp; &nbsp;Press Tab to replace the characters to the right from the caret.<br/><br/>
+   <b>0.0.1</b><br/><br/>
+   <li>Support *.gradle,*.gradle.kts.</li>
+   <li>Use jcenter API for Gradle queries.</li>
+   <li>Use Gradle Plugins Search for Gradle Plugins queries.</li>
+   <li>Support wildcard query *,? etc.</li>
+    
   </ul>
       ]]>
   </change-notes>
