@@ -28,8 +28,14 @@ class GradleKtsDependenciesCompletionContributor : AbstractGradleCompletionContr
                                         result: CompletionResultSet) {
                 result.stopHere()
                 val text = trim(params.originalPosition?.text ?: "")
-                val searchText = if (!text.startsWith("c:", true) && !text.startsWith("fc:", true)) params.position.text.substringBefore("IntellijIdeaRulezzz") else text
-                val searchParam = SearchParam(searchText)
+                val prefix = params.position.text.substringBefore("IntellijIdeaRulezzz")
+                val searchText = if (!text.startsWith("c:", true) && !text.startsWith("fc:", true)) prefix else text
+                val searchParam: SearchParam
+                if (text.contains(":") && !prefix.contains(":")) {
+                    searchParam = SearchParam(searchText, "")
+                } else {
+                    searchParam = SearchParam(searchText)
+                }
                 if (searchParam.id.length < 2)
                     return
                 val searchResult = artifactSearcher.search(searchParam, params.position.project)

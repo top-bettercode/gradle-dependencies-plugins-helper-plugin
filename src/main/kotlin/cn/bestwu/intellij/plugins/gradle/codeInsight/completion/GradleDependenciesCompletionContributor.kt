@@ -100,19 +100,24 @@ class GradleDependenciesCompletionContributor : AbstractGradleCompletionContribu
                 val parent = params.position.parent
                 if (parent !is GrLiteral && parent !is GrStringContent) return
                 result.stopHere()
-                var searchText: String
+                val prefix: String
                 if (parent is GrStringContent) {
-                    searchText = params.position.text.substringBefore("IntellijIdeaRulezzz ")
+                    prefix = params.position.text.substringBefore("IntellijIdeaRulezzz ")
                 } else
-                    searchText = CompletionUtil.findReferenceOrAlphanumericPrefix(params)
+                    prefix = CompletionUtil.findReferenceOrAlphanumericPrefix(params)
                 val text = trim(params.originalPosition?.text ?: "")
-                searchText = if (!text.startsWith("c:", true) && !text.startsWith("fc:", true)) searchText else text
-                val searchParam = SearchParam(searchText)
+                val searchText = if (!text.startsWith("c:", true) && !text.startsWith("fc:", true)) prefix else text
+                val searchParam: SearchParam
+                if (text.contains(":") && !prefix.contains(":")) {
+                    searchParam = SearchParam(searchText, "")
+                } else {
+                    searchParam = SearchParam(searchText)
+                }
                 if (searchParam.id.length < 2)
                     return
                 val searchResult = artifactSearcher.search(searchParam, params.position.project)
                 if (searchResult.isEmpty()) {
-                    show(params.position.project,  searchParam.failContent,"find dependencies fail", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
+                    show(params.position.project, searchParam.failContent, "find dependencies fail", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
                 }
 
                 val resultSet = searchResult.distinctBy { it.presentableText }
