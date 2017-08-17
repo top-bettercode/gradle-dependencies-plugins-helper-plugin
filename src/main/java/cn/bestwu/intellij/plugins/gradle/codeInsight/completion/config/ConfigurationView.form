@@ -36,9 +36,9 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <font style="1"/>
+              <font style="0"/>
               <labelFor value="8a9de"/>
-              <text value="nexus search url:"/>
+              <text value="Nexus url:"/>
             </properties>
           </component>
           <component id="8a9de" class="javax.swing.JTextField" binding="nexusSearchUrlField">
@@ -74,7 +74,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="auto add mavenCentral remote repository to maven repository"/>
+              <text value="Auto add mavenCentral remote repository to maven repository"/>
             </properties>
           </component>
         </children>
