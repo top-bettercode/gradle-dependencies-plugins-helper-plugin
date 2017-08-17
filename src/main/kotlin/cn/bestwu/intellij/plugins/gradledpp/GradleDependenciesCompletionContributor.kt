@@ -38,16 +38,16 @@ class GradleDependenciesCompletionContributor : AbstractGradleCompletionContribu
                 val searchText = CompletionUtil.findReferenceOrAlphanumericPrefix(params)
                 val searchParam: SearchParam
                 searchParam = when {
-                    GROUP_LABEL == parent.labelName -> SearchParam(searchText, "")
+                    GROUP_LABEL == parent.labelName -> SearchParam(searchText, "", false)
                     NAME_LABEL == parent.labelName -> {
                         val groupId = findNamedArgumentValue(parent.parent as GrNamedArgumentsOwner, GROUP_LABEL) ?: return
-                        SearchParam(groupId, searchText)
+                        SearchParam(groupId, searchText, true)
                     }
                     VERSION_LABEL == parent.labelName -> {
                         val namedArgumentsOwner = parent.parent as GrNamedArgumentsOwner
                         val groupId = findNamedArgumentValue(namedArgumentsOwner, GROUP_LABEL) ?: return
                         val artifactId = findNamedArgumentValue(namedArgumentsOwner, NAME_LABEL) ?: return
-                        SearchParam(groupId, artifactId)
+                        SearchParam(groupId, artifactId, true)
                     }
                     else -> return
                 }
@@ -109,7 +109,7 @@ class GradleDependenciesCompletionContributor : AbstractGradleCompletionContribu
                 val searchText = if (!text.startsWith("c:", true) && !text.startsWith("fc:", true)) prefix else text
                 val searchParam: SearchParam
                 searchParam = if (text.contains(":") && !prefix.contains(":")) {
-                    SearchParam(searchText, "")
+                    SearchParam(searchText, "", false)
                 } else {
                     SearchParam(searchText)
                 }
@@ -131,7 +131,7 @@ class GradleDependenciesCompletionContributor : AbstractGradleCompletionContribu
                     completionResultSet = completionResultSet.withPrefixMatcher(PrefixMatcher.ALWAYS_TRUE)
                 }
                 searchResult.forEach {
-                    completionResultSet.addElement(LookupElementBuilder.create(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true))
+                    completionResultSet.addElement(LookupElementBuilder.create("${it.gav}${if (it.artifactId.isEmpty() || it.version.isEmpty()) ":" else ""}").withPresentableText(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true))
                 }
             }
         })
