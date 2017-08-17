@@ -31,7 +31,7 @@ class ArtifactInfo(groupId: String, artifactId: String, version: String = "", re
         return "ArtifactInfo(groupId='$groupId', artifactId='$artifactId', version='$version', id='$id')"
     }
 
-    fun type() = "$repo${if ("jcenter" != repo && "mavenCentral" != repo) " By $owner" else ""}"
+    fun type() = "$repo${if ("bintray" != owner && "Apache" != owner && owner.isNotBlank()) " By $owner" else ""}"
 
     init {
         this.id = "${this.groupId}:${this.artifactId}"
@@ -250,23 +250,23 @@ class GradleArtifactSearcher {
         val repositoriesHolder = MavenRepositoriesHolder.getInstance(project)
         try {
             repositoriesHolder::class.java.getMethod("checkNotIndexedRepositories").invoke(repositoriesHolder)
-        } catch(e: NoSuchMethodException) {
+        } catch (e: NoSuchMethodException) {
         }
 
         val m = MavenProjectIndicesManager.getInstance(project)
         if (searchParam.groupId.isNotEmpty()) {
             if (searchParam.artifactId.isEmpty())
-                m.groupIds.mapTo(result) { ArtifactInfo(it, "", "", "mavenCentral", "Apache") }
+                m.groupIds.mapTo(result) { ArtifactInfo(it, "", "", "maven", "") }
             else {
                 m.getArtifactIds(searchParam.groupId).forEach {
                     if (it == searchParam.artifactId) {
                         m.getVersions(searchParam.groupId, it).sortedWith(kotlin.Comparator<String> { o1, o2 ->
                             compareVersion(o2, o1)
                         }).forEach { version ->
-                            result.add(ArtifactInfo(searchParam.groupId, it, version, "mavenCentral", "Apache"))
+                            result.add(ArtifactInfo(searchParam.groupId, it, version, "maven", ""))
                         }
                     } else {
-                        result.add(ArtifactInfo(searchParam.groupId, it, "", "mavenCentral", "Apache"))
+                        result.add(ArtifactInfo(searchParam.groupId, it, "", "maven", ""))
                     }
                 }
             }
@@ -279,7 +279,7 @@ class GradleArtifactSearcher {
                             compareVersion(o2.version, o1.version)
                         })
                     }
-                    .mapTo(result) { ArtifactInfo(it.groupId, it.artifactId, it.version, "mavenCentral", "Apache") }
+                    .mapTo(result) { ArtifactInfo(it.groupId, it.artifactId, it.version, "maven", "") }
         }
 
         return result
