@@ -111,6 +111,10 @@ class SearchParam {
 class GradleArtifactSearcher {
     companion object {
         private val regex = Regex("\\{\"id\":\"(.*?):(.*?):(.*?)\",")
+        private val keyIndex = "index:"
+        private val keyNexus = "nexus:"
+        private val keyMaven = "maven:"
+        private val keyBintray = "bintray:"
 
         private fun getConnection(spec: String): HttpURLConnection {
             val url = URL(spec)
@@ -152,7 +156,7 @@ class GradleArtifactSearcher {
         val vl = version1s.size < version2s.size
         val length = if (vl) version1s.size else version2s.size
 
-        for (i in 0..length - 1) {
+        for (i in 0 until length) {
             val v2 = version2s[i].toIntOrNull() ?: versionTails.indexOf(version2s[i].replace(versionTailRegex, "$1").toUpperCase())
             val v1 = version1s[i].toIntOrNull() ?: versionTails.indexOf(version1s[i].replace(versionTailRegex, "$1").toUpperCase())
             if (v1 == -1 || v2 == -1) {
@@ -178,37 +182,42 @@ class GradleArtifactSearcher {
 
 
     fun search(searchParam: SearchParam, project: Project): List<ArtifactInfo> {
-        val existResult = artifactsCaches[searchParam.q]
-        if (existResult != null) {
-            return existResult
-        }
-        var result: MutableList<ArtifactInfo>
+        var result: List<ArtifactInfo>
         if (searchParam.advancedSearch.isNotEmpty()) {
             if (Settings.getInstance(project).useNexus) {
-                result = searchByClassNameInNexus(searchParam, project)
+                result = search(keyNexus, searchParam, project, this::searchByClassNameInNexus)
                 if (result.isEmpty())
-                    result = searchByClassNameInMavenCentral(searchParam, project)
+                    result = search(keyMaven, searchParam, project, this::searchByClassNameInMavenCentral)
             } else {
-                result = searchByClassNameInMavenCentral(searchParam, project)
+                result = search(keyMaven, searchParam, project, this::searchByClassNameInMavenCentral)
             }
         } else {
-            if (Settings.getInstance(project).useMavenIndex) {
-                result = searchInMavenIndexes(searchParam, project)
+            result = if (Settings.getInstance(project).useMavenIndex) {
+                search(keyIndex, searchParam, project, this::searchInMavenIndexes)
             } else {
                 if (Settings.getInstance(project).useNexus)
-                    result = searchInNexus(searchParam, project)
+                    search(keyNexus, searchParam, project, this::searchInNexus)
                 else
-                    result = searchInJcenter(searchParam, project)
+                    search(keyBintray, searchParam, project, this::searchInJcenter)
             }
         }
-        artifactsCaches.put(searchParam.q, result)
         return result
     }
 
+    private fun search(repoKey: String, searchParam: SearchParam, project: Project, run: (SearchParam, Project, MutableList<ArtifactInfo>) -> MutableList<ArtifactInfo>): List<ArtifactInfo> {
+        val key = "$repoKey${searchParam.q}"
+        val existResult = artifactsCaches[key]
+        if (existResult != null) {
+            return existResult
+        }
+        var result: MutableList<ArtifactInfo> = mutableListOf()
+        result = run(searchParam, project, result)
+        artifactsCaches.put(key, result)
+        return result
+    }
 
     @Suppress("UNCHECKED_CAST")
-    private fun searchByClassNameInMavenCentral(searchParam: SearchParam, project: Project): MutableList<ArtifactInfo> {
-        val result: MutableList<ArtifactInfo> = mutableListOf()
+    private fun searchByClassNameInMavenCentral(searchParam: SearchParam, project: Project, result: MutableList<ArtifactInfo>): MutableList<ArtifactInfo> {
         val url = "http://search.maven.org/solrsearch/select?q=${searchParam.advancedSearch}:\"${searchParam.id}\"&core=gav&rows=1000&wt=json"
         val connection = getConnection(url)
         val stream = getResponse(connection, project) ?: return result
@@ -228,8 +237,7 @@ class GradleArtifactSearcher {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun searchByClassNameInNexus(searchParam: SearchParam, project: Project): MutableList<ArtifactInfo> {
-        val result: MutableList<ArtifactInfo> = mutableListOf()
+    private fun searchByClassNameInNexus(searchParam: SearchParam, project: Project, result: MutableList<ArtifactInfo>): MutableList<ArtifactInfo> {
         val url = "${Settings.getInstance(project).nexusSearchUrl}?repositoryId=central&cn=${searchParam.id}"
         val connection = getConnection(url)
         connection.setRequestProperty("Accept", "application/json")
@@ -241,12 +249,10 @@ class GradleArtifactSearcher {
                 result.add(artifactInfo)
             }
         }
-
         return result
     }
 
-    private fun searchInMavenIndexes(searchParam: SearchParam, project: Project): MutableList<ArtifactInfo> {
-        val result: MutableList<ArtifactInfo> = mutableListOf()
+    private fun searchInMavenIndexes(searchParam: SearchParam, project: Project, result: MutableList<ArtifactInfo>): MutableList<ArtifactInfo> {
         val repositoriesHolder = MavenRepositoriesHolder.getInstance(project)
         try {
             repositoriesHolder::class.java.getMethod("checkNotIndexedRepositories").invoke(repositoriesHolder)
@@ -286,9 +292,8 @@ class GradleArtifactSearcher {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun searchInNexus(searchParam: SearchParam, project: Project): MutableList<ArtifactInfo> {
-        val result: MutableList<ArtifactInfo> = mutableListOf()
-        val url = "http://maven.aliyun.com/nexus/service/local/lucene/search?repositoryId=central&${searchParam.nq}"
+    private fun searchInNexus(searchParam: SearchParam, project: Project, result: MutableList<ArtifactInfo>): MutableList<ArtifactInfo> {
+        val url = "${Settings.getInstance(project).nexusSearchUrl}?repositoryId=central&${searchParam.nq}"
         val connection = getConnection(url)
         connection.setRequestProperty("Accept", "application/json")
         val stream = getResponse(connection, project) ?: return result
@@ -315,12 +320,11 @@ class GradleArtifactSearcher {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun searchInJcenter(searchParam: SearchParam, project: Project): MutableList<ArtifactInfo> {
-        var result: MutableList<ArtifactInfo> = mutableListOf()
-
+    private fun searchInJcenter(searchParam: SearchParam, project: Project, result: MutableList<ArtifactInfo>): MutableList<ArtifactInfo> {
+        var cresult = result
         val url = "https://api.bintray.com/search/packages/maven?${searchParam.q}"
         val connection = getConnection(url)
-        val stream = getResponse(connection, project) ?: return result
+        val stream = getResponse(connection, project) ?: return cresult
         var jsonResult = JsonSlurper().parse(stream) as List<Map<*, *>>
         val findById = jsonResult.filter { (it["system_ids"] as List<String>).contains(searchParam.id) }
         if (findById.isNotEmpty()) {
@@ -344,18 +348,18 @@ class GradleArtifactSearcher {
                     artifactId = ""
                 }
                 if (searchParam.id == id) {
-                    ((any["versions"] as List<String>).mapTo(result) { ArtifactInfo(groupId, artifactId, it, any["repo"] as String, any["owner"] as String) })
+                    ((any["versions"] as List<String>).mapTo(cresult) { ArtifactInfo(groupId, artifactId, it, any["repo"] as String, any["owner"] as String) })
                 } else {
-                    result.add(ArtifactInfo(groupId, artifactId, "", any["repo"] as String, any["owner"] as String))
+                    cresult.add(ArtifactInfo(groupId, artifactId, "", any["repo"] as String, any["owner"] as String))
                 }
             }
         }
         if (findById.size > 1 && findById.any { "spring" == it["owner"] }) {
-            result = result.sortedWith(kotlin.Comparator<ArtifactInfo> { o1, o2 ->
+            cresult = cresult.sortedWith(kotlin.Comparator<ArtifactInfo> { o1, o2 ->
                 compareVersion(o2.version, o1.version)
             }).toMutableList()
         }
-        return result
+        return cresult
     }
 
 
