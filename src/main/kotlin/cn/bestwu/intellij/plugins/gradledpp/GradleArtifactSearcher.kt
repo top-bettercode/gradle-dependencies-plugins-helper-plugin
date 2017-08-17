@@ -77,7 +77,7 @@ class SearchParam {
                 this.id = "$groupId${if (artifactId.isEmpty()) "" else ":$artifactId"}"
                 this.q = "g=$groupId${if (artifactId.isEmpty()) "*" else "&a=$artifactId*"}"
                 this.mq = "g:\"$groupId\"${if (artifactId.isEmpty()) "" else "+AND+a:\"$artifactId\""}"
-                this.nq = "g=$groupId${if (artifactId.isEmpty()) "" else "&a=$artifactId"}"
+                this.nq = "g=$groupId${if (artifactId.isEmpty()) "*" else "&a=$artifactId*"}"
             } else {
                 groupId = ""
                 artifactId = ""
@@ -97,12 +97,12 @@ class SearchParam {
         this.id = "$groupId${if (artifactId.isEmpty()) "" else ":$artifactId"}"
         this.q = "g=$groupId${if (artifactId.isEmpty()) "*" else "&a=$artifactId*"}"
         this.mq = "g:\"$groupId\"${if (artifactId.isEmpty()) "" else "+AND+a:\"$artifactId\""}"
-        this.nq = "g=$groupId${if (artifactId.isEmpty()) "" else "&a=$artifactId"}"
+        this.nq = "g=$groupId${if (artifactId.isEmpty()) "*" else "&a=$artifactId*"}"
         failContent = "<a href='https://bintray.com/search?query=$id'>search in jcenter</a>"
     }
 
     override fun toString(): String {
-        return "SearchParam(id='$id', q='$q', advancedSearch='$advancedSearch', failContent='$failContent')"
+        return "SearchParam(groupId='$groupId', artifactId='$artifactId', id='$id', q='$q', mq='$mq', nq='$nq', advancedSearch='$advancedSearch', failContent='$failContent')"
     }
 
 

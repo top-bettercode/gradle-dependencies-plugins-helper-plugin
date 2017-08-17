@@ -37,18 +37,19 @@ class GradleDependenciesCompletionContributor : AbstractGradleCompletionContribu
                 result.stopHere()
                 val searchText = CompletionUtil.findReferenceOrAlphanumericPrefix(params)
                 val searchParam: SearchParam
-                if (GROUP_LABEL == parent.labelName) {
-                    searchParam = SearchParam(searchText)
-                } else if (NAME_LABEL == parent.labelName) {
-                    val groupId = findNamedArgumentValue(parent.parent as GrNamedArgumentsOwner, GROUP_LABEL) ?: return
-                    searchParam = SearchParam(groupId, searchText)
-                } else if (VERSION_LABEL == parent.labelName) {
-                    val namedArgumentsOwner = parent.parent as GrNamedArgumentsOwner
-                    val groupId = findNamedArgumentValue(namedArgumentsOwner, GROUP_LABEL) ?: return
-                    val artifactId = findNamedArgumentValue(namedArgumentsOwner, NAME_LABEL) ?: return
-                    searchParam = SearchParam(groupId, artifactId)
-                } else {
-                    return
+                searchParam = when {
+                    GROUP_LABEL == parent.labelName -> SearchParam(searchText,"")
+                    NAME_LABEL == parent.labelName -> {
+                        val groupId = findNamedArgumentValue(parent.parent as GrNamedArgumentsOwner, GROUP_LABEL) ?: return
+                        SearchParam(groupId, searchText)
+                    }
+                    VERSION_LABEL == parent.labelName -> {
+                        val namedArgumentsOwner = parent.parent as GrNamedArgumentsOwner
+                        val groupId = findNamedArgumentValue(namedArgumentsOwner, GROUP_LABEL) ?: return
+                        val artifactId = findNamedArgumentValue(namedArgumentsOwner, NAME_LABEL) ?: return
+                        SearchParam(groupId, artifactId)
+                    }
+                    else -> return
                 }
                 if (searchParam.id.length < 2)
                     return
@@ -59,30 +60,33 @@ class GradleDependenciesCompletionContributor : AbstractGradleCompletionContribu
 
                 var completionResultSet = result
                 val resultSet: List<ArtifactInfo>
-                if (GROUP_LABEL == parent.labelName) {
-                    resultSet = searchResult.filter { it.groupId.isNotBlank() }.distinctBy { it.groupId }
-                    resultSet.forEach {
-                        completionResultSet.addElement(LookupElementBuilder.create(it.groupId).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true))
+                when {
+                    GROUP_LABEL == parent.labelName -> {
+                        resultSet = searchResult.filter { it.groupId.isNotBlank() }.distinctBy { it.groupId }
+                        resultSet.forEach {
+                            completionResultSet.addElement(LookupElementBuilder.create(it.groupId).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true))
+                        }
                     }
-                } else if (NAME_LABEL == parent.labelName) {
-                    resultSet = searchResult.filter { it.artifactId.isNotBlank() }.distinctBy { it.artifactId }
-                    resultSet.forEach {
-                        completionResultSet.addElement(LookupElementBuilder.create(it.artifactId).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true))
+                    NAME_LABEL == parent.labelName -> {
+                        resultSet = searchResult.filter { it.artifactId.isNotBlank() }.distinctBy { it.artifactId }
+                        resultSet.forEach {
+                            completionResultSet.addElement(LookupElementBuilder.create(it.artifactId).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true))
+                        }
                     }
-                } else if (VERSION_LABEL == parent.labelName) {
-                    resultSet = searchResult.filter { it.version.isNotBlank() }.distinctBy { it.version }
-                    completionResultSet = result.withRelevanceSorter(
-                            CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("gradleDependencyWeigher") {
-                                override fun weigh(element: LookupElement): Comparable<*> {
-                                    return VersionComparator(resultSet.indexOfFirst { it.version == element.lookupString })
-                                }
-                            })
-                    )
-                    resultSet.forEach {
-                        completionResultSet.addElement(LookupElementBuilder.create(it.version).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true))
+                    VERSION_LABEL == parent.labelName -> {
+                        resultSet = searchResult.filter { it.version.isNotBlank() }.distinctBy { it.version }
+                        completionResultSet = result.withRelevanceSorter(
+                                CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("gradleDependencyWeigher") {
+                                    override fun weigh(element: LookupElement): Comparable<*> {
+                                        return VersionComparator(resultSet.indexOfFirst { it.version == element.lookupString })
+                                    }
+                                })
+                        )
+                        resultSet.forEach {
+                            completionResultSet.addElement(LookupElementBuilder.create(it.version).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true))
+                        }
                     }
-                } else {
-                    return
+                    else -> return
                 }
 
 
