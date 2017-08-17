@@ -40,13 +40,14 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
             val remoteRepositories: MutableSet<String>
             if (settings.useMavenIndex) {
                 remoteRepositories = settings.remoteRepositories
-                if (settings.originRemoteRepositories == null) {
+                if (settings.first) {
                     val mutableSet = repositoriesHolder.remoteRepositories.map { it.url }.toMutableSet()
                     settings.originRemoteRepositories = mutableSet
+                    settings.first = false
                     remoteRepositories.addAll(mutableSet)
                 }
             } else {
-                remoteRepositories = settings.originRemoteRepositories?.toMutableSet() ?: mutableSetOf()
+                remoteRepositories = settings.originRemoteRepositories.toMutableSet()
             }
             repositoriesHolder.update(remoteRepositories.map { it.toMavenRemoteRepository() }.toMutableSet())
             MavenProjectIndicesManager.getInstance(project).scheduleUpdateIndicesList(Consumer<List<MavenIndex>> { indexes ->
@@ -60,7 +61,10 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
                         })
                         .map(MavenIndex::getRepositoryPathOrUrl)
                         .collect(Collectors.toList<String>())
-                repositoriesHolder.updateNotIndexedUrls(repositoriesWithEmptyIndex)
+                try {
+                    repositoriesHolder::class.java.getMethod("updateNotIndexedUrls").invoke(repositoriesHolder, repositoriesWithEmptyIndex)
+                } catch(e: NoSuchMethodException) {
+                }
             })
 
         }

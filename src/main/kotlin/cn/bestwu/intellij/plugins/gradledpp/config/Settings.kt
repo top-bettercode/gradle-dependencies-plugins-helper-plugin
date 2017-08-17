@@ -3,16 +3,15 @@ package cn.bestwu.intellij.plugins.gradle.codeInsight.completion.config
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.Storage
-import com.intellij.openapi.components.StoragePathMacros
 import com.intellij.openapi.project.Project
 import java.util.*
 
 
 @com.intellij.openapi.components.State(
         name = "gdphConfig",
-        storages = arrayOf(Storage(StoragePathMacros.WORKSPACE_FILE))
+        storages = arrayOf(Storage("gdphConfig.xml"))
 )
-class Settings(var originRemoteRepositories: Set<String>? = null, var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useMavenIndex: Boolean = Settings.useMavenIndex, var remoteRepositories: MutableSet<String> = Settings.remoteRepositories) : PersistentStateComponent<Settings> {
+class Settings(var first: Boolean = true, var originRemoteRepositories: Set<String> = mutableSetOf(), var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useMavenIndex: Boolean = Settings.useMavenIndex, var remoteRepositories: MutableSet<String> = Settings.remoteRepositories) : PersistentStateComponent<Settings> {
     override fun loadState(state: Settings?) {
         this.useNexus = state?.useNexus ?: Settings.useNexus
         this.useMavenIndex = state?.useMavenIndex ?: Settings.useMavenIndex

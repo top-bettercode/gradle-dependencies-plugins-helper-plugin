@@ -247,7 +247,12 @@ class GradleArtifactSearcher {
 
     private fun searchInMavenIndexes(searchParam: SearchParam, project: Project): MutableList<ArtifactInfo> {
         val result: MutableList<ArtifactInfo> = mutableListOf()
-        MavenRepositoriesHolder.getInstance(project).checkNotIndexedRepositories()
+        val repositoriesHolder = MavenRepositoriesHolder.getInstance(project)
+        try {
+            repositoriesHolder::class.java.getMethod("checkNotIndexedRepositories").invoke(repositoriesHolder)
+        } catch(e: NoSuchMethodException) {
+        }
+
         val m = MavenProjectIndicesManager.getInstance(project)
         if (searchParam.groupId.isNotEmpty()) {
             if (searchParam.artifactId.isEmpty())
