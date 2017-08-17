@@ -263,19 +263,15 @@ class GradleArtifactSearcher {
 
         val m = MavenProjectIndicesManager.getInstance(project)
         if (searchParam.groupId.isNotEmpty()) {
-            if (searchParam.artifactId.isEmpty())
-                m.groupIds.mapTo(result) { ArtifactInfo(it, "", "", "maven", "") }
-            else {
-                m.getArtifactIds(searchParam.groupId).forEach {
-                    if (it == searchParam.artifactId) {
-                        m.getVersions(searchParam.groupId, it).sortedWith(kotlin.Comparator<String> { o1, o2 ->
-                            compareVersion(o2, o1)
-                        }).forEach { version ->
-                            result.add(ArtifactInfo(searchParam.groupId, it, version, "maven", ""))
-                        }
-                    } else {
-                        result.add(ArtifactInfo(searchParam.groupId, it, "", "maven", ""))
+            m.getArtifactIds(searchParam.groupId).forEach {
+                if (it == searchParam.artifactId) {
+                    m.getVersions(searchParam.groupId, it).sortedWith(kotlin.Comparator<String> { o1, o2 ->
+                        compareVersion(o2, o1)
+                    }).forEach { version ->
+                        result.add(ArtifactInfo(searchParam.groupId, it, version, "maven", ""))
                     }
+                } else {
+                    result.add(ArtifactInfo(searchParam.groupId, it, "", "maven", ""))
                 }
             }
         } else {
@@ -286,8 +282,16 @@ class GradleArtifactSearcher {
                         it.versions.sortedWith(kotlin.Comparator<MavenArtifactInfo> { o1, o2 ->
                             compareVersion(o2.version, o1.version)
                         })
-                    }
-                    .mapTo(result) { ArtifactInfo(it.groupId, it.artifactId, it.version, "maven", "") }
+                    }.forEach {
+                val artifactInfo = ArtifactInfo(it.groupId, it.artifactId, "", "maven", "")
+                if (artifactInfo.id == searchParam.id) {
+                    artifactInfo.version = it.version
+                    result.add(artifactInfo)
+                } else {
+                    if (!result.any { artifactInfo.id == it.id })
+                        result.add(artifactInfo)
+                }
+            }
         }
 
         return result
