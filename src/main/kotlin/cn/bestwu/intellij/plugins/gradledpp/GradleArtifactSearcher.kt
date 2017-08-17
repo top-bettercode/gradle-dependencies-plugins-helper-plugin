@@ -299,8 +299,14 @@ class GradleArtifactSearcher {
         val stream = getResponse(connection, project) ?: return result
         val jsonResult = (JsonSlurper().parse(stream) as Map<*, *>)["data"] as List<Map<*, *>>
         jsonResult.forEach {
-            val artifactInfo = ArtifactInfo(it["groupId"] as String, it["artifactId"] as String, it["version"] as String, "mavenCentral", "Apache")
-            result.add(artifactInfo)
+            val artifactInfo = ArtifactInfo(it["groupId"] as String, it["artifactId"] as String, "", "mavenCentral", "Apache")
+            if (artifactInfo.id == searchParam.id) {
+                artifactInfo.version = it["version"] as String
+                result.add(artifactInfo)
+            } else {
+                if (!result.any { artifactInfo.id == it.id })
+                    result.add(artifactInfo)
+            }
         }
 
         return result
@@ -313,8 +319,14 @@ class GradleArtifactSearcher {
         val connection = getConnection(url)
         val stream = getResponse(connection, project) ?: return result
         regex.findAll(stream.bufferedReader().readText()).forEach {
-            val artifactInfo = ArtifactInfo(it.groupValues[1], it.groupValues[2], it.groupValues[3], "mavenCentral", "Apache")
-            result.add(artifactInfo)
+            val artifactInfo = ArtifactInfo(it.groupValues[1], it.groupValues[2], "", "mavenCentral", "Apache")
+            if (artifactInfo.id == searchParam.id) {
+                artifactInfo.version = it.groupValues[3]
+                result.add(artifactInfo)
+            } else {
+                if (!result.any { artifactInfo.id == it.id })
+                    result.add(artifactInfo)
+            }
         }
         return result
     }
