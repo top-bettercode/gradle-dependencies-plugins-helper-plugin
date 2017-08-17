@@ -15,7 +15,9 @@ class GradlePluginsSearcher {
         }
         val elements = Jsoup.connect("https://plugins.gradle.org/search?term=${text.trim()}").get().select("#search-results tbody tr")
         result = elements.map { it.select(".plugin-id a").text() }
-        pluginsCaches.put(text, result)
+        if (result.isNotEmpty()) {
+            pluginsCaches.put(text, result)
+        }
         return result
     }
 
@@ -30,7 +32,9 @@ class GradlePluginsSearcher {
         result.add(plugin.select(".version-info h3").text().replace("^Version (.*) \\(latest\\)$".toRegex(), "$1"))
         val elements = plugin.select(".other-versions li")
         elements.mapTo(result) { it.select("a").text() }
-        pluginVersionsCaches.put(text, result)
+        if (result.isNotEmpty()) {
+            pluginVersionsCaches.put(text, result)
+        }
         return result
     }
 

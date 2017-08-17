@@ -42,19 +42,18 @@ class GradleKtsDependenciesCompletionContributor : AbstractGradleCompletionContr
                 if (searchResult.isEmpty()) {
                     show(params.position.project, searchParam.failContent, "find dependencies fail", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
                 }
-                val resultSet = searchResult.distinctBy { it.presentableText }
                 var completionResultSet = result.withRelevanceSorter(
                         CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("gradleDependencyWeigher") {
                             override fun weigh(element: LookupElement): Comparable<*> {
-                                return VersionComparator(resultSet.indexOfFirst { it.presentableText == element.lookupString })
+                                return VersionComparator(searchResult.indexOfFirst { it.gav == element.lookupString })
                             }
                         })
                 )
                 if (searchParam.advancedSearch.isNotEmpty()) {
                     completionResultSet = completionResultSet.withPrefixMatcher(PrefixMatcher.ALWAYS_TRUE)
                 }
-                resultSet.forEach {
-                    completionResultSet.addElement(LookupElementBuilder.create(it.presentableText).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true))
+                searchResult.forEach {
+                    completionResultSet.addElement(LookupElementBuilder.create(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true))
                 }
             }
         })

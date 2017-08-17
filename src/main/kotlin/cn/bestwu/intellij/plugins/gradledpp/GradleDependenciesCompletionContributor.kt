@@ -38,7 +38,7 @@ class GradleDependenciesCompletionContributor : AbstractGradleCompletionContribu
                 val searchText = CompletionUtil.findReferenceOrAlphanumericPrefix(params)
                 val searchParam: SearchParam
                 searchParam = when {
-                    GROUP_LABEL == parent.labelName -> SearchParam(searchText,"")
+                    GROUP_LABEL == parent.labelName -> SearchParam(searchText, "")
                     NAME_LABEL == parent.labelName -> {
                         val groupId = findNamedArgumentValue(parent.parent as GrNamedArgumentsOwner, GROUP_LABEL) ?: return
                         SearchParam(groupId, searchText)
@@ -59,30 +59,26 @@ class GradleDependenciesCompletionContributor : AbstractGradleCompletionContribu
                 }
 
                 var completionResultSet = result
-                val resultSet: List<ArtifactInfo>
                 when {
                     GROUP_LABEL == parent.labelName -> {
-                        resultSet = searchResult.filter { it.groupId.isNotBlank() }.distinctBy { it.groupId }
-                        resultSet.forEach {
+                        searchResult.forEach {
                             completionResultSet.addElement(LookupElementBuilder.create(it.groupId).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true))
                         }
                     }
                     NAME_LABEL == parent.labelName -> {
-                        resultSet = searchResult.filter { it.artifactId.isNotBlank() }.distinctBy { it.artifactId }
-                        resultSet.forEach {
+                        searchResult.forEach {
                             completionResultSet.addElement(LookupElementBuilder.create(it.artifactId).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true))
                         }
                     }
                     VERSION_LABEL == parent.labelName -> {
-                        resultSet = searchResult.filter { it.version.isNotBlank() }.distinctBy { it.version }
                         completionResultSet = result.withRelevanceSorter(
                                 CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("gradleDependencyWeigher") {
                                     override fun weigh(element: LookupElement): Comparable<*> {
-                                        return VersionComparator(resultSet.indexOfFirst { it.version == element.lookupString })
+                                        return VersionComparator(searchResult.indexOfFirst { it.version == element.lookupString })
                                     }
                                 })
                         )
-                        resultSet.forEach {
+                        searchResult.forEach {
                             completionResultSet.addElement(LookupElementBuilder.create(it.version).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true))
                         }
                     }
@@ -124,19 +120,18 @@ class GradleDependenciesCompletionContributor : AbstractGradleCompletionContribu
                     show(params.position.project, searchParam.failContent, "find dependencies fail", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
                 }
 
-                val resultSet = searchResult.distinctBy { it.presentableText }
                 var completionResultSet = result.withRelevanceSorter(
                         CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("gradleDependencyWeigher") {
                             override fun weigh(element: LookupElement): Comparable<*> {
-                                return VersionComparator(resultSet.indexOfFirst { it.presentableText == element.lookupString })
+                                return VersionComparator(searchResult.indexOfFirst { it.gav == element.lookupString })
                             }
                         })
                 )
                 if (searchParam.advancedSearch.isNotEmpty()) {
                     completionResultSet = completionResultSet.withPrefixMatcher(PrefixMatcher.ALWAYS_TRUE)
                 }
-                resultSet.forEach {
-                    completionResultSet.addElement(LookupElementBuilder.create(it.presentableText).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true))
+                searchResult.forEach {
+                    completionResultSet.addElement(LookupElementBuilder.create(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true))
                 }
             }
         })
