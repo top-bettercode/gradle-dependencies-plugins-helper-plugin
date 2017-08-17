@@ -14,9 +14,8 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
-import org.jetbrains.plugins.gradle.codeInsight.AbstractGradleCompletionContributor
 
-class GradleKtsDependenciesCompletionContributor : AbstractGradleCompletionContributor() {
+class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
 
     init {
         // group:name:version notation
