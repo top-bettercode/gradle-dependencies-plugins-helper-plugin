@@ -238,7 +238,7 @@ class GradleArtifactSearcher {
 
     @Suppress("UNCHECKED_CAST")
     private fun searchByClassNameInNexus(searchParam: SearchParam, project: Project, result: MutableList<ArtifactInfo>): MutableList<ArtifactInfo> {
-        val url = "${Settings.getInstance(project).nexusSearchUrl}?repositoryId=central&cn=${searchParam.id}"
+        val url = "${Settings.getInstance(project).nexusSearchUrl}/service/local/lucene/search?repositoryId=central&cn=${searchParam.id}"
         val connection = getConnection(url)
         connection.setRequestProperty("Accept", "application/json")
         val stream = getResponse(connection, project) ?: return result
@@ -293,7 +293,7 @@ class GradleArtifactSearcher {
 
     @Suppress("UNCHECKED_CAST")
     private fun searchInNexus(searchParam: SearchParam, project: Project, result: MutableList<ArtifactInfo>): MutableList<ArtifactInfo> {
-        val url = "${Settings.getInstance(project).nexusSearchUrl}?repositoryId=central&${searchParam.nq}"
+        val url = "${Settings.getInstance(project).nexusSearchUrl}/service/local/lucene/search?repositoryId=central&${searchParam.nq}"
         val connection = getConnection(url)
         connection.setRequestProperty("Accept", "application/json")
         val stream = getResponse(connection, project) ?: return result

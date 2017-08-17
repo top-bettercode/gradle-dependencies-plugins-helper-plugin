@@ -26,8 +26,8 @@ class Settings(var first: Boolean = true, var originRemoteRepositories: Set<Stri
     companion object {
         val useNexus: Boolean = Locale.getDefault() == Locale.CHINA
         val useMavenIndex: Boolean = false
-        val nexusSearchUrl: String = "http://maven.aliyun.com/nexus/service/local/lucene/search"
-        val mavenCentralRemoteRepository = "https://repo1.maven.org/maven2/"
+        val nexusSearchUrl: String = "http://maven.aliyun.com/nexus"
+        private val mavenCentralRemoteRepository = "https://repo1.maven.org/maven2/"
         val remoteRepositories = mutableSetOf(mavenCentralRemoteRepository)
 
         fun getInstance(project: Project): Settings {
