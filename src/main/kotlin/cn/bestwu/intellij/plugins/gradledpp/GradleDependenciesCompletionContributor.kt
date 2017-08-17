@@ -112,10 +112,10 @@ class GradleDependenciesCompletionContributor : AbstractGradleCompletionContribu
                 val text = trim(params.originalPosition?.text ?: "")
                 val searchText = if (!text.startsWith("c:", true) && !text.startsWith("fc:", true)) prefix else text
                 val searchParam: SearchParam
-                if (text.contains(":") && !prefix.contains(":")) {
-                    searchParam = SearchParam(searchText, "")
+                searchParam = if (text.contains(":") && !prefix.contains(":")) {
+                    SearchParam(searchText, "")
                 } else {
-                    searchParam = SearchParam(searchText)
+                    SearchParam(searchText)
                 }
                 if (searchParam.id.length < 2)
                     return
