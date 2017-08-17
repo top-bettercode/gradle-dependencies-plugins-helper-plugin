@@ -7,18 +7,23 @@ import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.icons.AllIcons
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
+import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns.psiElement
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
-import org.jetbrains.plugins.gradle.codeInsight.AbstractGradleCompletionContributor
+import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.arguments.GrNamedArgument
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals.GrLiteral
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals.GrStringContent
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrMethodCallExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.util.GrNamedArgumentsOwner
+import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.literals.GrLiteralImpl
+import com.intellij.patterns.PlatformPatterns.psiFile
+import com.intellij.patterns.StandardPatterns.string
 
-class GradleDependenciesCompletionContributor : AbstractGradleCompletionContributor() {
+class GradleDependenciesCompletionContributor : CompletionContributor() {
 
     init {
         // map-style notation:
@@ -148,6 +153,17 @@ class GradleDependenciesCompletionContributor : AbstractGradleCompletionContribu
         private val VERSION_LABEL = "version"
         private val DEPENDENCIES_SCRIPT_BLOCK = "dependencies"
         private val artifactSearcher = GradleArtifactSearcher()
+        private val GRADLE_FILE_PATTERN: ElementPattern<PsiElement> = psiElement()
+                .inFile(psiFile().withName(string().endsWith('.' + GradleConstants.EXTENSION)))
+
+        private fun findNamedArgumentValue(namedArgumentsOwner: GrNamedArgumentsOwner?, label: String): String? {
+            if (namedArgumentsOwner == null) return null
+            val namedArgument = namedArgumentsOwner.findNamedArgument(label) ?: return null
+
+            val expression = namedArgument.expression as? GrLiteralImpl ?: return null
+            val value = GrLiteralImpl::class.java.cast(expression).value
+            return value?.toString()
+        }
 
         private val DEPENDENCIES_CALL_PATTERN = psiElement()
                 .inside(true, psiElement(GrMethodCallExpression::class.java).with(
