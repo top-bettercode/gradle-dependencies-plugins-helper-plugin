@@ -47,7 +47,7 @@
    <li>Add Maven Index search option.</li>
    <li>Add Nexus search option.</li>
    <li>Support search by classname in mavenCentral search.<br/>
-   use "c:"(classname) or "fc:"( fully-qualified classname ) in dependencies/plugins script block<br/>
+   use "c:"(classname) or "fc:"( fully-qualified classname ) in dependencies script block<br/>
    example: <br/>
    &nbsp; &nbsp; compile("fc:org.junit.Test")<br/>
    &nbsp; &nbsp; compile("c:Junit")<br/>
