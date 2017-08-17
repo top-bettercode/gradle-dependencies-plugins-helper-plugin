@@ -212,7 +212,9 @@ class GradleArtifactSearcher {
         }
         var result: MutableList<ArtifactInfo> = mutableListOf()
         result = run(searchParam, project, result)
-        artifactsCaches.put(key, result)
+        if (result.isNotEmpty()) {
+            artifactsCaches.put(key, result)
+        }
         return result
     }
 
