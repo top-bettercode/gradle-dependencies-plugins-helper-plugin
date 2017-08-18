@@ -67,52 +67,59 @@ class SearchParam {
     val fa: Boolean
 
     constructor(text: String) {
-        if (text.startsWith("c:", true)) {
-            groupId = ""
-            artifactId = ""
-            id = text.substringAfter("c:").trim()
-            q = text.trim()
-            mq = text.trim()
-            nq = text.trim()
-            fg = false
-            fa = false
-            advancedSearch = "c"
-            failContent = "<a href='http://search.maven.org/#search|gav|1|c:\"$id\"'>search in mavenCentral</a>"
-        } else if (text.startsWith("fc:", true)) {
-            groupId = ""
-            artifactId = ""
-            id = text.substringAfter("fc:").trim()
-            q = text.trim()
-            mq = text.trim()
-            nq = text.trim()
-            fg = false
-            fa = false
-            advancedSearch = "fc"
-            failContent = "<a href='http://search.maven.org/#search|gav|1|fc:\"$id\"'>search in mavenCentral</a>"
-        } else {
-            advancedSearch = ""
-            val list = split(text)
-            fg = text.contains(":")
-            if (list.size in (2..3)) {
-                groupId = list[0].trim()
-                artifactId = list[1].trim()
-                fa = text.endsWith(":") && artifactId.isNotEmpty()
-                this.id = "$groupId${if (artifactId.isEmpty()) "" else ":$artifactId"}"
-                this.q = "g=$groupId${if (artifactId.isEmpty()) if (this.fg) "" else "*" else "&a=$artifactId${if (this.fa) "" else "*"}"}"
-                this.mq = "g:\"$groupId\"${if (artifactId.isEmpty()) "" else "+AND+a:\"$artifactId\""}"
-                this.nq = "g=$groupId${if (artifactId.isEmpty()) if (this.fg) "" else "*" else "&a=$artifactId${if (this.fa) "" else "*"}"}"
-            } else {
+        when {
+            text.startsWith("c:", true) -> {
                 groupId = ""
                 artifactId = ""
+                id = text.substringAfter("c:").trim()
+                q = text.trim()
+                mq = text.trim()
+                nq = text.trim()
+                fg = false
                 fa = false
-                this.id = text.trim()
-                this.q = "q=${text.trim()}*"
-                this.mq = "a:\"${text.trim()}\""
-                this.nq = "q=${text.trim()}"
+                advancedSearch = "c"
+                failContent = "<a href='http://search.maven.org/#search|gav|1|c:\"$id\"'>search in mavenCentral</a>"
             }
-            failContent = "<a href='https://bintray.com/search?query=$id'>search in jcenter</a>"
+            text.startsWith("fc:", true) -> {
+                groupId = ""
+                artifactId = ""
+                id = text.substringAfter("fc:").trim()
+                q = text.trim()
+                mq = text.trim()
+                nq = text.trim()
+                fg = false
+                fa = false
+                advancedSearch = "fc"
+                failContent = "<a href='http://search.maven.org/#search|gav|1|fc:\"$id\"'>search in mavenCentral</a>"
+            }
+            else -> {
+                advancedSearch = ""
+                val list = split(text)
+                fg = text.contains(":")
+                if (list.size in (2..3)) {
+                    groupId = list[0].trim()
+                    artifactId = list[1].trim()
+                    fa = text.endsWith(":") && artifactId.isNotEmpty()
+                    this.id = "$groupId${if (artifactId.isEmpty()) "" else ":$artifactId"}"
+                    this.q = "g=${fullQuery(fg, groupId)}${if (artifactId.isEmpty()) "" else "&a=${fullQuery(fa, artifactId)}"}"
+                    this.mq = "g:\"$groupId\"${if (artifactId.isEmpty()) "" else "+AND+a:\"$artifactId\""}"
+                    this.nq = "g=${halfQuery(fg, groupId)}${if (artifactId.isEmpty()) "" else "&a=${halfQuery(fa, artifactId)}"}"
+                } else {
+                    groupId = ""
+                    artifactId = ""
+                    fa = false
+                    this.id = text.trim()
+                    this.q = "q=*${text.trim()}*"
+                    this.mq = "a:\"${text.trim()}\""
+                    this.nq = "q=${text.trim()}"
+                }
+                failContent = "<a href='https://bintray.com/search?query=$id'>search in jcenter</a>"
+            }
         }
     }
+
+    private fun fullQuery(fullname: Boolean, name: String) = if (fullname) name else "*$name*"
+    private fun halfQuery(fullname: Boolean, name: String) = if (fullname) name else "$name*"
 
     constructor(groupIdParam: String, artifactIdParam: String, fg: Boolean) {
         advancedSearch = ""
@@ -121,15 +128,12 @@ class SearchParam {
         this.fg = fg
         this.fa = false
         this.id = "$groupId${if (artifactId.isEmpty()) "" else ":$artifactId"}"
-        this.q = "g=$groupId${if (artifactId.isEmpty()) if (this.fg) "" else "*" else "&a=$artifactId*"}"
+        this.q = "g=${fullQuery(fg, groupId)}${if (artifactId.isEmpty()) "" else "&a=*$artifactId*"}"
         this.mq = "g:\"$groupId\"${if (artifactId.isEmpty()) "" else "+AND+a:\"$artifactId\""}"
-        this.nq = "g=$groupId${if (artifactId.isEmpty()) if (this.fg) "" else "*" else "&a=$artifactId*"}"
+        this.nq = "g=${halfQuery(fg, groupId)}${if (artifactId.isEmpty()) "" else "&a=$artifactId*"}"
         failContent = "<a href='https://bintray.com/search?query=$id'>search in jcenter</a>"
     }
 
-    override fun toString(): String {
-        return "SearchParam(groupId='$groupId', artifactId='$artifactId', id='$id', q='$q', mq='$mq', nq='$nq', advancedSearch='$advancedSearch', failContent='$failContent')"
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -161,6 +165,10 @@ class SearchParam {
         result = 31 * result + fg.hashCode()
         result = 31 * result + fa.hashCode()
         return result
+    }
+
+    override fun toString(): String {
+        return "SearchParam(groupId='$groupId', artifactId='$artifactId', id='$id', q='$q', mq='$mq', nq='$nq', advancedSearch='$advancedSearch', failContent='$failContent', fg=$fg, fa=$fa)"
     }
 
 
@@ -240,6 +248,7 @@ class GradleArtifactSearcher {
 
 
     fun search(searchParam: SearchParam, project: Project): LinkedHashSet<ArtifactInfo> {
+//        show(project, searchParam.toString())
         var result: LinkedHashSet<ArtifactInfo>
         if (searchParam.advancedSearch.isNotEmpty()) {
             if (Settings.getInstance(project).useNexus) {
@@ -272,6 +281,7 @@ class GradleArtifactSearcher {
         val key = "$repoKey${searchParam.q}"
         val existResult = artifactsCaches[key]
         if (existResult != null) {
+//            show(project, existResult.toString())
             return existResult
         }
         var result: LinkedHashSet<ArtifactInfo> = linkedSetOf()
@@ -279,6 +289,7 @@ class GradleArtifactSearcher {
         if (result.isNotEmpty()) {
             artifactsCaches.put(key, result)
         }
+//        show(project, result.toString())
         return result
     }
 
@@ -369,7 +380,7 @@ class GradleArtifactSearcher {
         if (searchParam.fg)
             jsonResult = jsonResult.filter { it["groupId"] == searchParam.groupId }
         jsonResult.forEach {
-            val artifactInfo = ArtifactInfo(it["groupId"] as String, if (searchParam.artifactId.isEmpty() && !searchParam.fg) "" else it["artifactId"] as String, "", "mavenCentral", "Apache")
+            val artifactInfo = ArtifactInfo(it["groupId"] as String, if (searchParam.artifactId.isEmpty() && !searchParam.fg && searchParam.groupId.isNotEmpty()) "" else it["artifactId"] as String, "", "mavenCentral", "Apache")
             if (artifactInfo.id == searchParam.id && artifactInfo.artifactId.isNotEmpty()) {
                 artifactInfo.version = it["version"] as String
                 result.add(artifactInfo)
@@ -389,7 +400,7 @@ class GradleArtifactSearcher {
         regex.findAll(stream.bufferedReader().readText()).forEach {
             if (searchParam.fg && it.groupValues[1] != searchParam.groupId)
                 return@forEach
-            val artifactInfo = ArtifactInfo(it.groupValues[1], if (searchParam.artifactId.isEmpty() && !searchParam.fg) "" else it.groupValues[2], "", "mavenCentral", "Apache")
+            val artifactInfo = ArtifactInfo(it.groupValues[1], if (searchParam.artifactId.isEmpty() && !searchParam.fg && searchParam.groupId.isNotEmpty()) "" else it.groupValues[2], "", "mavenCentral", "Apache")
             if (artifactInfo.id == searchParam.id && artifactInfo.artifactId.isNotEmpty()) {
                 artifactInfo.version = it.groupValues[3]
                 result.add(artifactInfo)
@@ -431,7 +442,7 @@ class GradleArtifactSearcher {
                 if (searchParam.id == id) {
                     ((any["versions"] as List<String>).mapTo(cresult) { ArtifactInfo(groupId, artifactId, it, any["repo"] as String, any["owner"] as String) })
                 } else if (!searchParam.fa) {
-                    cresult.add(ArtifactInfo(groupId, if (searchParam.artifactId.isEmpty() && !searchParam.fg) "" else artifactId, "", any["repo"] as String, any["owner"] as String))
+                    cresult.add(ArtifactInfo(groupId, if (searchParam.artifactId.isEmpty() && !searchParam.fg && searchParam.groupId.isNotEmpty()) "" else artifactId, "", any["repo"] as String, any["owner"] as String))
                 }
             }
         }

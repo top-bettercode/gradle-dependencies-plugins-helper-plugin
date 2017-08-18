@@ -110,13 +110,13 @@ class ParseResultTest {
         val connection = URL(url).openConnection() as HttpURLConnection
         connection.setRequestProperty("Accept", "application/json")
         val stream = connection.inputStream ?: return
-        println(stream.bufferedReader().readText())
-//        val jsonResult = (JsonSlurper().parse(stream) as Map<*, *>)["data"] as List<Map<*, *>>
-//        jsonResult.forEach {
-//            val artifactInfo = ArtifactInfo(it["groupId"] as String, it["artifactId"] as String, it["version"] as String, "mavenCentral", "Apache")
-//            println(artifactInfo)
-//        }
-//        println(jsonResult.size)
+//        println(stream.bufferedReader().readText())
+        val jsonResult = (JsonSlurper().parse(stream) as Map<*, *>)["data"] as List<Map<*, *>>
+        jsonResult.forEach {
+            val artifactInfo = ArtifactInfo(it["groupId"] as String, it["artifactId"] as String, it["version"] as String, "mavenCentral", "Apache")
+            println(artifactInfo)
+        }
+        println(jsonResult.size)
     }
 
     @Test
