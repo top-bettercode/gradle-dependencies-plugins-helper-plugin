@@ -31,7 +31,7 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                 val searchText = if (!text.startsWith("c:", true) && !text.startsWith("fc:", true)) prefix else text
                 val searchParam: SearchParam
                 if (text.contains(":") && !searchText.contains(":")) {
-                    searchParam = SearchParam(searchText, "", false)
+                    searchParam = SearchParam(searchText, "", false, false)
                 } else {
                     searchParam = SearchParam(searchText)
                 }
@@ -53,7 +53,7 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                     completionResultSet = completionResultSet.withPrefixMatcher(PrefixMatcher.ALWAYS_TRUE)
                 }
                 searchResult.forEach {
-                    completionResultSet.addElement(LookupElementBuilder.create("${it.gav}${if (it.artifactId.isEmpty() || it.version.isEmpty()) ":" else ""}").withPresentableText(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(INSERT_HANDLER))
+                    completionResultSet.addElement(LookupElementBuilder.create("${it.gav}${if (it.artifactId.isEmpty()) ":" else ""}").withPresentableText(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(INSERT_HANDLER))
                 }
             }
         })

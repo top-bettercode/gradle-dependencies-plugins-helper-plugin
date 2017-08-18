@@ -43,16 +43,16 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                 val searchText = CompletionUtil.findReferenceOrAlphanumericPrefix(params)
                 val searchParam: SearchParam
                 searchParam = when {
-                    GROUP_LABEL == parent.labelName -> SearchParam(searchText, "", false)
+                    GROUP_LABEL == parent.labelName -> SearchParam(searchText, "", false, false)
                     NAME_LABEL == parent.labelName -> {
                         val groupId = findNamedArgumentValue(parent.parent as GrNamedArgumentsOwner, GROUP_LABEL) ?: return
-                        SearchParam(groupId, searchText, true)
+                        SearchParam(groupId, searchText, true, false)
                     }
                     VERSION_LABEL == parent.labelName -> {
                         val namedArgumentsOwner = parent.parent as GrNamedArgumentsOwner
                         val groupId = findNamedArgumentValue(namedArgumentsOwner, GROUP_LABEL) ?: return
                         val artifactId = findNamedArgumentValue(namedArgumentsOwner, NAME_LABEL) ?: return
-                        SearchParam(groupId, artifactId, true)
+                        SearchParam(groupId, artifactId, true, true)
                     }
                     else -> return
                 }
@@ -67,12 +67,12 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                 when {
                     GROUP_LABEL == parent.labelName -> {
                         searchResult.forEach {
-                            completionResultSet.addElement(LookupElementBuilder.create(it.groupId).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true))
+                            completionResultSet.addElement(LookupElementBuilder.create(it.groupId).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(INSERT_HANDLER))
                         }
                     }
                     NAME_LABEL == parent.labelName -> {
                         searchResult.forEach {
-                            completionResultSet.addElement(LookupElementBuilder.create(it.artifactId).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true))
+                            completionResultSet.addElement(LookupElementBuilder.create(it.artifactId).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(INSERT_HANDLER))
                         }
                     }
                     VERSION_LABEL == parent.labelName -> {
@@ -114,7 +114,7 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                 val searchText = if (!text.startsWith("c:", true) && !text.startsWith("fc:", true)) prefix else text
                 val searchParam: SearchParam
                 searchParam = if (text.contains(":") && !searchText.contains(":")) {
-                    SearchParam(searchText, "", false)
+                    SearchParam(searchText, "", false, false)
                 } else {
                     SearchParam(searchText)
                 }
@@ -136,7 +136,7 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                     completionResultSet = completionResultSet.withPrefixMatcher(PrefixMatcher.ALWAYS_TRUE)
                 }
                 searchResult.forEach {
-                    completionResultSet.addElement(LookupElementBuilder.create("${it.gav}${if (it.artifactId.isEmpty() || it.version.isEmpty()) ":" else ""}").withPresentableText(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(INSERT_HANDLER))
+                    completionResultSet.addElement(LookupElementBuilder.create("${it.gav}${if (it.artifactId.isEmpty()) ":" else ""}").withPresentableText(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(INSERT_HANDLER))
                 }
             }
         })

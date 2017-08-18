@@ -23,8 +23,8 @@ class ArtifactInfo(groupId: String, artifactId: String, version: String = "", re
             field = value
             this.gav = "${this.id}${if (this.version.isEmpty()) "" else ":${this.version}"}"
         }
-    val repo: String = repo.trim()
-    val owner: String = owner.trim()
+    private val repo: String = repo.trim()
+    private val owner: String = owner.trim()
     val id: String
     var gav: String
 
@@ -122,16 +122,16 @@ class SearchParam {
     private fun fullQuery(fullname: Boolean, name: String) = if (fullname) name else "*$name*"
     private fun halfQuery(fullname: Boolean, name: String) = if (fullname) name else "$name*"
 
-    constructor(groupIdParam: String, artifactIdParam: String, fg: Boolean) {
+    constructor(groupIdParam: String, artifactIdParam: String, fg: Boolean, fa: Boolean) {
         advancedSearch = ""
         groupId = groupIdParam.trim()
         artifactId = artifactIdParam.trim()
         this.fg = fg
-        this.fa = false
+        this.fa = fa
         this.id = "$groupId${if (artifactId.isEmpty()) "" else ":$artifactId"}"
-        this.q = "g=${fullQuery(fg, groupId)}${if (artifactId.isEmpty()) "" else "&a=*$artifactId*"}"
+        this.q = "g=${fullQuery(fg, groupId)}${if (artifactId.isEmpty()) "" else "&a=${fullQuery(fa, artifactId)}"}"
         this.mq = "g:\"$groupId\"${if (artifactId.isEmpty()) "" else "+AND+a:\"$artifactId\""}"
-        this.nq = "g=${halfQuery(fg, groupId)}${if (artifactId.isEmpty()) "" else "&a=$artifactId*"}"
+        this.nq = "g=${halfQuery(fg, groupId)}${if (artifactId.isEmpty()) "" else "&a=${halfQuery(fa, artifactId)}"}"
         failContent = "<a href='https://bintray.com/search?query=$id'>search in jcenter</a>"
     }
 
@@ -364,7 +364,13 @@ class GradleArtifactSearcher {
         val m = MavenProjectIndicesManager.getInstance(project)
         if (searchParam.groupId.isNotEmpty()) {
             if (searchParam.artifactId.isEmpty() && !searchParam.fg)
-                m.groupIds.mapTo(result) { ArtifactInfo(it, "", "", "maven", "") }
+                m.groupIds.forEach {
+                    if (it == searchParam.groupId) {
+                        m.getArtifactIds(searchParam.groupId).mapTo(result) { ArtifactInfo(searchParam.groupId, it, "", "maven", "") }
+                    } else {
+                        result.add(ArtifactInfo(it, "", "", "maven", ""))
+                    }
+                }
             else {
                 m.getArtifactIds(searchParam.groupId).forEach {
                     if (it == searchParam.artifactId) {
@@ -402,7 +408,7 @@ class GradleArtifactSearcher {
         if (searchParam.fg)
             jsonResult = jsonResult.filter { it["groupId"] == searchParam.groupId }
         jsonResult.forEach {
-            val artifactInfo = ArtifactInfo(it["groupId"] as String, if (searchParam.artifactId.isEmpty() && !searchParam.fg && searchParam.groupId.isNotEmpty()) "" else it["artifactId"] as String, "", "mavenCentral", "Apache")
+            val artifactInfo = ArtifactInfo(it["groupId"] as String, if (searchParam.artifactId.isEmpty() && !searchParam.fg && searchParam.groupId.isNotEmpty() && searchParam.groupId != it["groupId"]) "" else it["artifactId"] as String, "", "mavenCentral", "Apache")
             if (artifactInfo.id == searchParam.id && artifactInfo.artifactId.isNotEmpty()) {
                 artifactInfo.version = it["version"] as String
                 result.add(artifactInfo)
@@ -422,7 +428,7 @@ class GradleArtifactSearcher {
         regex.findAll(stream.bufferedReader().readText()).forEach {
             if (searchParam.fg && it.groupValues[1] != searchParam.groupId)
                 return@forEach
-            val artifactInfo = ArtifactInfo(it.groupValues[1], if (searchParam.artifactId.isEmpty() && !searchParam.fg && searchParam.groupId.isNotEmpty()) "" else it.groupValues[2], "", "mavenCentral", "Apache")
+            val artifactInfo = ArtifactInfo(it.groupValues[1], if (searchParam.artifactId.isEmpty() && !searchParam.fg && searchParam.groupId.isNotEmpty() && searchParam.groupId != it.groupValues[1]) "" else it.groupValues[2], "", "mavenCentral", "Apache")
             if (artifactInfo.id == searchParam.id && artifactInfo.artifactId.isNotEmpty()) {
                 artifactInfo.version = it.groupValues[3]
                 result.add(artifactInfo)
@@ -441,7 +447,7 @@ class GradleArtifactSearcher {
         val stream = getResponse(connection, project) ?: return cresult
         var jsonResult = JsonSlurper().parse(stream) as List<Map<*, *>>
         val findById = jsonResult.filter { (it["system_ids"] as List<String>).contains(searchParam.id) }
-        if (findById.isNotEmpty()) {
+        if (findById.isNotEmpty() && searchParam.fa) {
             jsonResult = findById
         }
         for (any in jsonResult) {
@@ -464,7 +470,7 @@ class GradleArtifactSearcher {
                 if (searchParam.id == id) {
                     ((any["versions"] as List<String>).mapTo(cresult) { ArtifactInfo(groupId, artifactId, it, any["repo"] as String, any["owner"] as String) })
                 } else if (!searchParam.fa) {
-                    cresult.add(ArtifactInfo(groupId, if (searchParam.artifactId.isEmpty() && !searchParam.fg && searchParam.groupId.isNotEmpty()) "" else artifactId, "", any["repo"] as String, any["owner"] as String))
+                    cresult.add(ArtifactInfo(groupId, if (searchParam.artifactId.isEmpty() && !searchParam.fg && searchParam.groupId.isNotEmpty() && searchParam.groupId != groupId) "" else artifactId, "", any["repo"] as String, any["owner"] as String))
                 }
             }
         }

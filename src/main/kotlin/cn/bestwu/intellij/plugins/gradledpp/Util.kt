@@ -1,6 +1,7 @@
 package cn.bestwu.intellij.plugins.gradle.codeInsight.completion
 
 import com.intellij.codeInsight.completion.CompletionInitializationContext
+import com.intellij.codeInsight.completion.CompletionInitializationContext.IDENTIFIER_END_OFFSET
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
@@ -32,7 +33,7 @@ internal class VersionComparator(private val index: Int) : Comparable<VersionCom
     override fun compareTo(other: VersionComparator): Int = this.index - other.index
 }
 
-
+private val stopChars = arrayOf('"', '\'')
 internal var INSERT_HANDLER: InsertHandler<LookupElement> = InsertHandler<LookupElement> { context, _ ->
     context.commitDocument()
     val text = context.document.text
@@ -43,23 +44,10 @@ internal var INSERT_HANDLER: InsertHandler<LookupElement> = InsertHandler<Lookup
         if ('\n' == text[idStart] || idStart == -1) {
             return@InsertHandler
         }
-    } while ('"' != text[idStart] && '\'' != text[idStart])
+    } while (!stopChars.contains(text[idStart]))
     idStart++
-    var stopChars = arrayOf('"', '\'')
-    val endsWith = lookupString.endsWith(":")
-    if (endsWith) {
-        stopChars = stopChars.plus(':')
-    }
-    var idEnd = context.tailOffset
-    while (!stopChars.contains(text[idEnd])) {
-        idEnd++
-        if ('\n' == text[idEnd] || idEnd == text.length) {
-            return@InsertHandler
-        }
-    }
-    if (endsWith)
-        idEnd++
-    context.document.replaceString(idStart, idEnd, lookupString)
+
+    context.document.replaceString(idStart, context.getOffset(IDENTIFIER_END_OFFSET), lookupString)
 }
 
 
@@ -68,7 +56,7 @@ internal fun contributorDuringCompletion(context: CompletionInitializationContex
         val offset = context.caret.offset
         val text = context.editor.document.charsSequence
         var idEnd = offset
-        while ('"' != text[idEnd] && '\'' != text[idEnd] && ':' != text[idEnd]) {
+        while (!stopChars.contains(text[idEnd])) {
             idEnd++
             if ('\n' == text[idEnd] || idEnd == text.length) {
                 return
