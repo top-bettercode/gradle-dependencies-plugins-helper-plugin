@@ -4,8 +4,8 @@
   <version>0.0.2</version>
   <vendor email="piterwu@outlook.com"
     url="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin"><![CDATA[
-  piterwu</li></li>
-  <b>Donate:</b></li>
+  piterwu<br/><br/>
+  <b>Donate:</b><br/>
   <table>
     <tr>
       <td>alipay</td>
@@ -51,9 +51,7 @@
    example: <br/>
    &nbsp; &nbsp; compile("fc:org.junit.Test")<br/>
    &nbsp; &nbsp; compile("c:Junit")<br/>
-   note:<br/>
-   &nbsp; &nbsp;Press Tab to replace the characters to the right from the caret.<br/><br/>
-   <b>0.0.1</b><br/><br/>
+   <br/><b>0.0.1</b><br/><br/>
    <li>Support *.gradle,*.gradle.kts.</li>
    <li>Use jcenter API for Gradle queries.</li>
    <li>Use Gradle Plugins Search for Gradle Plugins queries.</li>
