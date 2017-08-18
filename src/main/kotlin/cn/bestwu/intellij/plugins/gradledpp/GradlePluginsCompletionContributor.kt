@@ -71,7 +71,7 @@ class GradlePluginsCompletionContributor : CompletionContributor() {
                 searchResult = pluginsSearcher.searchPlugins(searchText)
 
             searchResult.forEach {
-                completionResultSet.addElement(LookupElementBuilder.create(it).withIcon(AllIcons.Nodes.PpLib))
+                completionResultSet.addElement(LookupElementBuilder.create(it).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(INSERT_HANDLER))
             }
         }
     }

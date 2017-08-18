@@ -30,7 +30,7 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                 val prefix = params.position.text.substringBefore("IntellijIdeaRulezzz")
                 val searchText = if (!text.startsWith("c:", true) && !text.startsWith("fc:", true)) prefix else text
                 val searchParam: SearchParam
-                if (text.contains(":") && !prefix.contains(":")) {
+                if (text.contains(":") && !searchText.contains(":")) {
                     searchParam = SearchParam(searchText, "", false)
                 } else {
                     searchParam = SearchParam(searchText)
@@ -48,18 +48,16 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                             }
                         })
                 )
-                if (searchParam.advancedSearch.isNotEmpty()) {
+                val cSearch = searchParam.advancedSearch.isNotEmpty()
+                if (cSearch) {
                     completionResultSet = completionResultSet.withPrefixMatcher(PrefixMatcher.ALWAYS_TRUE)
                 }
                 searchResult.forEach {
-                    completionResultSet.addElement(LookupElementBuilder.create("${it.gav}${if (it.artifactId.isEmpty() || it.version.isEmpty()) ":" else ""}").withPresentableText(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true))
+                    completionResultSet.addElement(LookupElementBuilder.create("${it.gav}${if (it.artifactId.isEmpty() || it.version.isEmpty()) ":" else ""}").withPresentableText(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(INSERT_HANDLER))
                 }
             }
         })
     }
-
-    override fun beforeCompletion(context: CompletionInitializationContext) = contributorBeforeCompletion(context)
-
 
     override fun duringCompletion(context: CompletionInitializationContext) = contributorDuringCompletion(context)
 

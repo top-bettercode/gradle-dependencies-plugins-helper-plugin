@@ -2,6 +2,8 @@ package cn.bestwu.intellij.plugins.gradle.codeInsight.completion
 
 import com.intellij.codeInsight.completion.CompletionInitializationContext
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.codeInsight.completion.InsertHandler
+import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.notification.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
@@ -26,34 +28,47 @@ internal fun show(project: Project, content: String, title: String = "", type: N
 }
 
 
-internal class VersionComparator(val index: Int) : Comparable<VersionComparator> {
+internal class VersionComparator(private val index: Int) : Comparable<VersionComparator> {
     override fun compareTo(other: VersionComparator): Int = this.index - other.index
 }
 
 
-internal fun contributorBeforeCompletion(context: CompletionInitializationContext) {
-    if (context.completionType == CompletionType.SMART) {
-        val offset = context.caret.offset
-        val text = context.editor.document.text
-        var idStart = offset
-        do {
-            idStart--
-            if ('\n' == text[idStart] || idStart == -1) {
-                return
-            }
-        } while ('"' != text[idStart] && '\'' != text[idStart])
-        idStart++
-        if (text.substring(idStart, idStart + 2) == "c:" || text.substring(idStart, idStart + 3) == "fc:")
-            context.caret.moveToOffset(idStart)
+internal var INSERT_HANDLER: InsertHandler<LookupElement> = InsertHandler<LookupElement> { context, _ ->
+    context.commitDocument()
+    val text = context.document.text
+    val lookupString = text.substring(context.startOffset, context.tailOffset)
+    var idStart = context.startOffset
+    do {
+        idStart--
+        if ('\n' == text[idStart] || idStart == -1) {
+            return@InsertHandler
+        }
+    } while ('"' != text[idStart] && '\'' != text[idStart])
+    idStart++
+    var stopChars = arrayOf('"', '\'')
+    val endsWith = lookupString.endsWith(":")
+    if (endsWith) {
+        stopChars = stopChars.plus(':')
     }
+    var idEnd = context.tailOffset
+    while (!stopChars.contains(text[idEnd])) {
+        idEnd++
+        if ('\n' == text[idEnd] || idEnd == text.length) {
+            return@InsertHandler
+        }
+    }
+    if (endsWith)
+        idEnd++
+    context.document.replaceString(idStart, idEnd, lookupString)
 }
+
 
 internal fun contributorDuringCompletion(context: CompletionInitializationContext) {
     if (context.completionType == CompletionType.SMART) {
         val offset = context.caret.offset
         val text = context.editor.document.charsSequence
         var idEnd = offset
-        while ('"' != text[idEnd] && '\'' != text[idEnd]) {
+        while ('"' != text[idEnd] && '\'' != text[idEnd] && ':' != text[idEnd]) {
             idEnd++
             if ('\n' == text[idEnd] || idEnd == text.length) {
                 return

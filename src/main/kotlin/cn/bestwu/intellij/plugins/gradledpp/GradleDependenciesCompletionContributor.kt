@@ -84,7 +84,7 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                                 })
                         )
                         searchResult.forEach {
-                            completionResultSet.addElement(LookupElementBuilder.create(it.version).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true))
+                            completionResultSet.addElement(LookupElementBuilder.create(it.version).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(INSERT_HANDLER))
                         }
                     }
                     else -> return
@@ -113,7 +113,7 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                 val text = trim(params.originalPosition?.text ?: "")
                 val searchText = if (!text.startsWith("c:", true) && !text.startsWith("fc:", true)) prefix else text
                 val searchParam: SearchParam
-                searchParam = if (text.contains(":") && !prefix.contains(":")) {
+                searchParam = if (text.contains(":") && !searchText.contains(":")) {
                     SearchParam(searchText, "", false)
                 } else {
                     SearchParam(searchText)
@@ -136,14 +136,11 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                     completionResultSet = completionResultSet.withPrefixMatcher(PrefixMatcher.ALWAYS_TRUE)
                 }
                 searchResult.forEach {
-                    completionResultSet.addElement(LookupElementBuilder.create("${it.gav}${if (it.artifactId.isEmpty() || it.version.isEmpty()) ":" else ""}").withPresentableText(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true))
+                    completionResultSet.addElement(LookupElementBuilder.create("${it.gav}${if (it.artifactId.isEmpty() || it.version.isEmpty()) ":" else ""}").withPresentableText(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(INSERT_HANDLER))
                 }
             }
         })
     }
-
-    override fun beforeCompletion(context: CompletionInitializationContext) = contributorBeforeCompletion(context)
-
 
     override fun duringCompletion(context: CompletionInitializationContext) = contributorDuringCompletion(context)
 
