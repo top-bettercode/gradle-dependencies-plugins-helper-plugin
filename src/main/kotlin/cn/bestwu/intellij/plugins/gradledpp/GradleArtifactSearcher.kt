@@ -5,6 +5,7 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import groovy.json.JsonSlurper
 import org.jetbrains.idea.maven.indices.MavenArtifactSearcher
+import org.jetbrains.idea.maven.indices.MavenClassSearcher
 import org.jetbrains.idea.maven.indices.MavenProjectIndicesManager
 import org.jetbrains.idea.maven.model.MavenArtifactInfo
 import org.jetbrains.plugins.gradle.integrations.maven.MavenRepositoriesHolder
@@ -251,12 +252,20 @@ class GradleArtifactSearcher {
 //        show(project, searchParam.toString())
         var result: LinkedHashSet<ArtifactInfo>
         if (searchParam.advancedSearch.isNotEmpty()) {
-            if (Settings.getInstance(project).useNexus) {
-                result = search(keyNexus, searchParam, project, this::searchByClassNameInNexus)
+            if (Settings.getInstance(project).useMavenIndex) {
+                result = search(keyIndex, searchParam, project, this::searchByClassNameInMavenIndex)
+                if (result.isEmpty() && Settings.getInstance(project).useNexus)
+                    result = search(keyNexus, searchParam, project, this::searchByClassNameInNexus)
                 if (result.isEmpty())
                     result = search(keyMaven, searchParam, project, this::searchByClassNameInMavenCentral)
             } else {
-                result = search(keyMaven, searchParam, project, this::searchByClassNameInMavenCentral)
+                if (Settings.getInstance(project).useNexus) {
+                    result = search(keyNexus, searchParam, project, this::searchByClassNameInNexus)
+                    if (result.isEmpty())
+                        result = search(keyMaven, searchParam, project, this::searchByClassNameInMavenCentral)
+                } else {
+                    result = search(keyMaven, searchParam, project, this::searchByClassNameInMavenCentral)
+                }
             }
         } else {
             if (Settings.getInstance(project).useMavenIndex) {
@@ -324,6 +333,27 @@ class GradleArtifactSearcher {
         return result
     }
 
+    private fun searchByClassNameInMavenIndex(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
+        val searcher = MavenClassSearcher()
+        val searchResults = searcher.search(project, searchParam.id, 1000)
+        searchResults.filter { it.versions.isNotEmpty() }
+                .flatMap {
+                    it.versions.map { ArtifactInfo(it.groupId, it.artifactId, it.version, "maven", "") }
+                }.forEach { artifactInfo ->
+            val exist = result.find { it.id == artifactInfo.id }
+            if (exist != null) {
+                if (compareVersion(exist.version, artifactInfo.version) < 0) {
+                    exist.version = artifactInfo.version
+                }
+            } else {
+                result.add(artifactInfo)
+            }
+        }
+
+
+        return result
+    }
+
     private fun searchInMavenIndexes(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
         val repositoriesHolder = MavenRepositoriesHolder.getInstance(project)
         try {
@@ -352,19 +382,11 @@ class GradleArtifactSearcher {
             val searcher = MavenArtifactSearcher()
             val searchResults = searcher.search(project, searchParam.id, 1000)
             searchResults
-                    .flatMap {
+                    .flatMapTo(result) {
                         it.versions.sortedWith(kotlin.Comparator<MavenArtifactInfo> { o1, o2 ->
                             compareVersion(o2.version, o1.version)
-                        })
-                    }.forEach {
-                val artifactInfo = ArtifactInfo(it.groupId, it.artifactId, "", "maven", "")
-//                if (artifactInfo.id == searchParam.id) {
-//                    artifactInfo.version = it.version
-//                    result.add(artifactInfo)
-//                } else {
-                result.add(artifactInfo)
-//                }
-            }
+                        }).map { ArtifactInfo(it.groupId, it.artifactId, "", "maven", "") }
+                    }
         }
 
         return result
