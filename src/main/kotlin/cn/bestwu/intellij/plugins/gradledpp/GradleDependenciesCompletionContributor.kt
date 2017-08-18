@@ -10,6 +10,8 @@ import com.intellij.notification.NotificationType
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns.psiElement
+import com.intellij.patterns.PlatformPatterns.psiFile
+import com.intellij.patterns.StandardPatterns.string
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
@@ -20,8 +22,6 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrMethodCallExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.util.GrNamedArgumentsOwner
 import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.literals.GrLiteralImpl
-import com.intellij.patterns.PlatformPatterns.psiFile
-import com.intellij.patterns.StandardPatterns.string
 
 class GradleDependenciesCompletionContributor : CompletionContributor() {
 
@@ -157,12 +157,8 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                 .inFile(psiFile().withName(string().endsWith('.' + GradleConstants.EXTENSION)))
 
         private fun findNamedArgumentValue(namedArgumentsOwner: GrNamedArgumentsOwner?, label: String): String? {
-            if (namedArgumentsOwner == null) return null
-            val namedArgument = namedArgumentsOwner.findNamedArgument(label) ?: return null
-
-            val expression = namedArgument.expression as? GrLiteralImpl ?: return null
-            val value = GrLiteralImpl::class.java.cast(expression).value
-            return value?.toString()
+            val namedArgument = namedArgumentsOwner?.findNamedArgument(label) ?: return null
+            return (namedArgument.expression as? GrLiteralImpl)?.value?.toString()
         }
 
         private val DEPENDENCIES_CALL_PATTERN = psiElement()
