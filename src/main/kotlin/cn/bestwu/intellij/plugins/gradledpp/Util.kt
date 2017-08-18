@@ -1,7 +1,6 @@
 package cn.bestwu.intellij.plugins.gradle.codeInsight.completion
 
 import com.intellij.codeInsight.completion.CompletionInitializationContext
-import com.intellij.codeInsight.completion.CompletionInitializationContext.IDENTIFIER_END_OFFSET
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
@@ -47,7 +46,14 @@ internal var INSERT_HANDLER: InsertHandler<LookupElement> = InsertHandler<Lookup
     } while (!stopChars.contains(text[idStart]))
     idStart++
 
-    context.document.replaceString(idStart, context.getOffset(IDENTIFIER_END_OFFSET), lookupString)
+    var idEnd = context.tailOffset
+    while (!stopChars.contains(text[idEnd])) {
+        idEnd++
+        if ('\n' == text[idEnd] || idEnd == text.length) {
+            return@InsertHandler
+        }
+    }
+    context.document.replaceString(idStart, idEnd, lookupString)
 }
 
 
