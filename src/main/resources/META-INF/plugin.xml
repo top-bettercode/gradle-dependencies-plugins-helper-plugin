@@ -1,26 +1,9 @@
 <idea-plugin version="2">
-  <id>9928</id>
+  <id>GradleDependenciesAndPluginsHelper</id>
   <name>Gradle Dependencies And Plugins Helper</name>
   <version>0.0.2</version>
   <vendor email="piterwu@outlook.com"
-    url="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin"><![CDATA[
-  piterwu<br/><br/>
-  <b>Donate:</b><br/>
-  <table>
-    <tr>
-      <td>alipay</td>
-      <td>weixinpay</td>
-    </tr>
-    <tr>
-      <td><img width="175" height="175"
-               src="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin/blob/master/donate/alipay.png?raw=true"/>
-      </td>
-      <td><img width="175" height="175"
-               src="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin/blob/master/donate/wechatpay.png?raw=true"/>
-      </td>
-    </tr>
-  </table>
-    ]]>
+    url="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin">piterwu
   </vendor>
   <depends>org.jetbrains.idea.maven</depends>
   <depends>org.jetbrains.plugins.gradle</depends>
@@ -38,7 +21,22 @@
         <li>Support wildcard query *,? etc.</li>
         <li>Support search by classname in mavenCentral search.</li>
         <li>Support Maven Index search option and Nexus search option.</li>
-      </ul>
+      </ul><br/><br/>
+        <b>Donate:</b><br/>
+  <table>
+    <tr>
+      <td>alipay</td>
+      <td>weixinpay</td>
+    </tr>
+    <tr>
+      <td><img width="175" height="175"
+               src="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin/blob/master/donate/alipay.png?raw=true"/>
+      </td>
+      <td><img width="175" height="175"
+               src="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin/blob/master/donate/wechatpay.png?raw=true"/>
+      </td>
+    </tr>
+  </table>
       ]]></description>
 
   <change-notes><![CDATA[

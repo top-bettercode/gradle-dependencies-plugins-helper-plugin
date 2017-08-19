@@ -8,7 +8,6 @@ plugins {
 group = "cn.bestwu"
 version = "0.0.2"
 intellij {
-    pluginName = "Gradle Dependencies And Plugins Helper"
     updateSinceUntilBuild = false
 //    version = "IC-2017.2.2"
     version = "145.258.11"
@@ -18,6 +17,7 @@ intellij {
 tasks.withType(PublishTask::class.java) {
     username(project.property("intellij.publish.username"))
     password(project.property("intellij.publish.password"))
+    channels("stable")
 }
 
 repositories {
