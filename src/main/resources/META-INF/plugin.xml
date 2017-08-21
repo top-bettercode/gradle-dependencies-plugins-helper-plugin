@@ -63,32 +63,32 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <postStartupActivity
-      implementation="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.GradleProjectStartupActivity"/>
+      implementation="cn.bestwu.gdph.GradleProjectStartupActivity"/>
     <externalSystemTaskNotificationListener
-      implementation="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.GradleMavenProjectImportNotificationListener"/>
+      implementation="cn.bestwu.gdph.GradleMavenProjectImportNotificationListener"/>
 
     <completion.contributor language="Groovy"
-      implementationClass="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.GradleDependenciesCompletionContributor"
+      implementationClass="cn.bestwu.gdph.GradleDependenciesCompletionContributor"
       order="first"/>
     <completion.contributor language="kotlin"
-      implementationClass="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.GradleKtsDependenciesCompletionContributor"
+      implementationClass="cn.bestwu.gdph.GradleKtsDependenciesCompletionContributor"
       order="first"/>
     <completion.contributor language="Groovy"
-      implementationClass="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.GradlePluginsCompletionContributor"
+      implementationClass="cn.bestwu.gdph.GradlePluginsCompletionContributor"
       order="first"/>
     <completion.contributor language="kotlin"
-      implementationClass="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.GradlePluginsCompletionContributor"
+      implementationClass="cn.bestwu.gdph.GradlePluginsCompletionContributor"
       order="first"/>
 
     <documentationProvider
-      implementation="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.OpenJcenterOrMavenCentralProvider"
+      implementation="cn.bestwu.gdph.OpenJcenterOrMavenCentralProvider"
       order="first"/>
 
     <projectConfigurable
-      instance="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.config.GDPHConfigurable"/>
+      instance="cn.bestwu.gdph.config.GDPHConfigurable"/>
     <projectService
-      serviceInterface="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.config.Settings"
-      serviceImplementation="cn.bestwu.intellij.plugins.gradle.codeInsight.completion.config.Settings"/>
+      serviceInterface="cn.bestwu.gdph.config.Settings"
+      serviceImplementation="cn.bestwu.gdph.config.Settings"/>
 
   </extensions>
 

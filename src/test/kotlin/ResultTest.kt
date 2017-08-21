@@ -1,6 +1,6 @@
 
-import cn.bestwu.intellij.plugins.gradle.codeInsight.completion.ArtifactInfo
-import cn.bestwu.intellij.plugins.gradle.codeInsight.completion.GradleArtifactSearcher
+import cn.bestwu.gdph.ArtifactInfo
+import cn.bestwu.gdph.GradleArtifactSearcher
 import groovy.json.JsonSlurper
 import org.jsoup.Jsoup
 import org.junit.Test

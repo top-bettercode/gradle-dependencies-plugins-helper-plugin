@@ -1,6 +1,6 @@
-package cn.bestwu.intellij.plugins.gradle.codeInsight.completion
+package cn.bestwu.gdph
 
-import cn.bestwu.intellij.plugins.gradle.codeInsight.completion.config.Settings
+import cn.bestwu.gdph.config.Settings
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import groovy.json.JsonSlurper

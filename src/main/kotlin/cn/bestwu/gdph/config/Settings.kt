@@ -1,4 +1,4 @@
-package cn.bestwu.intellij.plugins.gradle.codeInsight.completion.config
+package cn.bestwu.gdph.config
 
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager

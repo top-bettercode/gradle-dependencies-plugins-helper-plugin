@@ -1,4 +1,4 @@
-import cn.bestwu.intellij.plugins.gradle.codeInsight.completion.ArtifactInfo
+import cn.bestwu.gdph.ArtifactInfo
 import org.junit.Test
 
 /**

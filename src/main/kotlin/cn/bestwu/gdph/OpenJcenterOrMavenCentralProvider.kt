@@ -1,4 +1,4 @@
-package cn.bestwu.intellij.plugins.gradle.codeInsight.completion
+package cn.bestwu.gdph
 
 import com.intellij.lang.documentation.DocumentationProvider
 import com.intellij.psi.PsiElement

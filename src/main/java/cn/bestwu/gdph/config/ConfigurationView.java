@@ -1,4 +1,4 @@
-package cn.bestwu.intellij.plugins.gradle.codeInsight.completion.config;
+package cn.bestwu.gdph.config;
 
 import java.util.HashSet;
 import java.util.Set;

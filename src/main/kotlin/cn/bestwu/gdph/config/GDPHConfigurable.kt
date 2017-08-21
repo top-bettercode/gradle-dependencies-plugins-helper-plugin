@@ -1,6 +1,6 @@
-package cn.bestwu.intellij.plugins.gradle.codeInsight.completion.config
+package cn.bestwu.gdph.config
 
-import cn.bestwu.intellij.plugins.gradle.codeInsight.completion.ImportMavenRepositoriesTask
+import cn.bestwu.gdph.ImportMavenRepositoriesTask
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
