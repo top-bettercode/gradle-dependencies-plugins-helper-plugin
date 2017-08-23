@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>GradleDependenciesAndPluginsHelper</id>
   <name>Gradle Dependencies And Plugins Helper</name>
-  <version>0.0.2</version>
+  <version>0.0.3</version>
   <vendor email="piterwu@outlook.com"
     url="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin">piterwu
   </vendor>
@@ -22,7 +22,7 @@
         <li>Support search by classname in mavenCentral search.</li>
         <li>Support Maven Index search option and Nexus search option.</li>
       </ul><br/><br/>
-        <b>Donate:</b><br/>
+        <b>Donate</b>( <a href="https://blockchain.info/address/1CWkfYDshK4LN3JWrZbi5V8gzo3iQNJj5">BTC</a> ) <br/>
   <table>
     <tr>
       <td>alipay</td>
