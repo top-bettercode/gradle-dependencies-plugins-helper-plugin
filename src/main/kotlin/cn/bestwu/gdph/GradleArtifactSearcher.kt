@@ -474,7 +474,7 @@ class GradleArtifactSearcher {
                 }
             }
         }
-        if (findById.size > 1 && findById.any { "spring" == it["owner"] }) {
+        if (findById.size == 2 && findById.any { "spring" == it["owner"] } && findById.any { "bintray" == it["owner"] }) {
             cresult = cresult.sortedWith(kotlin.Comparator<ArtifactInfo> { o1, o2 ->
                 compareVersion(o2.version, o1.version)
             }).toCollection(linkedSetOf())
