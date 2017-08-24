@@ -1,5 +1,6 @@
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.intellij.tasks.PublishTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
@@ -29,5 +30,9 @@ dependencies {
     compile("org.jsoup:jsoup:1.10.3")
 
     testCompile(kotlin("test-junit"))
+}
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+    apiVersion = "1.1"
 }
 

@@ -248,7 +248,7 @@ class GradleArtifactSearcher {
     }
 
 
-    fun search(searchParam: SearchParam, project: Project): LinkedHashSet<ArtifactInfo> {
+    fun search(searchParam: SearchParam, project: Project): Set<ArtifactInfo> {
 //        show(project, searchParam.toString())
         var result: LinkedHashSet<ArtifactInfo>
         if (searchParam.advancedSearch.isNotEmpty()) {
