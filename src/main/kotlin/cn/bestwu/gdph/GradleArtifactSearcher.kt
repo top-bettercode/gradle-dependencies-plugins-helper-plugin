@@ -7,7 +7,6 @@ import groovy.json.JsonSlurper
 import org.jetbrains.idea.maven.indices.MavenArtifactSearcher
 import org.jetbrains.idea.maven.indices.MavenClassSearcher
 import org.jetbrains.idea.maven.indices.MavenProjectIndicesManager
-import org.jetbrains.idea.maven.model.MavenArtifactInfo
 import org.jetbrains.plugins.gradle.integrations.maven.MavenRepositoriesHolder
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -387,12 +386,9 @@ class GradleArtifactSearcher {
         } else {
             val searcher = MavenArtifactSearcher()
             val searchResults = searcher.search(project, searchParam.id, 1000)
-            searchResults
-                    .flatMapTo(result) {
-                        it.versions.sortedWith(kotlin.Comparator<MavenArtifactInfo> { o1, o2 ->
-                            compareVersion(o2.version, o1.version)
-                        }).map { ArtifactInfo(it.groupId, it.artifactId, "", "maven", "") }
-                    }
+            searchResults.flatMapTo(result) {
+                it.versions.map { ArtifactInfo(it.groupId, it.artifactId, "", "maven", "") }
+            }
         }
 
         return result
