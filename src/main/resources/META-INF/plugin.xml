@@ -21,6 +21,7 @@
         <li>Support wildcard query *,? etc.</li>
         <li>Support search by classname in mavenCentral search.</li>
         <li>Support Maven Index search option and Nexus search option.</li>
+        <li>Support kotlin KtCallExpression Smart Type Completion.</li>
       </ul><br/><br/>
         <b>Donate</b>( <a href="https://blockchain.info/address/1CWkfYDshK4LN3JWrZbi5V8gzo3iQNJj5">BTC</a> ) <br/>
   <table>
@@ -41,6 +42,8 @@
 
   <change-notes><![CDATA[
   <ul>
+   <b>0.0.3</b><br/><br/>
+   <li>Support kotlin KtCallExpression Smart Type Completion.</li><br/><br/>
    <b>0.0.2</b><br/><br/>
    <li>Add Maven Index search option.</li>
    <li>Add Nexus search option.</li>
@@ -48,8 +51,8 @@
    use "c:"(classname) or "fc:"( fully-qualified classname ) in dependencies script block<br/>
    example: <br/>
    &nbsp; &nbsp; compile("fc:org.junit.Test")<br/>
-   &nbsp; &nbsp; compile("c:Junit")<br/>
-   <br/><b>0.0.1</b><br/><br/>
+   &nbsp; &nbsp; compile("c:Junit")<br/><br/>
+   <b>0.0.1</b><br/><br/>
    <li>Support *.gradle,*.gradle.kts.</li>
    <li>Use jcenter API for Gradle queries.</li>
    <li>Use Gradle Plugins Search for Gradle Plugins queries.</li>

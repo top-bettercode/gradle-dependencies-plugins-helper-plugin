@@ -4,7 +4,7 @@ This is an IntelliJ IDEA plugin for searching dependencies/plugins from [JCentra
 
 Inspired by [https://github.com/siosio/GradleDependenciesHelperPlugin](https://github.com/siosio/GradleDependenciesHelperPlugin)
 
-User Smart Type Completion in dependencies/plugins script block
+Use Smart Type Completion in dependencies/plugins script block
 
 #### Features
 
