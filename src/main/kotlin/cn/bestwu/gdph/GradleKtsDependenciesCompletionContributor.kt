@@ -72,7 +72,7 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
 
     companion object {
         private val DEPENDENCIES_SCRIPT_BLOCK = "dependencies"
-        private val kotlinPrefix = "org.jetbrains.kotlin:kotlin-"
+        val kotlinPrefix = "org.jetbrains.kotlin:kotlin-"
         private val artifactSearcher = GradleArtifactSearcher()
 
         private val DEPENDENCIES_CALL_PATTERN = PlatformPatterns.psiElement()

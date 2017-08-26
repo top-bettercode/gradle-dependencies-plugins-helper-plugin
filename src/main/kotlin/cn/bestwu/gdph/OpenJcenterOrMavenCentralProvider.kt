@@ -63,7 +63,10 @@ class OpenJcenterOrMavenCentralProvider : DocumentationProvider {
         do {
             e = e.parent ?: return null
         } while ("dependencies" != e.firstChild.text && "imports" != e.firstChild.text)
-        val dependency = trim(element.text)
+        var dependency = trim(element.text)
+        if (element.parent.text.startsWith("kotlin") || element.parent.parent.parent.text.startsWith("kotlin")) {
+            dependency = "${GradleKtsDependenciesCompletionContributor.kotlinPrefix}$dependency"
+        }
         val mavenUrl = split(dependency).let {
             if (it.size >= 2) {
                 if ("c" == it[0]) {
