@@ -45,6 +45,9 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                 if (searchResult.isEmpty()) {
                     show(params.position.project, searchParam.failContent, "find dependencies fail", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
                 }
+                if (isKotlin) {
+                    searchResult.forEach { it.version = "" }
+                }
                 var completionResultSet = result.withRelevanceSorter(
                         CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("gradleDependencyWeigher") {
                             override fun weigh(element: LookupElement): Comparable<*> {
