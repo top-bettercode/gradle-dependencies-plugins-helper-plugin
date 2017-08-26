@@ -10,8 +10,8 @@ group = "cn.bestwu"
 version = "0.0.3"
 intellij {
     updateSinceUntilBuild = false
-//    version = "IC-2017.2.2"
-    version = "145.258.11"
+    version = "IC-2017.2.2"
+//    version = "145.258.11"
     setPlugins("Groovy", "gradle", "Kotlin", "maven")
 }
 
