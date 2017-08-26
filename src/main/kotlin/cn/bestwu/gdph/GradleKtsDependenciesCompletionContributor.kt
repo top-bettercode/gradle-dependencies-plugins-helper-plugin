@@ -48,7 +48,7 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                 var completionResultSet = result.withRelevanceSorter(
                         CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("gradleDependencyWeigher") {
                             override fun weigh(element: LookupElement): Comparable<*> {
-                                return VersionComparator(searchResult.indexOfFirst { it.gav == element.lookupString })
+                                return VersionComparator(searchResult.indexOfFirst { it.gav == (if (isKotlin) kotlinPrefix + element.lookupString else element.lookupString) })
                             }
                         })
                 )
