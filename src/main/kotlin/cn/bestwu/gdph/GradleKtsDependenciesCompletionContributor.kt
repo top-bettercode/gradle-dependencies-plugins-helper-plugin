@@ -41,12 +41,13 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                 }
                 if (searchParam.id.length < 2)
                     return
-                val searchResult = artifactSearcher.search(searchParam, params.position.project)
+                var searchResult = artifactSearcher.search(searchParam, params.position.project)
                 if (searchResult.isEmpty()) {
                     show(params.position.project, searchParam.failContent, "find dependencies fail", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
                 }
                 if (isKotlin) {
                     searchResult.forEach { it.version = "" }
+                    searchResult = searchResult.filter { it.gav.startsWith(kotlinPrefix) }.toSet()
                 }
                 var completionResultSet = result.withRelevanceSorter(
                         CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("gradleDependencyWeigher") {
