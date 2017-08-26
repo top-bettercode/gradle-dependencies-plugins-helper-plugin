@@ -17,9 +17,12 @@ import org.jetbrains.kotlin.psi.KtParenthesizedExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals.GrLiteral
 import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.path.GrMethodCallExpressionImpl
 
+
 class GradlePluginsCompletionContributor : CompletionContributor() {
     companion object {
         val regex = "^id *\\(? *[\"'](.*)[\"'] *\\)? *version.*$".toRegex()
+        val kotlinRegex = "^kotlin\\(\"(.*?)\".*$".toRegex()
+        val kotlinPrefix = "org.jetbrains.kotlin."
     }
 
     init {
@@ -52,14 +55,35 @@ class GradlePluginsCompletionContributor : CompletionContributor() {
                 result: CompletionResultSet) {
             var parent = params.position.parent?.parent?.parent
             result.stopHere()
-            val searchText = CompletionUtil.findReferenceOrAlphanumericPrefix(params)
             if (parent is KtParenthesizedExpression) {
                 parent = parent.parent
             }
-            val searchResult: List<String>
+            var isVersion = parent != null && parent.text.contains("version")
+            var searchText = if (isVersion) {
+                val text = parent!!.text
+                if (text.startsWith("kotlin")) {
+                    text.replace(kotlinRegex, "$kotlinPrefix$1")
+                } else
+                    text.replace(regex, "$1")
+            } else
+                CompletionUtil.findReferenceOrAlphanumericPrefix(params)
+            val isKotlin: Boolean
+            if (parent?.parent?.parent is KtCallExpression && parent.parent.parent.firstChild.text == "kotlin") {
+                isKotlin = true
+                isVersion = isVersion || "(" != parent.prevSibling.text
+                if (isVersion) {
+                    searchText = parent.parent.parent.text.replace(kotlinRegex, "$kotlinPrefix$1")
+                } else {
+                    searchText = "$kotlinPrefix$searchText"
+                }
+            } else {
+                isKotlin = false
+            }
+
+            var searchResult: List<String>
             var completionResultSet = result
-            if (parent != null && parent.text.contains("version")) {
-                searchResult = pluginsSearcher.searchPluginVersions(parent.text.replace(regex, "$1"))
+            if (isVersion) {
+                searchResult = pluginsSearcher.searchPluginVersions(searchText)
                 completionResultSet = result.withRelevanceSorter(
                         CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("gradleDependencyWeigher") {
                             override fun weigh(element: LookupElement): Comparable<*> {
@@ -67,11 +91,21 @@ class GradlePluginsCompletionContributor : CompletionContributor() {
                             }
                         })
                 )
-            } else
+            } else {
                 searchResult = pluginsSearcher.searchPlugins(searchText)
+            }
+            if (isKotlin && !isVersion) {
+                searchResult = searchResult.filter { it.startsWith(kotlinPrefix) }
+            }
 
             searchResult.forEach {
-                completionResultSet.addElement(LookupElementBuilder.create(it).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(INSERT_HANDLER))
+                val lookupElementBuilder =
+                        if (isKotlin && !isVersion) {
+                            LookupElementBuilder.create(it.substringAfter(kotlinPrefix)).withPresentableText(it).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(INSERT_HANDLER)
+                        } else {
+                            LookupElementBuilder.create(it).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(INSERT_HANDLER)
+                        }
+                completionResultSet.addElement(lookupElementBuilder)
             }
         }
     }

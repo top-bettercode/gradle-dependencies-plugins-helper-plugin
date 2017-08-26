@@ -1,6 +1,7 @@
 
 import cn.bestwu.gdph.ArtifactInfo
 import cn.bestwu.gdph.GradleArtifactSearcher
+import cn.bestwu.gdph.GradlePluginsCompletionContributor
 import groovy.json.JsonSlurper
 import org.jsoup.Jsoup
 import org.junit.Test
@@ -126,6 +127,13 @@ class ParseResultTest {
         println(Locale.getDefault()== Locale.CHINA)
         println(Locale.getDefault()== Locale.CHINESE)
         println(Locale.getDefault()== Locale.SIMPLIFIED_CHINESE)
+    }
+
+    @Test
+    fun testkotlinRegex() {
+        println("kotlin(\"jvm\", \"1.1.4\")".replace(GradlePluginsCompletionContributor.kotlinRegex,"${GradlePluginsCompletionContributor.kotlinPrefix}$1"))
+        println("kotlin(\"jvm\") version (\"IntellijIdeaRulezzz\$\")".replace(GradlePluginsCompletionContributor.kotlinRegex,"${GradlePluginsCompletionContributor.kotlinPrefix}$1"))
+        println("kotlin(\"jvm\") version \"IntellijIdeaRulezzz\$\"".replace(GradlePluginsCompletionContributor.kotlinRegex,"${GradlePluginsCompletionContributor.kotlinPrefix}$1"))
     }
 
     //     find e
