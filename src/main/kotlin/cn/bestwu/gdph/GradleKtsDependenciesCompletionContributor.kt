@@ -29,11 +29,15 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                 val text = trim(params.originalPosition?.text ?: "")
                 val prefix = params.position.text.substringBefore("IntellijIdeaRulezzz")
                 val searchText = if (!text.startsWith("c:", true) && !text.startsWith("fc:", true)) prefix else text
-                val searchParam: SearchParam
-                if (text.contains(":") && !searchText.contains(":")) {
-                    searchParam = SearchParam(searchText, "", false, false)
+                var isKotlin = false
+                val searchParam = if (text.contains(":") && !searchText.contains(":")) {
+                    SearchParam(searchText, "", false, false)
                 } else {
-                    searchParam = SearchParam(searchText)
+                    if (params.position.parent.parent.parent.parent.parent.text.startsWith("kotlin")) {
+                        isKotlin = true
+                        SearchParam("$kotlinPrefix$searchText")
+                    } else
+                        SearchParam(searchText)
                 }
                 if (searchParam.id.length < 2)
                     return
@@ -53,7 +57,12 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                     completionResultSet = completionResultSet.withPrefixMatcher(PrefixMatcher.ALWAYS_TRUE)
                 }
                 searchResult.forEach {
-                    completionResultSet.addElement(LookupElementBuilder.create("${it.gav}${if (it.artifactId.isEmpty()) ":" else ""}").withPresentableText(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(INSERT_HANDLER))
+                    val lookupElementBuilder =
+                            if (isKotlin)
+                                LookupElementBuilder.create(it.gav.substringAfter(kotlinPrefix)).withPresentableText(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(INSERT_HANDLER)
+                            else
+                                LookupElementBuilder.create("${it.gav}${if (it.artifactId.isEmpty()) ":" else ""}").withPresentableText(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(INSERT_HANDLER)
+                    completionResultSet.addElement(lookupElementBuilder)
                 }
             }
         })
@@ -63,6 +72,7 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
 
     companion object {
         private val DEPENDENCIES_SCRIPT_BLOCK = "dependencies"
+        private val kotlinPrefix = "org.jetbrains.kotlin:kotlin-"
         private val artifactSearcher = GradleArtifactSearcher()
 
         private val DEPENDENCIES_CALL_PATTERN = PlatformPatterns.psiElement()
