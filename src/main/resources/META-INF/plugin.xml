@@ -23,41 +23,19 @@
         <li>Support Maven Index search option and Nexus search option.</li>
         <li>Support kotlin KtCallExpression Smart Type Completion.</li>
       </ul><br/><br/>
-        <b>Donate</b>( <a href="https://blockchain.info/address/1CWkfYDshK4LN3JWrZbi5V8gzo3iQNJj5">BTC</a> ) <br/>
-  <table>
-    <tr>
-      <td>alipay</td>
-      <td>weixinpay</td><br/>
-    </tr>
-    <tr>
-      <td><img width="175" height="175"
-               src="http://bestwu.cn/images/donate/alipay.png"/>
-      </td>
-      <td><img width="175" height="175"
-               src="http://bestwu.cn/images/donate/wechatpay.png"/>
-      </td>
-    </tr>
-  </table>
+        <b>Donate</b>( <a href="https://blockchain.info/address/1CWkfYDshK4LN3JWrZbi5V8gzo3iQNJj5">BTC</a> ) <br/><br/>
+      <div width="400">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alipay
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;weixinpay<br/>
+        <img width="175" height="175"  src="http://bestwu.cn/images/donate/alipay.png"/>
+        <img width="175" height="175"  src="http://bestwu.cn/images/donate/wechatpay.png"/>
+      </div>
       ]]></description>
 
   <change-notes><![CDATA[
   <ul>
-   <b>0.0.3</b><br/><br/>
    <li>Support kotlin KtCallExpression Smart Type Completion.</li><br/><br/>
-   <b>0.0.2</b><br/><br/>
-   <li>Add Maven Index search option.</li>
-   <li>Add Nexus search option.</li>
-   <li>Support search by classname in mavenCentral search.<br/>
-   use "c:"(classname) or "fc:"( fully-qualified classname ) in dependencies script block<br/>
-   example: <br/>
-   &nbsp; &nbsp; compile("fc:org.junit.Test")<br/>
-   &nbsp; &nbsp; compile("c:Junit")<br/><br/>
-   <b>0.0.1</b><br/><br/>
-   <li>Support *.gradle,*.gradle.kts.</li>
-   <li>Use jcenter API for Gradle queries.</li>
-   <li>Use Gradle Plugins Search for Gradle Plugins queries.</li>
-   <li>Support wildcard query *,? etc.</li>
-    
   </ul>
       ]]>
   </change-notes>
