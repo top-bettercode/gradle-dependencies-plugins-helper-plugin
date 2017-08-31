@@ -14,3 +14,4 @@ Use Smart Type Completion in dependencies/plugins script block
 * Support wildcard query *,? etc.
 * Support search by classname in mavenCentral search.
 * Support Maven Index search option and Nexus search option.
+* Support kotlin KtCallExpression Smart Type Completion.
