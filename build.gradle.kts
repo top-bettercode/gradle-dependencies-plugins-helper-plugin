@@ -3,14 +3,14 @@ import org.jetbrains.intellij.tasks.PublishTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm")
-    id("org.jetbrains.intellij") version "0.2.16"
+    kotlin("jvm") version "1.1.4-3"
+    id("org.jetbrains.intellij") version "0.2.17"
 }
 group = "cn.bestwu"
 version = "0.0.3"
 intellij {
     updateSinceUntilBuild = false
-//    version = "IC-2017.2.2"
+//    version = "IC-2017.2.3"
     version = "145.258.11"
     setPlugins("Groovy", "gradle", "Kotlin", "maven")
 }
