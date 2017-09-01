@@ -18,7 +18,7 @@
         <li>Support *.gradle,*.gradle.kts.</li>
         <li>Use jcenter API for Gradle queries.</li>
         <li>Use Gradle Plugins Search for Gradle Plugins queries.</li>
-        <li>Support wildcard query *,? etc.</li>
+        <li>Support wildcard query *.</li>
         <li>Support search by classname in mavenCentral search.</li>
         <li>Support Maven Index search option and Nexus search option.</li>
         <li>Support kotlin KtCallExpression Smart Type Completion.</li>
