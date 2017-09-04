@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
 
 
-class GDPHConfigurable(val project: Project) : Configurable {
+class GDPHConfigurable(private val project: Project) : Configurable {
 
     private var view: ConfigurationView? = null
 
@@ -40,13 +40,13 @@ class GDPHConfigurable(val project: Project) : Configurable {
     }
 
     override fun isModified(): Boolean {
-        val settings = Settings.getInstance(project)
+        val settings = Settings.getInstance()
         return settings.useNexus != view!!.useNexus || settings.useMavenIndex != view!!.useMavenIndex || settings.nexusSearchUrl != view!!.nexusSearchUrl || settings.remoteRepositories != view!!.remoteRepositories
     }
 
     @Throws(ConfigurationException::class)
     override fun apply() {
-        val settings = Settings.getInstance(project)
+        val settings = Settings.getInstance()
         settings.useNexus = view!!.useNexus
         settings.useMavenIndex = view!!.useMavenIndex
         settings.nexusSearchUrl = view!!.nexusSearchUrl
@@ -55,7 +55,7 @@ class GDPHConfigurable(val project: Project) : Configurable {
     }
 
     override fun reset() {
-        val settings = Settings.getInstance(project)
+        val settings = Settings.getInstance()
         view!!.useNexus = settings.useNexus
         view!!.useMavenIndex = settings.useMavenIndex
         view!!.nexusSearchUrl = settings.nexusSearchUrl

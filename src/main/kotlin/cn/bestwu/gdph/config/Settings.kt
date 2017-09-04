@@ -3,7 +3,6 @@ package cn.bestwu.gdph.config
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.Storage
-import com.intellij.openapi.project.Project
 import java.util.*
 
 
@@ -11,7 +10,7 @@ import java.util.*
         name = "gdphConfig",
         storages = arrayOf(Storage("gdphConfig.xml"))
 )
-class Settings(var first: Boolean = true, var originRemoteRepositories: Set<String> = mutableSetOf(), var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useMavenIndex: Boolean = Settings.useMavenIndex, var remoteRepositories: MutableSet<String> = Settings.remoteRepositories) : PersistentStateComponent<Settings> {
+class Settings(var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useMavenIndex: Boolean = Settings.useMavenIndex, var remoteRepositories: MutableSet<String> = Settings.remoteRepositories) : PersistentStateComponent<Settings> {
     override fun loadState(state: Settings?) {
         this.useNexus = state?.useNexus ?: Settings.useNexus
         this.useMavenIndex = state?.useMavenIndex ?: Settings.useMavenIndex
@@ -30,8 +29,8 @@ class Settings(var first: Boolean = true, var originRemoteRepositories: Set<Stri
         private val mavenCentralRemoteRepository = "https://repo1.maven.org/maven2/"
         val remoteRepositories = mutableSetOf(mavenCentralRemoteRepository)
 
-        fun getInstance(project: Project): Settings {
-            return ServiceManager.getService(project, Settings::class.java)
+        fun getInstance(): Settings {
+            return ServiceManager.getService(Settings::class.java)
         }
     }
 

@@ -250,15 +250,16 @@ class GradleArtifactSearcher {
     fun search(searchParam: SearchParam, project: Project): Set<ArtifactInfo> {
 //        show(project, searchParam.toString())
         var result: LinkedHashSet<ArtifactInfo>
+        val settings = Settings.getInstance()
         if (searchParam.advancedSearch.isNotEmpty()) {
-            if (Settings.getInstance(project).useMavenIndex) {
+            if (settings.useMavenIndex) {
                 result = search(keyIndex, searchParam, project, this::searchByClassNameInMavenIndex)
-                if (result.isEmpty() && Settings.getInstance(project).useNexus)
+                if (result.isEmpty() && settings.useNexus)
                     result = search(keyNexus, searchParam, project, this::searchByClassNameInNexus)
                 if (result.isEmpty())
                     result = search(keyMaven, searchParam, project, this::searchByClassNameInMavenCentral)
             } else {
-                if (Settings.getInstance(project).useNexus) {
+                if (settings.useNexus) {
                     result = search(keyNexus, searchParam, project, this::searchByClassNameInNexus)
                     if (result.isEmpty())
                         result = search(keyMaven, searchParam, project, this::searchByClassNameInMavenCentral)
@@ -267,14 +268,14 @@ class GradleArtifactSearcher {
                 }
             }
         } else {
-            if (Settings.getInstance(project).useMavenIndex) {
+            if (settings.useMavenIndex) {
                 result = search(keyIndex, searchParam, project, this::searchInMavenIndexes)
-                if (result.isEmpty() && Settings.getInstance(project).useNexus)
+                if (result.isEmpty() && settings.useNexus)
                     result = search(keyNexus, searchParam, project, this::searchInNexus)
                 if (result.isEmpty())
                     result = search(keyBintray, searchParam, project, this::searchInJcenter)
             } else {
-                if (Settings.getInstance(project).useNexus) {
+                if (settings.useNexus) {
                     result = search(keyNexus, searchParam, project, this::searchInNexus)
                     if (result.isEmpty())
                         result = search(keyBintray, searchParam, project, this::searchInJcenter)
@@ -323,7 +324,7 @@ class GradleArtifactSearcher {
 
     @Suppress("UNCHECKED_CAST")
     private fun searchByClassNameInNexus(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
-        val url = "${Settings.getInstance(project).nexusSearchUrl}/service/local/lucene/search?repositoryId=central&cn=${searchParam.id}"
+        val url = "${Settings.getInstance().nexusSearchUrl}/service/local/lucene/search?repositoryId=central&cn=${searchParam.id}"
         val connection = getConnection(url)
         connection.setRequestProperty("Accept", "application/json")
         val stream = getResponse(connection, project) ?: return result
@@ -396,7 +397,7 @@ class GradleArtifactSearcher {
 
     @Suppress("UNCHECKED_CAST")
     private fun searchInNexus(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
-        val url = "${Settings.getInstance(project).nexusSearchUrl}/service/local/lucene/search?repositoryId=central&${searchParam.nq}"
+        val url = "${Settings.getInstance().nexusSearchUrl}/service/local/lucene/search?repositoryId=central&${searchParam.nq}"
         val connection = getConnection(url)
         connection.setRequestProperty("Accept", "application/json")
         val stream = getResponse(connection, project) ?: return result

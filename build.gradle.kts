@@ -7,7 +7,7 @@ plugins {
     id("org.jetbrains.intellij") version "0.2.17"
 }
 group = "cn.bestwu"
-version = "0.0.3"
+version = "0.0.4"
 intellij {
     updateSinceUntilBuild = false
 //    version = "IC-2017.2.3"

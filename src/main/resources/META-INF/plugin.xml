@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>GradleDependenciesAndPluginsHelper</id>
   <name>Gradle Dependencies And Plugins Helper</name>
-  <version>0.0.3</version>
+  <version>0.0.4</version>
   <vendor email="piterwu@outlook.com"
     url="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin">piterwu
   </vendor>
@@ -35,7 +35,7 @@
 
   <change-notes><![CDATA[
   <ul>
-   <li>Support kotlin KtCallExpression Smart Type Completion.</li><br/><br/>
+   <li>Setting storage use applicationService.</li><br/><br/>
   </ul>
       ]]>
   </change-notes>
@@ -67,7 +67,7 @@
 
     <projectConfigurable
       instance="cn.bestwu.gdph.config.GDPHConfigurable"/>
-    <projectService
+    <applicationService
       serviceInterface="cn.bestwu.gdph.config.Settings"
       serviceImplementation="cn.bestwu.gdph.config.Settings"/>
 

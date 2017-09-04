@@ -15,6 +15,7 @@ import com.intellij.openapi.startup.StartupActivity
 import com.intellij.util.Consumer
 import org.jetbrains.idea.maven.indices.MavenIndex
 import org.jetbrains.idea.maven.indices.MavenProjectIndicesManager
+import org.jetbrains.idea.maven.model.MavenRemoteRepository
 import org.jetbrains.plugins.gradle.integrations.maven.MavenRepositoriesHolder
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.util.stream.Collectors
@@ -24,8 +25,6 @@ import java.util.stream.Collectors
  * @author Peter Wu
  * @since
  */
-
-
 class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
     private var myProject: Project = project
     private var myDumbService: DumbService
@@ -36,20 +35,15 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
             if (project.isDisposed) return
             if (ApplicationManager.getApplication().isUnitTestMode) return
             val repositoriesHolder = MavenRepositoriesHolder.getInstance(project)
-            val settings = Settings.getInstance(project)
-            val remoteRepositories: MutableSet<String>
+            val settings = Settings.getInstance()
+            val remoteRepositories: MutableSet<MavenRemoteRepository>
             if (settings.useMavenIndex) {
-                remoteRepositories = settings.remoteRepositories
-                if (settings.first) {
-                    val mutableSet = repositoriesHolder.remoteRepositories.map { it.url }.toMutableSet()
-                    settings.originRemoteRepositories = mutableSet
-                    settings.first = false
-                    remoteRepositories.addAll(mutableSet)
-                }
+                remoteRepositories = settings.remoteRepositories.map { it.toMavenRemoteRepository() }.toMutableSet()
+                remoteRepositories.addAll(repositoriesHolder.remoteRepositories)
             } else {
-                remoteRepositories = settings.originRemoteRepositories.toMutableSet()
+                remoteRepositories = repositoriesHolder.remoteRepositories
             }
-            repositoriesHolder.update(remoteRepositories.map { it.toMavenRemoteRepository() }.toMutableSet())
+            repositoriesHolder.update(remoteRepositories)
             MavenProjectIndicesManager.getInstance(project).scheduleUpdateIndicesList(Consumer<List<MavenIndex>> { indexes ->
                 if (project.isDisposed) return@Consumer
 
@@ -63,7 +57,7 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
                         .collect(Collectors.toList<String>())
                 try {
                     repositoriesHolder::class.java.getMethod("updateNotIndexedUrls").invoke(repositoriesHolder, repositoriesWithEmptyIndex)
-                } catch(e: NoSuchMethodException) {
+                } catch (e: NoSuchMethodException) {
                 }
             })
 
@@ -94,7 +88,7 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
 class GradleProjectStartupActivity : StartupActivity {
 
     override fun runActivity(project: Project) {
-        if (ApplicationManager.getApplication().isUnitTestMode || !Settings.getInstance(project).useMavenIndex) return
+        if (ApplicationManager.getApplication().isUnitTestMode || !Settings.getInstance().useMavenIndex) return
         ProgressIndicatorUtils.scheduleWithWriteActionPriority(ImportMavenRepositoriesTask(project))
     }
 }
@@ -104,7 +98,7 @@ class GradleMavenProjectImportNotificationListener : ExternalSystemTaskNotificat
     override fun onSuccess(id: ExternalSystemTaskId) {
         if (GradleConstants.SYSTEM_ID.id == id.projectSystemId.id && id.type == ExternalSystemTaskType.RESOLVE_PROJECT) {
             val project = id.findProject() ?: return
-            if (Settings.getInstance(project).useMavenIndex)
+            if (Settings.getInstance().useMavenIndex)
                 ProgressIndicatorUtils.scheduleWithWriteActionPriority(ImportMavenRepositoriesTask(project))
         }
     }
