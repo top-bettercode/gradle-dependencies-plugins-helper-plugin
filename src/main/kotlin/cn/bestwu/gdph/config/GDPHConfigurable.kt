@@ -47,11 +47,13 @@ class GDPHConfigurable(private val project: Project) : Configurable {
     @Throws(ConfigurationException::class)
     override fun apply() {
         val settings = Settings.getInstance()
+        val changeMavenIndex = settings.useMavenIndex != view!!.useMavenIndex || settings.remoteRepositories != view!!.remoteRepositories
         settings.useNexus = view!!.useNexus
         settings.useMavenIndex = view!!.useMavenIndex
         settings.nexusSearchUrl = view!!.nexusSearchUrl
         settings.remoteRepositories = view!!.remoteRepositories
-        ImportMavenRepositoriesTask.performTask(project)
+        if (changeMavenIndex)
+            ImportMavenRepositoriesTask.performTask(project)
     }
 
     override fun reset() {
