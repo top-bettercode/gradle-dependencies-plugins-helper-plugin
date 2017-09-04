@@ -334,6 +334,11 @@ class GradleArtifactSearcher {
     }
 
     private fun searchByClassNameInMavenIndex(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
+        val repositoriesHolder = MavenRepositoriesHolder.getInstance(project)
+        try {
+            repositoriesHolder::class.java.getMethod("checkNotIndexedRepositories").invoke(repositoriesHolder)
+        } catch (e: NoSuchMethodException) {
+        }
         val searcher = MavenClassSearcher()
         val searchResults = searcher.search(project, searchParam.id, 1000)
         searchResults.filter { it.versions.isNotEmpty() }
