@@ -7,9 +7,10 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.notification.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
+import org.jetbrains.plugins.groovy.lang.psi.util.GrStringUtil.removeQuotes
 
 internal fun split(dependency: String) = Regex(":").split(dependency)
-internal fun trim(dependency: String) = dependency.trim('"', '\'', '(', ')')
+internal fun trim(dependency: String) = removeQuotes(dependency).trim('(', ')')
 
 private val group = NotificationGroup(
         "GradleDependencies",

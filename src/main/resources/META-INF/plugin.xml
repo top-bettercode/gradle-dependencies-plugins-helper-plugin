@@ -38,7 +38,8 @@
   <change-notes><![CDATA[
   <ul>
    <li>Setting storage use applicationService.</li><br/><br/>
-   <li>Support Android Studio</li><br/><br/>
+   <li>Support Android Studio.</li><br/><br/>
+   <li>Add specified repository to repositories.</li><br/><br/>
   </ul>
       ]]>
   </change-notes>
@@ -63,6 +64,10 @@
       serviceInterface="cn.bestwu.gdph.config.Settings"
       serviceImplementation="cn.bestwu.gdph.config.Settings"/>
 
+    <intentionAction>
+      <category>Gradle</category>
+      <className>cn.bestwu.gdph.AddMethodNotationRepositoriesIntention</className>
+    </intentionAction>
   </extensions>
 
 </idea-plugin>

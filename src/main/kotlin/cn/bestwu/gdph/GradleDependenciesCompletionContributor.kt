@@ -11,6 +11,7 @@ import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.PlatformPatterns.psiFile
+import com.intellij.patterns.PsiElementPattern
 import com.intellij.patterns.StandardPatterns.string
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
@@ -149,7 +150,7 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
         private val NAME_LABEL = "name"
         private val VERSION_LABEL = "version"
         private val DEPENDENCIES_SCRIPT_BLOCK = "dependencies"
-        private val artifactSearcher = GradleArtifactSearcher()
+        val artifactSearcher = GradleArtifactSearcher()
         private val GRADLE_FILE_PATTERN: ElementPattern<PsiElement> = psiElement()
                 .inFile(psiFile().withName(string().endsWith('.' + GradleConstants.EXTENSION)))
 
@@ -179,7 +180,7 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                 .withSuperParent(2, psiElement(GrNamedArgument::class.java))
                 .and(DEPENDENCIES_CALL_PATTERN)
 
-        private val IN_METHOD_DEPENDENCY_NOTATION = psiElement()
+        val IN_METHOD_DEPENDENCY_NOTATION: PsiElementPattern.Capture<PsiElement> = psiElement()
                 .and(GRADLE_FILE_PATTERN)
                 .and(DEPENDENCIES_CALL_PATTERN)
     }

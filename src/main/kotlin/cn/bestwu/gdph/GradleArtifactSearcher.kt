@@ -26,6 +26,8 @@ class ArtifactInfo(groupId: String, artifactId: String, version: String = "", re
 
 
     fun type() = "$repo${if ("bintray" != owner && "Apache" != owner && owner.isNotEmpty()) " By $owner" else ""}"
+    fun repo() = "https://dl.bintray.com/$owner/$repo"
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is ArtifactInfo) return false
@@ -177,7 +179,7 @@ class GradleArtifactSearcher {
         private val keyIndex = "index:"
         private val keyNexus = "nexus:"
         private val keyMaven = "maven:"
-        private val keyBintray = "bintray:"
+        val keyBintray = "bintray:"
 
         private fun getConnection(spec: String): HttpURLConnection {
             val url = URL(spec)
@@ -285,7 +287,7 @@ class GradleArtifactSearcher {
         return result
     }
 
-    private fun search(repoKey: String, searchParam: SearchParam, project: Project, run: (SearchParam, Project, LinkedHashSet<ArtifactInfo>) -> LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
+    fun search(repoKey: String, searchParam: SearchParam, project: Project, run: (SearchParam, Project, LinkedHashSet<ArtifactInfo>) -> LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
         val key = "$repoKey${searchParam.q}"
         val existResult = artifactsCaches[key]
         if (existResult != null) {
@@ -374,7 +376,7 @@ class GradleArtifactSearcher {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun searchInJcenter(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
+    fun searchInJcenter(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
         var cresult = result
         val url = "https://api.bintray.com/search/packages/maven?${searchParam.q}"
         val connection = getConnection(url)
