@@ -1,27 +1,14 @@
 package cn.bestwu.gdph
 
-import com.intellij.lang.documentation.DocumentationProvider
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.psi.KtParenthesizedExpression
-import org.jetbrains.kotlin.psi.KtStringTemplateExpression
-import org.jetbrains.kotlin.psi.KtValueArgumentList
 import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.GrCommandArgumentListImpl
 import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.literals.GrLiteralImpl
 import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.literals.GrStringContentImpl
 
-class OpenJcenterOrMavenCentralProvider : DocumentationProvider {
+class OpenJcenterOrMavenCentralProvider : AbstractGDPHProvider() {
 
-    override fun getQuickNavigateInfo(element: PsiElement?, element1: PsiElement?): String? {
-        return null
-    }
-
-    override fun getUrlFor(element: PsiElement?, element1: PsiElement?): List<String>? {
-        return null
-    }
-
-    override fun generateDoc(element: PsiElement, element1: PsiElement?): String? {
-        if (element is GrLiteralImpl || element is GrStringContentImpl || element is KtValueArgumentList || element is KtStringTemplateExpression) {
+    override fun generateDoc(element: PsiElement, originalElement: PsiElement?): String? {
+        if (element is GrLiteralImpl || element is GrStringContentImpl) {
             return dependenciesDoc(element) ?: pluginsDoc(element)
         }
         return null
@@ -35,27 +22,16 @@ class OpenJcenterOrMavenCentralProvider : DocumentationProvider {
         var parent = element.parent
         var searchText = trim(element.text)
 
-        if (parent is GrCommandArgumentListImpl || parent is KtParenthesizedExpression) {
+        if (parent is GrCommandArgumentListImpl) {
             parent = parent.parent
         }
         val parentText = parent.text
         if (parent != null) {
             if (parentText.contains("version")) {
-                if (parentText.startsWith("kotlin")) {
-                    searchText = parentText.replace(GradlePluginsCompletionContributor.kotlinRegex, "${GradlePluginsCompletionContributor.kotlinPrefix}$1").trim()
-                } else {
-                    searchText = parentText.replace(GradlePluginsCompletionContributor.regex, "$1").trim()
-                }
-            } else if (parentText.startsWith("kotlin")) {
-                searchText = searchText.replace("^(.*?)\".*$".toRegex(), "$1")
-                searchText = "${GradlePluginsCompletionContributor.kotlinPrefix}$searchText"
-            } else if (parent.parent.parent.text.startsWith("kotlin")) {
-                searchText = trim(element.parent.parent.text).replace("^(.*?)\".*$".toRegex(), "$1")
-                searchText = "${GradlePluginsCompletionContributor.kotlinPrefix}$searchText"
+                searchText = parentText.replace(AbstractGradlePluginsCompletionContributor.regex, "$1").trim()
             }
         }
-        return "<a href='https://plugins.gradle.org/search?term=$searchText'>search in GradlePlugins</a><br/>" +
-                "<a href='https://plugins.gradle.org/plugin/$searchText'>show in GradlePlugins</a><br/>"
+        return pluginsDoc(searchText)
     }
 
     private fun dependenciesDoc(element: PsiElement): String? {
@@ -63,31 +39,6 @@ class OpenJcenterOrMavenCentralProvider : DocumentationProvider {
         do {
             e = e.parent ?: return null
         } while ("dependencies" != e.firstChild.text && "imports" != e.firstChild.text)
-        var dependency = trim(element.text)
-        if (element.parent.text.startsWith("kotlin") || element.parent.parent.parent.text.startsWith("kotlin")) {
-            dependency = "${GradleKtsDependenciesCompletionContributor.kotlinPrefix}$dependency"
-        }
-        val mavenUrl = split(dependency).let {
-            if (it.size >= 2) {
-                if ("c" == it[0]) {
-                    return "<a href='http://search.maven.org/#search|gav|1|c:\"${it[1]}\"'>search in mavenCentral</a><br/>"
-                } else if ("fc" == it[0]) {
-                    return "<a href='http://search.maven.org/#search|gav|1|fc:\"${it[1]}\"'>search in mavenCentral</a><br/>"
-                } else
-                    "http://search.maven.org/#search|gav|1|g:\"${it[0]}\" AND a:\"${it[1]}\""
-            } else {
-                "http://search.maven.org/#search|gav|1|g:\"${it[0]}\""
-            }
-        }
-        return "<a href='https://bintray.com/search?query=$dependency'>search in jcenter</a><br/>" +
-                "<a href='$mavenUrl'>search in mavenCentral</a><br/>"
-    }
-
-    override fun getDocumentationElementForLookupItem(manager: PsiManager?, o: Any?, element: PsiElement?): PsiElement? {
-        return null
-    }
-
-    override fun getDocumentationElementForLink(manager: PsiManager?, s: String?, element: PsiElement?): PsiElement? {
-        return null
+        return dependenciesDoc(trim(element.text))
     }
 }

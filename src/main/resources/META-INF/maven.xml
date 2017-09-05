@@ -1,0 +1,7 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <postStartupActivity implementation="cn.bestwu.gdph.maven.GradleProjectStartupActivity"/>
+    <externalSystemTaskNotificationListener
+      implementation="cn.bestwu.gdph.maven.GradleMavenProjectImportNotificationListener"/>
+  </extensions>
+</idea-plugin>

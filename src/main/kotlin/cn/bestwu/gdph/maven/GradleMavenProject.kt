@@ -1,5 +1,8 @@
-package cn.bestwu.gdph
+package cn.bestwu.gdph.maven
 
+import cn.bestwu.gdph.ArtifactInfo
+import cn.bestwu.gdph.GradleArtifactSearcher
+import cn.bestwu.gdph.SearchParam
 import cn.bestwu.gdph.config.Settings
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId

@@ -1,6 +1,7 @@
 package cn.bestwu.gdph
 
 import cn.bestwu.gdph.config.Settings
+import cn.bestwu.gdph.maven.ImportMavenRepositoriesTask
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import groovy.json.JsonSlurper
@@ -247,7 +248,6 @@ class GradleArtifactSearcher {
 
 
     fun search(searchParam: SearchParam, project: Project): Set<ArtifactInfo> {
-//        show(project, searchParam.toString())
         var result: LinkedHashSet<ArtifactInfo>
         val settings = Settings.getInstance()
         if (searchParam.advancedSearch.isNotEmpty()) {
@@ -289,7 +289,6 @@ class GradleArtifactSearcher {
         val key = "$repoKey${searchParam.q}"
         val existResult = artifactsCaches[key]
         if (existResult != null) {
-//            show(project, existResult.toString())
             return existResult
         }
         var result: LinkedHashSet<ArtifactInfo> = linkedSetOf()
@@ -297,7 +296,6 @@ class GradleArtifactSearcher {
         if (result.isNotEmpty()) {
             artifactsCaches.put(key, result)
         }
-//        show(project, result.toString())
         return result
     }
 

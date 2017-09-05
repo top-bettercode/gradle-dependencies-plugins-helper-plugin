@@ -1,41 +1,44 @@
-<idea-plugin version="2">
+<idea-plugin version="2" url="http://kotlinlang.org" allow-bundled-update="true">
   <id>GradleDependenciesAndPluginsHelper</id>
   <name>Gradle Dependencies And Plugins Helper</name>
   <version>0.0.4</version>
   <vendor email="piterwu@outlook.com"
     url="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin">piterwu
   </vendor>
-  <depends>org.jetbrains.idea.maven</depends>
   <depends>org.jetbrains.plugins.gradle</depends>
   <depends>org.intellij.groovy</depends>
-  <depends>org.jetbrains.kotlin</depends>
+  <depends optional="true" config-file="maven.xml">org.jetbrains.idea.maven</depends>
+  <depends optional="true" config-file="kotlin.xml">org.jetbrains.kotlin</depends>
 
   <description><![CDATA[
-      This is an IntelliJ IDEA plugin for searching dependencies/plugins from JCentral/GradlePlugins inside Gradle projects.<br/><br/>
+    This is an IntelliJ IDEA plugin for searching dependencies/plugins from JCentral/GradlePlugins inside Gradle projects.
+    <br/><br/>
 
-      <b>Features</b>
-      <ul>
-        <li>Support *.gradle,*.gradle.kts.</li>
-        <li>Use jcenter API for Gradle queries.</li>
-        <li>Use Gradle Plugins Search for Gradle Plugins queries.</li>
-        <li>Support wildcard query *.</li>
-        <li>Support search by classname in mavenCentral search.</li>
-        <li>Support Maven Index search option and Nexus search option.</li>
-        <li>Support kotlin KtCallExpression Smart Type Completion.</li>
-      </ul><br/><br/>
-        <b>Donate</b>( <a href="https://blockchain.info/address/1CWkfYDshK4LN3JWrZbi5V8gzo3iQNJj5">BTC</a> ) <br/><br/>
-      <div width="400">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alipay
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;weixinpay<br/>
-        <img width="175" height="175"  src="http://bestwu.cn/images/donate/alipay.png"/>
-        <img width="175" height="175"  src="http://bestwu.cn/images/donate/wechatpay.png"/>
-      </div>
-      ]]></description>
+    <b>Features</b>
+    <ul>
+      <li>Support *.gradle,*.gradle.kts.</li>
+      <li>Use jcenter API for Gradle queries.</li>
+      <li>Use Gradle Plugins Search for Gradle Plugins queries.</li>
+      <li>Support wildcard query *.</li>
+      <li>Support search by classname in mavenCentral search.</li>
+      <li>Support Maven Index search option and Nexus search option.</li>
+      <li>Support kotlin KtCallExpression Smart Type Completion.</li>
+    </ul><br/><br/>
+    <b>Donate</b>( <a
+      href="https://blockchain.info/address/1CWkfYDshK4LN3JWrZbi5V8gzo3iQNJj5">BTC</a> ) <br/><br/>
+    <div width="400">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alipay
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;weixinpay<br/>
+      <img width="175" height="175" src="http://bestwu.cn/images/donate/alipay.png"/>
+      <img width="175" height="175" src="http://bestwu.cn/images/donate/wechatpay.png"/>
+    </div>
+    ]]></description>
 
   <change-notes><![CDATA[
   <ul>
    <li>Setting storage use applicationService.</li><br/><br/>
+   <li>Support Android Studio</li><br/><br/>
   </ul>
       ]]>
   </change-notes>
@@ -43,26 +46,15 @@
   <idea-version since-build="145.258.11"/>
 
   <extensions defaultExtensionNs="com.intellij">
-    <postStartupActivity
-      implementation="cn.bestwu.gdph.GradleProjectStartupActivity"/>
-    <externalSystemTaskNotificationListener
-      implementation="cn.bestwu.gdph.GradleMavenProjectImportNotificationListener"/>
-
     <completion.contributor language="Groovy"
       implementationClass="cn.bestwu.gdph.GradleDependenciesCompletionContributor"
       order="first"/>
-    <completion.contributor language="kotlin"
-      implementationClass="cn.bestwu.gdph.GradleKtsDependenciesCompletionContributor"
-      order="first"/>
     <completion.contributor language="Groovy"
       implementationClass="cn.bestwu.gdph.GradlePluginsCompletionContributor"
       order="first"/>
-    <completion.contributor language="kotlin"
-      implementationClass="cn.bestwu.gdph.GradlePluginsCompletionContributor"
-      order="first"/>
 
-    <documentationProvider
-      implementation="cn.bestwu.gdph.OpenJcenterOrMavenCentralProvider"
+
+    <documentationProvider implementation="cn.bestwu.gdph.OpenJcenterOrMavenCentralProvider"
       order="first"/>
 
     <projectConfigurable

@@ -1,5 +1,6 @@
-package cn.bestwu.gdph
+package cn.bestwu.gdph.kotlin
 
+import cn.bestwu.gdph.*
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
@@ -40,9 +41,9 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                         isKotlin = true
                         if ("(" != parent.prevSibling.text) {
                             isVersion = true
-                            SearchParam(pText.replace(GradlePluginsCompletionContributor.kotlinRegex, "$kotlinPrefix$1:"))
+                            SearchParam(pText.replace(GradleKtsPluginsCompletionContributor.kotlinRegex, "${kotlinPrefix}$1:"))
                         } else
-                            SearchParam("$kotlinPrefix$searchText")
+                            SearchParam("${kotlinPrefix}$searchText")
                     } else
                         SearchParam(searchText)
                 }

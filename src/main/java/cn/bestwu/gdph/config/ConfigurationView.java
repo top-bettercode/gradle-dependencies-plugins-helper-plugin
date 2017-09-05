@@ -1,5 +1,6 @@
 package cn.bestwu.gdph.config;
 
+import cn.bestwu.gdph.UtilKt;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.JButton;
@@ -35,6 +36,9 @@ public class ConfigurationView {
 //            repositoryEditor.getValue(), null, null, null));
 //      }
 //    });
+    if (!UtilKt.supportMavenIndex()) {
+      mavenIndexPanel.setVisible(false);
+    }
   }
 
   public JPanel getDpPanel() {

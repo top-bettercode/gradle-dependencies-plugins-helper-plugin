@@ -17,6 +17,15 @@ private val group = NotificationGroup(
         true
 )
 
+internal fun supportMavenIndex(): Boolean {
+    try {
+        Class.forName("org.jetbrains.idea.maven.indices.MavenIndex")
+        return true
+    } catch (e: ClassNotFoundException) {
+        return false
+    }
+}
+
 internal var repoIcon = IconLoader.getIcon("/icons/repo.png")
 
 internal fun show(project: Project, content: String, title: String = "", type: NotificationType = NotificationType.INFORMATION, listener: NotificationListener? = null) {
