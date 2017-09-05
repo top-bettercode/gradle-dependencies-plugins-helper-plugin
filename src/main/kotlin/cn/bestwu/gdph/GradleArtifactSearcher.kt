@@ -4,10 +4,6 @@ import cn.bestwu.gdph.config.Settings
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import groovy.json.JsonSlurper
-import org.jetbrains.idea.maven.indices.MavenArtifactSearcher
-import org.jetbrains.idea.maven.indices.MavenClassSearcher
-import org.jetbrains.idea.maven.indices.MavenProjectIndicesManager
-import org.jetbrains.plugins.gradle.integrations.maven.MavenRepositoriesHolder
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
@@ -196,55 +192,58 @@ class GradleArtifactSearcher {
         }
 
         private val artifactsCaches = HashMap<String, LinkedHashSet<ArtifactInfo>>()
-    }
 
+        private val versionTails = arrayOf("SNAPSHOTS", "ALPHA", "BETA", "M", "RC", "RELEASE")
+        private val versionTailRegex = "^(.*?)\\d*$".toRegex()
 
-    private val versionTails = arrayOf("SNAPSHOTS", "ALPHA", "BETA", "M", "RC", "RELEASE")
-    private val versionTailRegex = "^(.*?)\\d*$".toRegex()
+        /**
+         * 比较版本信息
 
-    /**
-     * 比较版本信息
+         * @param version1 版本1
+         * *
+         * @param version2 版本2
+         * *
+         * @return int
+         */
+        fun compareVersion(version1: String, version2: String): Int {
+            if (version1 == version2) {
+                return 0
+            }
+            val separator = "[.-]"
+            val version1s = version1.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            val version2s = version2.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
-     * @param version1 版本1
-     * *
-     * @param version2 版本2
-     * *
-     * @return int
-     */
-    fun compareVersion(version1: String, version2: String): Int {
-        if (version1 == version2) {
+            val vl = version1s.size < version2s.size
+            val length = if (vl) version1s.size else version2s.size
+
+            for (i in 0 until length) {
+                val v2 = version2s[i].toIntOrNull() ?: versionTails.indexOf(version2s[i].replace(versionTailRegex, "$1").toUpperCase())
+                val v1 = version1s[i].toIntOrNull() ?: versionTails.indexOf(version1s[i].replace(versionTailRegex, "$1").toUpperCase())
+                if (v1 == -1 || v2 == -1) {
+                    val result = version1s[i].compareTo(version2s[i])
+                    if (result != 0) {
+                        return result
+                    }
+                }
+                if (v2 > v1) {
+                    return -1
+                } else if (v2 < v1) {
+                    return 1
+                }
+                // 相等 比较下一组值
+            }
+
+            if (vl)
+                return -1
+            else if (version1s.size > version2s.size)
+                return 1
             return 0
         }
-        val separator = "[.-]"
-        val version1s = version1.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        val version2s = version2.split(separator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-
-        val vl = version1s.size < version2s.size
-        val length = if (vl) version1s.size else version2s.size
-
-        for (i in 0 until length) {
-            val v2 = version2s[i].toIntOrNull() ?: versionTails.indexOf(version2s[i].replace(versionTailRegex, "$1").toUpperCase())
-            val v1 = version1s[i].toIntOrNull() ?: versionTails.indexOf(version1s[i].replace(versionTailRegex, "$1").toUpperCase())
-            if (v1 == -1 || v2 == -1) {
-                val result = version1s[i].compareTo(version2s[i])
-                if (result != 0) {
-                    return result
-                }
-            }
-            if (v2 > v1) {
-                return -1
-            } else if (v2 < v1) {
-                return 1
-            }
-            // 相等 比较下一组值
-        }
-
-        if (vl)
-            return -1
-        else if (version1s.size > version2s.size)
-            return 1
-        return 0
     }
+
+
+
+
 
 
     fun search(searchParam: SearchParam, project: Project): Set<ArtifactInfo> {
@@ -253,7 +252,7 @@ class GradleArtifactSearcher {
         val settings = Settings.getInstance()
         if (searchParam.advancedSearch.isNotEmpty()) {
             if (settings.useMavenIndex) {
-                result = search(keyIndex, searchParam, project, this::searchByClassNameInMavenIndex)
+                result = search(keyIndex, searchParam, project, ImportMavenRepositoriesTask.Companion::searchByClassNameInMavenIndex)
                 if (result.isEmpty() && settings.useNexus)
                     result = search(keyNexus, searchParam, project, this::searchByClassNameInNexus)
                 if (result.isEmpty())
@@ -269,7 +268,7 @@ class GradleArtifactSearcher {
             }
         } else {
             if (settings.useMavenIndex) {
-                result = search(keyIndex, searchParam, project, this::searchInMavenIndexes)
+                result = search(keyIndex, searchParam, project, ImportMavenRepositoriesTask.Companion::searchInMavenIndexes)
                 if (result.isEmpty() && settings.useNexus)
                     result = search(keyNexus, searchParam, project, this::searchInNexus)
                 if (result.isEmpty())
@@ -333,72 +332,7 @@ class GradleArtifactSearcher {
         return result
     }
 
-    private fun searchByClassNameInMavenIndex(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
-        val repositoriesHolder = MavenRepositoriesHolder.getInstance(project)
-        try {
-            repositoriesHolder::class.java.getMethod("checkNotIndexedRepositories").invoke(repositoriesHolder)
-        } catch (e: NoSuchMethodException) {
-        }
-        val searcher = MavenClassSearcher()
-        val searchResults = searcher.search(project, searchParam.id, 1000)
-        searchResults.filter { it.versions.isNotEmpty() }
-                .flatMap {
-                    it.versions.map { ArtifactInfo(it.groupId, it.artifactId, it.version, "maven", "") }
-                }.forEach { artifactInfo ->
-            val exist = result.find { it.id == artifactInfo.id }
-            if (exist != null) {
-                if (compareVersion(exist.version, artifactInfo.version) < 0) {
-                    exist.version = artifactInfo.version
-                }
-            } else {
-                result.add(artifactInfo)
-            }
-        }
 
-
-        return result
-    }
-
-    private fun searchInMavenIndexes(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
-        val repositoriesHolder = MavenRepositoriesHolder.getInstance(project)
-        try {
-            repositoriesHolder::class.java.getMethod("checkNotIndexedRepositories").invoke(repositoriesHolder)
-        } catch (e: NoSuchMethodException) {
-        }
-
-        val m = MavenProjectIndicesManager.getInstance(project)
-        if (searchParam.groupId.isNotEmpty()) {
-            if (searchParam.artifactId.isEmpty() && !searchParam.fg)
-                m.groupIds.forEach {
-                    if (it == searchParam.groupId) {
-                        m.getArtifactIds(searchParam.groupId).mapTo(result) { ArtifactInfo(searchParam.groupId, it, "", "maven", "") }
-                    } else {
-                        result.add(ArtifactInfo(it, "", "", "maven", ""))
-                    }
-                }
-            else {
-                m.getArtifactIds(searchParam.groupId).forEach {
-                    if (it == searchParam.artifactId) {
-                        m.getVersions(searchParam.groupId, it).sortedWith(kotlin.Comparator<String> { o1, o2 ->
-                            compareVersion(o2, o1)
-                        }).forEach { version ->
-                            result.add(ArtifactInfo(searchParam.groupId, it, version, "maven", ""))
-                        }
-                    } else if (!searchParam.fa) {
-                        result.add(ArtifactInfo(searchParam.groupId, it, "", "maven", ""))
-                    }
-                }
-            }
-        } else {
-            val searcher = MavenArtifactSearcher()
-            val searchResults = searcher.search(project, searchParam.id, 1000)
-            searchResults.flatMapTo(result) {
-                it.versions.map { ArtifactInfo(it.groupId, it.artifactId, "", "maven", "") }
-            }
-        }
-
-        return result
-    }
 
     @Suppress("UNCHECKED_CAST")
     private fun searchInNexus(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {

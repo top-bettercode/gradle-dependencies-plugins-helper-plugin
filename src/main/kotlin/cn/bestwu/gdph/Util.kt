@@ -7,9 +7,6 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.notification.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
-import org.jetbrains.idea.maven.model.MavenRemoteRepository
-
-internal fun String.toMavenRemoteRepository() = MavenRemoteRepository(this, null, this, null, null, null)
 
 internal fun split(dependency: String) = Regex(":").split(dependency)
 internal fun trim(dependency: String) = dependency.trim('"', '\'', '(', ')')
