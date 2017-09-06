@@ -9,5 +9,10 @@
 
     <documentationProvider implementation="cn.bestwu.gdph.kotlin.KtsOpenJcenterOrMavenCentralProvider"
       order="first"/>
+
+    <intentionAction>
+      <category>Gradle</category>
+      <className>cn.bestwu.gdph.kotlin.AddKtsMethodNotationRepositoriesIntention</className>
+    </intentionAction>
   </extensions>
 </idea-plugin>

@@ -41,7 +41,7 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                         isKotlin = true
                         if ("(" != parent.prevSibling.text) {
                             isVersion = true
-                            SearchParam(pText.replace(GradleKtsPluginsCompletionContributor.kotlinRegex, "${kotlinPrefix}$1:"))
+                            SearchParam(pText.replace(GradleKtsPluginsCompletionContributor.kotlinRegex, "$kotlinPrefix$1:"))
                         } else
                             SearchParam("${kotlinPrefix}$searchText")
                     } else
@@ -112,7 +112,7 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                             }
                         }))
 
-        private val IN_METHOD_DEPENDENCY_NOTATION = PlatformPatterns.psiElement()
+        val IN_METHOD_DEPENDENCY_NOTATION = PlatformPatterns.psiElement()
                 .withParent(KtLiteralStringTemplateEntry::class.java)
                 .and(PlatformPatterns.psiElement().inFile(PlatformPatterns.psiFile().withName(StandardPatterns.string().endsWith(".gradle.kts"))))
                 .and(DEPENDENCIES_CALL_PATTERN)

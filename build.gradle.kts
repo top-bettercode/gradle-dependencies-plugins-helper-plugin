@@ -11,8 +11,8 @@ version = "0.1.0"
 intellij {
     updateSinceUntilBuild = false
 //    downloadSources = false
-    version ="IC-2017.2.3"
-//    version = "2016.1"
+//    version ="IC-2017.2.3"
+    version = "2016.1"
     setPlugins("Groovy", "gradle", "Kotlin", "maven")
 }
 
@@ -28,6 +28,7 @@ repositories {
 
 dependencies {
     compile(kotlin("stdlib"))
+    compile(kotlin("reflect"))
     compile("org.jsoup:jsoup:1.10.3")
 
     testCompile(kotlin("test-junit"))

@@ -9,13 +9,16 @@ import org.jetbrains.plugins.groovy.lang.psi.util.GrStringUtil
 class AddMethodNotationRepositoriesIntention : AbstractAddRepositoriesIntention() {
 
     override fun processIntention(element: PsiElement, project: Project, editor: Editor) {
-        val stringNotation = GrStringUtil.removeQuotes(element.text)
+        var stringNotation = GrStringUtil.removeQuotes(element.text)
+        if (stringNotation.count { it == ':' } == 1) {
+            stringNotation += ":"
+        }
         processIntention(SearchParam(stringNotation), project, element)
     }
 
     override fun getElementPredicate(): PsiElementPredicate {
         return PsiElementPredicate { element ->
-            GradleDependenciesCompletionContributor.IN_METHOD_DEPENDENCY_NOTATION.accepts(element)
+            GradleDependenciesCompletionContributor.IN_METHOD_DEPENDENCY_NOTATION.accepts(element) && GrStringUtil.removeQuotes(element.text).count { it == ':' } > 0
         }
     }
 

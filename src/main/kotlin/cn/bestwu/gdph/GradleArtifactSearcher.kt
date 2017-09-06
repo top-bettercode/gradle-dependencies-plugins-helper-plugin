@@ -99,7 +99,7 @@ class SearchParam {
                 if (list.size in (2..3)) {
                     groupId = list[0].trim()
                     artifactId = list[1].trim()
-                    fa = text.endsWith(":") && artifactId.isNotEmpty()
+                    fa = text.count { it == ':' } > 1 && artifactId.isNotEmpty()
                     this.id = "$groupId${if (artifactId.isEmpty()) "" else ":$artifactId"}"
                     this.q = "g=${fullQuery(fg, groupId)}${if (artifactId.isEmpty()) "" else "&a=${fullQuery(fa, artifactId)}"}"
                     this.mq = "g:\"$groupId\"${if (artifactId.isEmpty()) "" else "+AND+a:\"$artifactId\""}"

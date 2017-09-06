@@ -14,8 +14,8 @@ abstract class AbstractAddRepositoriesIntention : Intention() {
 
     private fun findRepositoriesClosure(psiFile: PsiFile): GrClosableBlock? {
         val methodCalls = PsiTreeUtil.getChildrenOfTypeAsList(psiFile, GrMethodCall::class.java)
-        val dependenciesBlock = methodCalls.find { it.invokedExpression.text == "repositories" } ?: return null
-        return dependenciesBlock.closureArguments.first()
+        val repositoriesBlock = methodCalls.find { it.invokedExpression.text == "repositories" } ?: return null
+        return repositoriesBlock.closureArguments.first()
     }
 
     protected fun processIntention(searchParam: SearchParam, project: Project, element: PsiElement) {
@@ -23,13 +23,13 @@ abstract class AbstractAddRepositoriesIntention : Intention() {
         if (result.isNotEmpty() && result.first().isSpecifiedRepo()) {
             val repositoriesClosure = findRepositoriesClosure(element.containingFile)
             val factory = GroovyPsiElementFactory.getInstance(project)
+            val mavenRepo = "\t\tmaven { url '${result.first().repo()}' }"
             if (repositoriesClosure == null) {
-                element.containingFile.add(factory.createStatementFromText("repositories {\n" +
-                        "    maven { url '${result.first().repo()}' }\n" +
-                        "}"))
+                element.containingFile.add(factory.createLineTerminator(2))
+                element.containingFile.add(factory.createStatementFromText("repositories {\n$mavenRepo\n}"))
             } else {
                 if (!repositoriesClosure.text.contains(result.first().repo())) {
-                    repositoriesClosure.addStatementBefore(factory.createStatementFromText("\t\tmaven { url '${result.first().repo()}' }"), null)
+                    repositoriesClosure.addStatementBefore(factory.createStatementFromText(mavenRepo), null)
                 }
             }
         }
