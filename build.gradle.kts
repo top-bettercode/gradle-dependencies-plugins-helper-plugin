@@ -28,7 +28,6 @@ repositories {
 
 dependencies {
     compile(kotlin("stdlib"))
-    compile(kotlin("reflect"))
     compile("org.jsoup:jsoup:1.10.3")
 
     testCompile(kotlin("test-junit"))
