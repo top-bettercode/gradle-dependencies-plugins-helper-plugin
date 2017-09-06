@@ -86,7 +86,7 @@ open class AddKtsMethodNotationRepositoriesIntention : IntentionAction {
             val psiFile = element.containingFile
             val repositoriesClosure = findRepositoriesClosure(psiFile)
             val factory = KtsPsiElementFactory(project)
-            val mavenRepo = "\t\tmaven { url uri(\"${result.first().repo()}\") }"
+            val mavenRepo = "\t\tmaven { url = uri(\"${result.first().repo()}\") }"
             if (repositoriesClosure == null) {
                 psiFile.add(GroovyPsiElementFactory.getInstance(project).createLineTerminator(2))
                 psiFile.add(factory.createStatementFromText("repositories {\n$mavenRepo\n}"))

@@ -10,7 +10,9 @@ import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns
+import com.intellij.patterns.PsiElementPattern
 import com.intellij.patterns.StandardPatterns
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -112,7 +114,7 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                             }
                         }))
 
-        val IN_METHOD_DEPENDENCY_NOTATION = PlatformPatterns.psiElement()
+        val IN_METHOD_DEPENDENCY_NOTATION: PsiElementPattern.Capture<PsiElement> = PlatformPatterns.psiElement()
                 .withParent(KtLiteralStringTemplateEntry::class.java)
                 .and(PlatformPatterns.psiElement().inFile(PlatformPatterns.psiFile().withName(StandardPatterns.string().endsWith(".gradle.kts"))))
                 .and(DEPENDENCIES_CALL_PATTERN)
