@@ -27,6 +27,7 @@ class ArtifactInfo(groupId: String, artifactId: String, version: String = "", re
 
     fun type() = "$repo${if ("bintray" != owner && "Apache" != owner && owner.isNotEmpty()) " By $owner" else ""}"
     fun repo() = "https://dl.bintray.com/$owner/$repo"
+    fun isSpecifiedRepo() = repo.isNotEmpty() && owner.isNotEmpty() && "bintray" != owner && "Apache" != owner
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -245,10 +246,6 @@ class GradleArtifactSearcher {
     }
 
 
-
-
-
-
     fun search(searchParam: SearchParam, project: Project): Set<ArtifactInfo> {
         var result: LinkedHashSet<ArtifactInfo>
         val settings = Settings.getInstance()
@@ -331,7 +328,6 @@ class GradleArtifactSearcher {
         jsonResult.mapTo(result) { ArtifactInfo(it["groupId"] as String, it["artifactId"] as String, it["latestRelease"] as String, "mavenCentral", "Apache") }
         return result
     }
-
 
 
     @Suppress("UNCHECKED_CAST")

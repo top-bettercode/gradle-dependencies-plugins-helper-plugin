@@ -20,7 +20,7 @@ abstract class AbstractAddRepositoriesIntention : Intention() {
 
     protected fun processIntention(searchParam: SearchParam, project: Project, element: PsiElement) {
         val result: LinkedHashSet<ArtifactInfo> = GradleDependenciesCompletionContributor.artifactSearcher.search(GradleArtifactSearcher.keyBintray, searchParam, project, GradleDependenciesCompletionContributor.artifactSearcher::searchInJcenter)
-        if (result.isNotEmpty()) {
+        if (result.isNotEmpty() && result.first().isSpecifiedRepo()) {
             val repositoriesClosure = findRepositoriesClosure(element.containingFile)
             val factory = GroovyPsiElementFactory.getInstance(project)
             if (repositoriesClosure == null) {

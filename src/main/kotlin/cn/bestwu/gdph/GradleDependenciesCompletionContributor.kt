@@ -174,7 +174,7 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                             }
                         }))
 
-        private val IN_MAP_DEPENDENCY_NOTATION = psiElement()
+        val IN_MAP_DEPENDENCY_NOTATION: PsiElementPattern.Capture<PsiElement> = psiElement()
                 .and(GRADLE_FILE_PATTERN)
                 .withParent(GrLiteral::class.java)
                 .withSuperParent(2, psiElement(GrNamedArgument::class.java))

@@ -13,7 +13,7 @@ Use Smart Type Completion in dependencies/plugins script block
 * Support *.gradle,*.gradle.kts.
 * Use jcenter API for Gradle queries.
 * Use Gradle Plugins Search for Gradle Plugins queries.
-* Support wildcard query *,? etc.
+* Support wildcard query * etc.
 * Support search by classname in mavenCentral search.
 * Support Maven Index search option and Nexus search option.
-* Support kotlin KtCallExpression Smart Type Completion.
+* Add specified repository to repositories.

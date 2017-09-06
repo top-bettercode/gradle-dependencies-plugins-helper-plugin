@@ -7,11 +7,12 @@ plugins {
     id("org.jetbrains.intellij") version "0.2.17"
 }
 group = "cn.bestwu"
-version = "0.0.4"
+version = "0.1.0"
 intellij {
     updateSinceUntilBuild = false
-//    version = "IC-2017.2.3"
-    version = "145.258.11"
+//    downloadSources = false
+    version ="IC-2017.2.3"
+//    version = "2016.1"
     setPlugins("Groovy", "gradle", "Kotlin", "maven")
 }
 
