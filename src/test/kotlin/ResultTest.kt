@@ -1,7 +1,7 @@
 
 import cn.bestwu.gdph.ArtifactInfo
 import cn.bestwu.gdph.GradleArtifactSearcher
-import cn.bestwu.gdph.GradlePluginsCompletionContributor
+import cn.bestwu.gdph.kotlin.GradleKtsPluginsCompletionContributor
 import groovy.json.JsonSlurper
 import org.jsoup.Jsoup
 import org.junit.Test
@@ -88,7 +88,7 @@ class ParseResultTest {
                 "1.3.0.M1"
         )
         versions.sortWith(kotlin.Comparator { o1, o2 ->
-            GradleArtifactSearcher().compareVersion(o1, o2)
+            GradleArtifactSearcher.compareVersion(o1, o2)
         })
         println(versions)
     }
@@ -131,9 +131,9 @@ class ParseResultTest {
 
     @Test
     fun testkotlinRegex() {
-        println("kotlin(\"jvm\", \"1.1.4\")".replace(GradlePluginsCompletionContributor.kotlinRegex,"${GradlePluginsCompletionContributor.kotlinPrefix}$1"))
-        println("kotlin(\"jvm\") version (\"IntellijIdeaRulezzz\$\")".replace(GradlePluginsCompletionContributor.kotlinRegex,"${GradlePluginsCompletionContributor.kotlinPrefix}$1"))
-        println("kotlin(\"jvm\") version \"IntellijIdeaRulezzz\$\"".replace(GradlePluginsCompletionContributor.kotlinRegex,"${GradlePluginsCompletionContributor.kotlinPrefix}$1"))
+        println("kotlin(\"jvm\", \"1.1.4\")".replace(GradleKtsPluginsCompletionContributor.kotlinRegex,"${GradleKtsPluginsCompletionContributor.kotlinPrefix}$1"))
+        println("kotlin(\"jvm\") version (\"IntellijIdeaRulezzz\$\")".replace(GradleKtsPluginsCompletionContributor.kotlinRegex,"${GradleKtsPluginsCompletionContributor.kotlinPrefix}$1"))
+        println("kotlin(\"jvm\") version \"IntellijIdeaRulezzz\$\"".replace(GradleKtsPluginsCompletionContributor.kotlinRegex,"${GradleKtsPluginsCompletionContributor.kotlinPrefix}$1"))
     }
 
     //     find e

@@ -43,7 +43,6 @@ private val stopChars = arrayOf('"', '\'')
 internal var INSERT_HANDLER: InsertHandler<LookupElement> = InsertHandler<LookupElement> { context, _ ->
     context.commitDocument()
     val text = context.document.text
-    val lookupString = text.substring(context.startOffset, context.tailOffset)
     var idStart = context.startOffset
     do {
         idStart--
@@ -59,6 +58,22 @@ internal var INSERT_HANDLER: InsertHandler<LookupElement> = InsertHandler<Lookup
         if ('\n' == text[idEnd] || idEnd == text.length) {
             return@InsertHandler
         }
+    }
+    val quote = text[idEnd]
+    var lookupString = text.substring(context.startOffset, context.tailOffset)
+    val list = lookupString.split(GradlePluginsSearcher.splitRule)
+    if (list.size == 2) {
+        lookupString = list[0]
+
+        var tailEnd = idEnd
+        var tailStart = idEnd + 1
+        while ('\n' != text[tailEnd]) {
+            tailEnd++
+            if (')' == text[tailEnd]) {
+                tailStart = tailEnd + 1
+            }
+        }
+        context.document.replaceString(tailStart, tailEnd, " version $quote${list[1]}$quote")
     }
     context.document.replaceString(idStart, idEnd, lookupString)
 }

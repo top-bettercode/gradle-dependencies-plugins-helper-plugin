@@ -1,6 +1,7 @@
 package cn.bestwu.gdph.kotlin
 
 import cn.bestwu.gdph.AbstractGradlePluginsCompletionContributor
+import cn.bestwu.gdph.GradlePluginsSearcher
 import cn.bestwu.gdph.INSERT_HANDLER
 import cn.bestwu.gdph.contributorDuringCompletion
 import com.intellij.codeInsight.completion.*
@@ -79,9 +80,9 @@ class GradleKtsPluginsCompletionContributor : AbstractGradlePluginsCompletionCon
             searchResult.forEach {
                 val lookupElementBuilder =
                         if (isKotlin && !isVersion) {
-                            LookupElementBuilder.create(it.substringAfter(kotlinPrefix)).withPresentableText(it).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(INSERT_HANDLER)
+                            LookupElementBuilder.create(it.substringAfter(kotlinPrefix)).withPresentableText(it.replace(GradlePluginsSearcher.splitRule, ":")).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(INSERT_HANDLER)
                         } else {
-                            LookupElementBuilder.create(it).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(INSERT_HANDLER)
+                            if (isVersion) LookupElementBuilder.create(it).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(INSERT_HANDLER) else LookupElementBuilder.create(it).withPresentableText(it.replace(GradlePluginsSearcher.splitRule, ":")).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(INSERT_HANDLER)
                         }
                 completionResultSet.addElement(lookupElementBuilder)
             }

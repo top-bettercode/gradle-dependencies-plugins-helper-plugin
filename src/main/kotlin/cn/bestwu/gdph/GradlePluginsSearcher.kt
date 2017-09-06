@@ -6,6 +6,7 @@ class GradlePluginsSearcher {
     companion object {
         private val pluginsCaches = HashMap<String, List<String>>()
         private val pluginVersionsCaches = HashMap<String, List<String>>()
+        val splitRule = ":plugin-version:"
     }
 
     fun searchPlugins(text: String): List<String> {
@@ -14,7 +15,13 @@ class GradlePluginsSearcher {
             return result
         }
         val elements = Jsoup.connect("https://plugins.gradle.org/search?term=${text.trim()}").get().select("#search-results tbody tr")
-        result = elements.map { it.select(".plugin-id a").text() }
+        result = elements.mapNotNull {
+            val pluginId = it.select(".plugin-id a").text()
+            if (pluginId.isEmpty()) {
+                return@mapNotNull null
+            }
+            pluginId + splitRule + it.select(".latest-version").text()
+        }
         if (result.isNotEmpty()) {
             pluginsCaches.put(text, result)
         }
