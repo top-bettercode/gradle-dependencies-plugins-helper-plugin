@@ -73,23 +73,24 @@ open class AddKtsMethodNotationRepositoriesIntention : IntentionAction {
         processIntention(element, project)
     }
 
-    private fun findRepositoriesClosure(psiFile: PsiFile): KtFunctionLiteral? {
+    private fun findClosure(psiFile: PsiFile, expressionName: String): PsiElement? {
         val methodCalls = PsiTreeUtil.getChildrenOfTypeAsList(PsiTreeUtil.getChildOfType(psiFile, KtScript::class.java)?.firstChild ?: return null, KtScriptInitializer::class.java)
         return methodCalls.find {
-            it.firstChild.firstChild.text == "repositories"
-        }?.firstChild?.lastChild?.firstChild?.firstChild as? KtFunctionLiteral ?: return null
+            it.firstChild.firstChild.text == expressionName
+        }
     }
 
     private fun processIntention(searchParam: SearchParam, project: Project, element: PsiElement) {
         val result: LinkedHashSet<ArtifactInfo> = GradleDependenciesCompletionContributor.artifactSearcher.search(GradleArtifactSearcher.keyBintray, searchParam, project, GradleDependenciesCompletionContributor.artifactSearcher::searchInJcenter)
         if (result.isNotEmpty() && result.first().isSpecifiedRepo()) {
             val psiFile = element.containingFile
-            val repositoriesClosure = findRepositoriesClosure(psiFile)
+            val repositoriesClosure = findClosure(psiFile, "repositories")?.firstChild?.lastChild?.firstChild?.firstChild as? KtFunctionLiteral
             val factory = KtsPsiElementFactory(project)
             val mavenRepo = "\t\tmaven { url = uri(\"${result.first().repo()}\") }"
             if (repositoriesClosure == null) {
-                psiFile.add(GroovyPsiElementFactory.getInstance(project).createLineTerminator(2))
-                psiFile.add(factory.createStatementFromText("repositories {\n$mavenRepo\n}"))
+                val dependenciesElement = findClosure(psiFile, "dependencies")!!
+                dependenciesElement.parent.addBefore(factory.createStatementFromText("repositories {\n$mavenRepo\n}"), dependenciesElement)
+                dependenciesElement.parent.addBefore(GroovyPsiElementFactory.getInstance(project).createLineTerminator(2), dependenciesElement)
             } else {
                 if (!repositoriesClosure.text.contains(result.first().repo())) {
                     repositoriesClosure.addBefore(factory.createStatementFromText(mavenRepo), repositoriesClosure.rBrace)
