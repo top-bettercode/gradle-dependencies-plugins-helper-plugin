@@ -67,11 +67,13 @@ internal var INSERT_HANDLER: InsertHandler<LookupElement> = InsertHandler<Lookup
 
         var tailEnd = idEnd
         var tailStart = idEnd + 1
-        while (idEnd != text.length || '\n' != text[tailEnd]) {
+        while ('\n' != text[tailEnd]) {
             tailEnd++
             if (')' == text[tailEnd]) {
                 tailStart = tailEnd + 1
             }
+            if (tailEnd == text.length)
+                break
         }
         context.document.replaceString(tailStart, tailEnd, " version $quote${list[1]}$quote")
     }
