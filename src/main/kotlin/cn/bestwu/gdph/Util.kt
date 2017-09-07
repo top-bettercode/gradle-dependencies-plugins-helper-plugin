@@ -46,7 +46,7 @@ internal var INSERT_HANDLER: InsertHandler<LookupElement> = InsertHandler<Lookup
     var idStart = context.startOffset
     do {
         idStart--
-        if ('\n' == text[idStart] || idStart == -1) {
+        if (idStart == -1 || '\n' == text[idStart]) {
             return@InsertHandler
         }
     } while (!stopChars.contains(text[idStart]))
@@ -55,7 +55,7 @@ internal var INSERT_HANDLER: InsertHandler<LookupElement> = InsertHandler<Lookup
     var idEnd = context.tailOffset
     while (!stopChars.contains(text[idEnd])) {
         idEnd++
-        if ('\n' == text[idEnd] || idEnd == text.length) {
+        if (idEnd == text.length || '\n' == text[idEnd]) {
             return@InsertHandler
         }
     }
@@ -67,7 +67,7 @@ internal var INSERT_HANDLER: InsertHandler<LookupElement> = InsertHandler<Lookup
 
         var tailEnd = idEnd
         var tailStart = idEnd + 1
-        while ('\n' != text[tailEnd]) {
+        while (idEnd != text.length || '\n' != text[tailEnd]) {
             tailEnd++
             if (')' == text[tailEnd]) {
                 tailStart = tailEnd + 1
@@ -86,7 +86,7 @@ internal fun contributorDuringCompletion(context: CompletionInitializationContex
         var idEnd = offset
         while (!stopChars.contains(text[idEnd])) {
             idEnd++
-            if ('\n' == text[idEnd] || idEnd == text.length) {
+            if (idEnd == text.length || '\n' == text[idEnd]) {
                 return
             }
         }
