@@ -10,20 +10,20 @@ Inspired by [https://github.com/siosio/GradleDependenciesHelperPlugin](https://g
 
 * Use Smart Type Completion in dependencies/plugins script block.
 
-![](http://bestwu.cn/images/gradle-dependencies-plugins-helper-plugin/plugins.gif)
+<img width="650" src="http://bestwu.cn/images/gradle-dependencies-plugins-helper-plugin/plugins.gif"/>
 
-![](http://bestwu.cn/images/gradle-dependencies-plugins-helper-plugin/dependencies.gif)
+<img width="650" src="http://bestwu.cn/images/gradle-dependencies-plugins-helper-plugin/dependencies.gif"/>
 
 * Support *.gradle,*.gradle.kts.
 
-![](http://bestwu.cn/images/gradle-dependencies-plugins-helper-plugin/plugins.kts.gif)
+<img width="650" src="http://bestwu.cn/images/gradle-dependencies-plugins-helper-plugin/plugins.kts.gif"/>
 
-![](http://bestwu.cn/images/gradle-dependencies-plugins-helper-plugin/dependencies.kts.gif)
+<img width="650" src="http://bestwu.cn/images/gradle-dependencies-plugins-helper-plugin/dependencies.kts.gif"/>
 
 * Use [jcenter API](https://bintray.com/docs/api/) for Gradle dependencies queries, Use [Gradle Plugins](https://plugins.gradle.org) for Gradle plugins queries.
 * Support wildcard query * etc.
 
-![](http://bestwu.cn/images/gradle-dependencies-plugins-helper-plugin/wildcard.gif)
+<img width="650" src="http://bestwu.cn/images/gradle-dependencies-plugins-helper-plugin/wildcard.gif"/>
 
 * Support search by classname in mavenCentral search.
 
@@ -36,23 +36,23 @@ Inspired by [https://github.com/siosio/GradleDependenciesHelperPlugin](https://g
       compile("c:Junit")
 
 
-![](http://bestwu.cn/images/gradle-dependencies-plugins-helper-plugin/classname-query.gif)
+<img width="650" src="http://bestwu.cn/images/gradle-dependencies-plugins-helper-plugin/classname-query.gif"/>
 
 * Support Maven Index search option and Nexus search option.
 * Add specified repository to repositories.
 
-![](http://bestwu.cn/images/gradle-dependencies-plugins-helper-plugin/add-repo.gif)
+<img width="650" src="http://bestwu.cn/images/gradle-dependencies-plugins-helper-plugin/add-repo.gif"/>
 
 ### Settings
 
 * Make sure Smart Type Completion is on.
 
-![](http://bestwu.cn/images/gradle-dependencies-plugins-helper-plugin/smart-type-completion.png)
+<img width="650" src="http://bestwu.cn/images/gradle-dependencies-plugins-helper-plugin/smart-type-completion.png"/>
 
 * Gradle Dependencies And Plugins Helper configuration.
 
-![](http://bestwu.cn/images/gradle-dependencies-plugins-helper-plugin/settings.png)
+<img width="650" src="http://bestwu.cn/images/gradle-dependencies-plugins-helper-plugin/settings.png"/>
 
 * Use Maven Index (Android Studio not support) should update Maven Repositories Index.
 
-![](http://bestwu.cn/images/gradle-dependencies-plugins-helper-plugin/settings-maven-repositories.png)
+<img width="650" src="http://bestwu.cn/images/gradle-dependencies-plugins-helper-plugin/settings-maven-repositories.png"/>
