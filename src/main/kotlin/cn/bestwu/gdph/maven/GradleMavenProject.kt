@@ -40,6 +40,8 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
 
         private fun String.toMavenRemoteRepository() = MavenRemoteRepository(this, null, this, null, null, null)
 
+        private fun String.toMavenIndexParam() = replace("[*-]".toRegex(), " ")
+
         fun searchByClassNameInMavenIndex(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
             val repositoriesHolder = MavenRepositoriesHolder.getInstance(project)
             try {
@@ -47,7 +49,7 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
             } catch (e: NoSuchMethodException) {
             }
             val searcher = MavenClassSearcher()
-            val searchResults = searcher.search(project, searchParam.id, 1000)
+            val searchResults = searcher.search(project, searchParam.id.toMavenIndexParam(), 1000)
             searchResults.filter { it.versions.isNotEmpty() }
                     .flatMap {
                         it.versions.map { ArtifactInfo(it.groupId, it.artifactId, it.version, "maven", "") }
@@ -66,7 +68,7 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
             return result
         }
 
-         fun searchInMavenIndexes(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
+        fun searchInMavenIndexes(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
             val repositoriesHolder = MavenRepositoriesHolder.getInstance(project)
             try {
                 repositoriesHolder::class.java.getMethod("checkNotIndexedRepositories").invoke(repositoriesHolder)
@@ -98,7 +100,7 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
                 }
             } else {
                 val searcher = MavenArtifactSearcher()
-                val searchResults = searcher.search(project, searchParam.id, 1000)
+                val searchResults = searcher.search(project, searchParam.id.toMavenIndexParam(), 1000)
                 searchResults.flatMapTo(result) {
                     it.versions.map { ArtifactInfo(it.groupId, it.artifactId, "", "maven", "") }
                 }
