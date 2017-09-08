@@ -81,7 +81,7 @@ open class AddKtsMethodNotationRepositoriesIntention : IntentionAction {
     }
 
     private fun processIntention(searchParam: SearchParam, project: Project, element: PsiElement) {
-        val result: LinkedHashSet<ArtifactInfo> = GradleDependenciesCompletionContributor.artifactSearcher.search(GradleArtifactSearcher.keyBintray, searchParam, project, GradleDependenciesCompletionContributor.artifactSearcher::searchInJcenter)
+        val result: LinkedHashSet<ArtifactInfo> = GradleDependenciesCompletionContributor.artifactSearcher.search(GradleArtifactSearcher.keyBintray, searchParam, linkedSetOf(), project, GradleDependenciesCompletionContributor.artifactSearcher::searchInJcenter)
         if (result.isNotEmpty() && result.first().isSpecifiedRepo()) {
             val psiFile = element.containingFile
             val repositoriesClosure = findClosure(psiFile, "repositories")?.firstChild?.lastChild?.firstChild?.firstChild as? KtFunctionLiteral

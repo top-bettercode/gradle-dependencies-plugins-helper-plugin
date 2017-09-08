@@ -247,51 +247,52 @@ class GradleArtifactSearcher {
 
 
     fun search(searchParam: SearchParam, project: Project): Set<ArtifactInfo> {
-        var result: LinkedHashSet<ArtifactInfo>
+        var result: LinkedHashSet<ArtifactInfo> = linkedSetOf()
         val settings = Settings.getInstance()
         if (searchParam.advancedSearch.isNotEmpty()) {
             if (settings.useMavenIndex) {
-                result = search(keyIndex, searchParam, project, ImportMavenRepositoriesTask.Companion::searchByClassNameInMavenIndex)
+                result = search(keyIndex, searchParam, result, project, ImportMavenRepositoriesTask.Companion::searchByClassNameInMavenIndex)
                 if (result.isEmpty() && settings.useNexus)
-                    result = search(keyNexus, searchParam, project, this::searchByClassNameInNexus)
+                    result = search(keyNexus, searchParam, result, project, this::searchByClassNameInNexus)
                 if (result.isEmpty())
-                    result = search(keyMaven, searchParam, project, this::searchByClassNameInMavenCentral)
+                    result = search(keyMaven, searchParam, result, project, this::searchByClassNameInMavenCentral)
             } else {
                 if (settings.useNexus) {
-                    result = search(keyNexus, searchParam, project, this::searchByClassNameInNexus)
+                    result = search(keyNexus, searchParam, result, project, this::searchByClassNameInNexus)
                     if (result.isEmpty())
-                        result = search(keyMaven, searchParam, project, this::searchByClassNameInMavenCentral)
+                        result = search(keyMaven, searchParam, result, project, this::searchByClassNameInMavenCentral)
                 } else {
-                    result = search(keyMaven, searchParam, project, this::searchByClassNameInMavenCentral)
+                    result = search(keyMaven, searchParam, result, project, this::searchByClassNameInMavenCentral)
                 }
             }
         } else {
             if (settings.useMavenIndex) {
-                result = search(keyIndex, searchParam, project, ImportMavenRepositoriesTask.Companion::searchInMavenIndexes)
+                result = search(keyIndex, searchParam, result, project, ImportMavenRepositoriesTask.Companion::searchInMavenIndexes)
                 if (result.isEmpty() && settings.useNexus)
-                    result = search(keyNexus, searchParam, project, this::searchInNexus)
+                    result = search(keyNexus, searchParam, result, project, this::searchInNexus)
                 if (result.isEmpty())
-                    result = search(keyBintray, searchParam, project, this::searchInJcenter)
+                    result = search(keyBintray, searchParam, result, project, this::searchInJcenter)
             } else {
                 if (settings.useNexus) {
-                    result = search(keyNexus, searchParam, project, this::searchInNexus)
+                    result = search(keyNexus, searchParam, result, project, this::searchInNexus)
                     if (result.isEmpty())
-                        result = search(keyBintray, searchParam, project, this::searchInJcenter)
+                        result = search(keyBintray, searchParam, result, project, this::searchInJcenter)
                 } else
-                    result = search(keyBintray, searchParam, project, this::searchInJcenter)
+                    result = search(keyBintray, searchParam, result, project, this::searchInJcenter)
             }
         }
         return result
     }
 
-    fun search(repoKey: String, searchParam: SearchParam, project: Project, run: (SearchParam, Project, LinkedHashSet<ArtifactInfo>) -> LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
+    fun search(repoKey: String, searchParam: SearchParam, preResult: LinkedHashSet<ArtifactInfo>, project: Project, run: (SearchParam, Project, LinkedHashSet<ArtifactInfo>) -> LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
         val key = "$repoKey${searchParam.q}"
         val existResult = artifactsCaches[key]
         if (existResult != null) {
             return existResult
         }
-        var result: LinkedHashSet<ArtifactInfo> = linkedSetOf()
-        result = run(searchParam, project, result)
+        val result = run(searchParam, project, preResult)
+        if (repoKey != keyBintray && searchParam.advancedSearch.isEmpty())
+            result.removeIf { !it.groupId.contains(searchParam.groupId.filter { it != '*' }) || !it.artifactId.contains(searchParam.artifactId.filter { it != '*' }) }
         if (result.isNotEmpty()) {
             artifactsCaches.put(key, result)
         }
