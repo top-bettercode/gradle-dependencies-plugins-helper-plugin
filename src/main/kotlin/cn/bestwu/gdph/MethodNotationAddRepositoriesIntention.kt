@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.plugins.groovy.intentions.base.PsiElementPredicate
 import org.jetbrains.plugins.groovy.lang.psi.util.GrStringUtil
 
-class AddMethodNotationRepositoriesIntention : AbstractAddRepositoriesIntention() {
+class MethodNotationAddRepositoriesIntention : AbstractAddRepositoriesIntention() {
 
     override fun processIntention(element: PsiElement, project: Project, editor: Editor) {
         var stringNotation = GrStringUtil.removeQuotes(element.text)
@@ -18,7 +18,8 @@ class AddMethodNotationRepositoriesIntention : AbstractAddRepositoriesIntention(
 
     override fun getElementPredicate(): PsiElementPredicate {
         return PsiElementPredicate { element ->
-            GradleDependenciesCompletionContributor.IN_METHOD_DEPENDENCY_NOTATION.accepts(element) && GrStringUtil.removeQuotes(element.text).count { it == ':' } > 0
+            val text = GrStringUtil.removeQuotes(element.text)
+            GradleDependenciesCompletionContributor.IN_METHOD_DEPENDENCY_NOTATION.accepts(element) && !text.contains("['\"]".toRegex()) && text.count { it == ':' } > 0
         }
     }
 

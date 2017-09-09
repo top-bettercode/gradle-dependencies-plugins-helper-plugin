@@ -20,7 +20,7 @@ import org.jetbrains.plugins.groovy.lang.psi.impl.PsiImplUtil
 import org.jetbrains.plugins.groovy.lang.psi.util.GrStringUtil
 import java.util.*
 
-open class AddKtsMethodNotationRepositoriesIntention : IntentionAction {
+open class KtsMethodNotationAddRepositoriesIntention : IntentionAction {
     override fun startInWriteAction(): Boolean {
         return true
     }

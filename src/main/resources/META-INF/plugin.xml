@@ -79,11 +79,11 @@
 
     <intentionAction>
       <category>Gradle</category>
-      <className>cn.bestwu.gdph.AddMapNotationRepositoriesIntention</className>
+      <className>cn.bestwu.gdph.MapNotationAddRepositoriesIntention</className>
     </intentionAction>
     <intentionAction>
       <category>Gradle</category>
-      <className>cn.bestwu.gdph.AddMethodNotationRepositoriesIntention</className>
+      <className>cn.bestwu.gdph.MethodNotationAddRepositoriesIntention</className>
     </intentionAction>
   </extensions>
 
