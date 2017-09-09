@@ -27,10 +27,10 @@ repositories {
 }
 
 dependencies {
-    compile(kotlin("stdlib"))
+    compile("org.jetbrains.kotlin:kotlin-stdlib")
     compile("org.jsoup:jsoup:1.10.3")
 
-    testCompile(kotlin("test-junit"))
+    testCompile("org.jetbrains.kotlin:kotlin-test-junit")
 }
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
