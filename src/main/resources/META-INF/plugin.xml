@@ -41,6 +41,7 @@
     ]]></description>
 
   <change-notes><![CDATA[
+    <b>0.1.0</b> (initial release)
     <ul>
       <li>Use Smart Type Completion in dependencies/plugins script block.</li>
       <li>Support *.gradle,*.gradle.kts.</li>
