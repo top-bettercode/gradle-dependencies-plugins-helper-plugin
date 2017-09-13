@@ -13,7 +13,7 @@ intellij {
 //    downloadSources = false
 //    version ="IC-2017.2.3"
     version = "2016.1"
-    setPlugins("Groovy", "gradle", "Kotlin", "maven")
+    setPlugins("Groovy", "gradle", "Kotlin", "maven", "properties", "junit")
 }
 
 tasks.withType(PublishTask::class.java) {
@@ -27,10 +27,10 @@ repositories {
 }
 
 dependencies {
-    compile("org.jetbrains.kotlin:kotlin-stdlib")
+    compile("org.jetbrains.kotlin:kotlin-stdlib:1.1.4-3")
     compile("org.jsoup:jsoup:1.10.3")
 
-    testCompile("org.jetbrains.kotlin:kotlin-test-junit")
+    testCompile("org.jetbrains.kotlin:kotlin-test-junit:1.1.4-3")
 }
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
