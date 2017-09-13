@@ -13,7 +13,7 @@ import junit.framework.TestCase
  * @author Peter Wu
  * @since
  */
-open class CodeInsightTestBase : LightCodeInsightFixtureTestCase() {
+abstract class CodeInsightTestBase : LightCodeInsightFixtureTestCase() {
     companion object {
         val gradleFileName = "build.gradle"
         val gradleKtsFileName = "build.gradle.kts"
