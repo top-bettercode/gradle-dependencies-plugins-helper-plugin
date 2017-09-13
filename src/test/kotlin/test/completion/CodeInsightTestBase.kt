@@ -1,5 +1,6 @@
 package test.completion
 
+import cn.bestwu.gdph.config.Settings
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
@@ -16,11 +17,13 @@ open class CodeInsightTestBase : LightCodeInsightFixtureTestCase() {
         val gradleFileName = "build.gradle"
         val gradleKtsFileName = "build.gradle.kts"
         val kotlinVersion = "1.1.4-3"
+        val feignVersion = "8.18.0"
         val caret = "<caret>"
     }
 
     override fun setUp() {
         super.setUp()
+        Settings.getInstance().useNexus = false
     }
 
     protected fun doCheckResult(fileName: String, before: String, after: String, selectItem: String) {
