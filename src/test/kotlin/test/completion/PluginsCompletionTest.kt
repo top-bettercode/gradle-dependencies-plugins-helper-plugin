@@ -1,5 +1,6 @@
 package test.completion
 
+import cn.bestwu.gdph.GradlePluginsSearcher
 import test.CodeInsightTestBase
 
 
@@ -28,7 +29,7 @@ class PluginsCompletionTest : CodeInsightTestBase() {
     fun testStdPluginId() {
         completionCheckResult(gradleFileName, """plugins {
     id 'intellij$caret'
-}""", pluginsAfter, "org.jetbrains.intellij:plugin-version:$intellijPluginVersion")
+}""", pluginsAfter, "org.jetbrains.intellij${GradlePluginsSearcher.splitRule}$intellijPluginVersion")
     }
 
     fun testStdPluginVersion() {
@@ -41,7 +42,7 @@ class PluginsCompletionTest : CodeInsightTestBase() {
     fun testKtsPluginId() {
         completionCheckResult(gradleKtsFileName, """plugins {
     id("intellij$caret")
-}""", pluginsKtsAfter, "org.jetbrains.intellij:plugin-version:$intellijPluginVersion")
+}""", pluginsKtsAfter, "org.jetbrains.intellij${GradlePluginsSearcher.splitRule}$intellijPluginVersion")
     }
 
     fun testKtsPluginVersion() {
@@ -54,7 +55,7 @@ class PluginsCompletionTest : CodeInsightTestBase() {
     fun testKtsKotlinPluginId() {
         completionCheckResult(gradleKtsFileName, """plugins {
     kotlin("$caret")
-}""", pluginsKtsKotlinAfter, "jvm:plugin-version:$kotlinVersion")
+}""", pluginsKtsKotlinAfter, "jvm${GradlePluginsSearcher.splitRule}$kotlinVersion")
     }
 
     fun testKtsKotlinPluginVersion() {

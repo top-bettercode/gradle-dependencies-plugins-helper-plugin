@@ -176,7 +176,7 @@ class SearchParam {
 
 class GradleArtifactSearcher {
     companion object {
-        private val regex = Regex("\\{\"id\":\"(.*?):(.*?):(.*?)\",")
+        val regex = Regex("\\{\"id\":\"(.*?):(.*?):(.*?)\",")
         private val keyIndex = "index:"
         private val keyNexus = "nexus:"
         private val keyMaven = "maven:"
@@ -198,7 +198,7 @@ class GradleArtifactSearcher {
         private val artifactsCaches = HashMap<String, LinkedHashSet<ArtifactInfo>>()
 
         private val versionTails = arrayOf("SNAPSHOTS", "ALPHA", "BETA", "M", "RC", "RELEASE")
-        private val versionTailRegex = "^(.*?)\\d*$".toRegex()
+        private val versionTailRegex = "^([A-Za-z]+?)(\\d*)$".toRegex()
 
         /**
          * 比较版本信息
@@ -221,8 +221,18 @@ class GradleArtifactSearcher {
             val length = if (vl) version1s.size else version2s.size
 
             for (i in 0 until length) {
-                val v2 = version2s[i].toIntOrNull() ?: versionTails.indexOf(version2s[i].replace(versionTailRegex, "$1").toUpperCase())
-                val v1 = version1s[i].toIntOrNull() ?: versionTails.indexOf(version1s[i].replace(versionTailRegex, "$1").toUpperCase())
+                val toIntOrNull2 = version2s[i].toIntOrNull()
+                val toIntOrNull1 = version1s[i].toIntOrNull()
+                if (toIntOrNull1 == null && toIntOrNull2 != null)
+                    return -1
+                else if (toIntOrNull1 != null && toIntOrNull2 == null)
+                    return 1
+                var v2 = toIntOrNull2 ?: versionTails.indexOf(version2s[i].replace(versionTailRegex, "$1").toUpperCase())
+                var v1 = toIntOrNull1 ?: versionTails.indexOf(version1s[i].replace(versionTailRegex, "$1").toUpperCase())
+                if (v1 == v2 && toIntOrNull1 == null && toIntOrNull2 == null) {
+                    v2 = version2s[i].replace(versionTailRegex, "$2").toIntOrNull() ?: 0
+                    v1 = version1s[i].replace(versionTailRegex, "$2").toIntOrNull() ?: 0
+                }
                 if (v1 == -1 || v2 == -1) {
                     val result = version1s[i].compareTo(version2s[i])
                     if (result != 0) {
@@ -236,11 +246,17 @@ class GradleArtifactSearcher {
                 }
                 // 相等 比较下一组值
             }
-
-            if (vl)
-                return -1
-            else if (version1s.size > version2s.size)
-                return 1
+            if (vl) {
+                if (version2s.last().matches(versionTailRegex))
+                    return 1
+                else
+                    return -1
+            } else if (version1s.size > version2s.size) {
+                if (version1s.last().matches(versionTailRegex))
+                    return -1
+                else
+                    return 1
+            }
             return 0
         }
     }

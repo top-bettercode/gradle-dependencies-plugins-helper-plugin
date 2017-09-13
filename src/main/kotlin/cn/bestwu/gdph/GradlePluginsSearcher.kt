@@ -6,7 +6,7 @@ class GradlePluginsSearcher {
     companion object {
         private val pluginsCaches = HashMap<String, List<String>>()
         private val pluginVersionsCaches = HashMap<String, List<String>>()
-        val splitRule = ":plugin-version:"
+        val splitRule = "#"
     }
 
     fun searchPlugins(text: String): List<String> {
