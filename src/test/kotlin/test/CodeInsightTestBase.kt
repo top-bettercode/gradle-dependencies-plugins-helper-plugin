@@ -60,10 +60,15 @@ open class CodeInsightTestBase : LightCodeInsightFixtureTestCase() {
         myFixture.configureByText(fileName, given)
         val list = myFixture.filterAvailableIntentions(intention)
         assert(list.size == 1)
-        println("An intention '$intention' should be applicable to: \n$given\n")
         myFixture.launchAction(list.first())
         PostprocessReformattingAspect.getInstance(project).doPostponedFormatting()
         myFixture.checkResult(expected)
+    }
+
+    protected fun intentionEmpty(fileName: String, given: String) {
+        myFixture.configureByText(fileName, given)
+        val list = myFixture.filterAvailableIntentions(intention)
+        assert(list.size == 0)
     }
 
 }
