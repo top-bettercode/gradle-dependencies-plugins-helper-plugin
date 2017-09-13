@@ -1,5 +1,7 @@
 package test.completion
 
+import test.CodeInsightTestBase
+
 /**
  *
  * @author Peter Wu
@@ -9,7 +11,7 @@ class DependenciesCompletionTest : CodeInsightTestBase() {
 
     //build.gradle dependencies
     fun testStdDependencies() {
-        doCheckResult(gradleFileName, """dependencies {
+        completionCheckResult(gradleFileName, """dependencies {
     compile 'kotlin-reflect$caret'
 }""", """dependencies {
     compile 'org.jetbrains.kotlin:kotlin-reflect'
@@ -17,7 +19,7 @@ class DependenciesCompletionTest : CodeInsightTestBase() {
     }
 
     fun testStdDependenciesVersion() {
-        doCheckResult(gradleFileName, """dependencies {
+        completionCheckResult(gradleFileName, """dependencies {
     compile 'org.jetbrains.kotlin:kotlin-reflect$caret'
 }""", """dependencies {
     compile 'org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion'
@@ -27,7 +29,7 @@ class DependenciesCompletionTest : CodeInsightTestBase() {
     //build.gradle dependencies map notation
 
     fun testDependenciesMapGroup() {
-        doCheckResult(gradleFileName, """dependencies {
+        completionCheckResult(gradleFileName, """dependencies {
     compile group:'kotlin$caret'
 }""", """dependencies {
     compile group:'org.jetbrains.kotlin'
@@ -35,7 +37,7 @@ class DependenciesCompletionTest : CodeInsightTestBase() {
     }
 
     fun testDependenciesMapName() {
-        doCheckResult(gradleFileName, """dependencies {
+        completionCheckResult(gradleFileName, """dependencies {
     compile group:'org.jetbrains.kotlin',name:'$caret'
 }""", """dependencies {
     compile group:'org.jetbrains.kotlin',name:'kotlin-reflect'
@@ -43,7 +45,7 @@ class DependenciesCompletionTest : CodeInsightTestBase() {
     }
 
     fun testDependenciesMapVersion() {
-        doCheckResult(gradleFileName, """dependencies {
+        completionCheckResult(gradleFileName, """dependencies {
     compile group:'org.jetbrains.kotlin',name:'kotlin-reflect',version:'$caret'
 }""", """dependencies {
     compile group:'org.jetbrains.kotlin',name:'kotlin-reflect',version:'$kotlinVersion'
@@ -53,7 +55,7 @@ class DependenciesCompletionTest : CodeInsightTestBase() {
 
     //build.gradle dependencies *
     fun testDependenciesWildcard() {
-        doCheckResult(gradleFileName, """dependencies{
+        completionCheckResult(gradleFileName, """dependencies{
     testCompile 'kotlin*junit$caret'
 }""", """dependencies{
     testCompile 'org.jetbrains.kotlin:kotlin-test-junit'
@@ -62,7 +64,7 @@ class DependenciesCompletionTest : CodeInsightTestBase() {
 
     //build.gradle dependencies by className
     fun testDependenciesByFullyQualifiedClassName() {
-        doCheckResult(gradleFileName, """dependencies{
+        completionCheckResult(gradleFileName, """dependencies{
     compile 'fc:feign.Client$caret'
 }""", """dependencies{
     compile 'com.netflix.feign:feign-core:$feignVersion'
@@ -70,7 +72,7 @@ class DependenciesCompletionTest : CodeInsightTestBase() {
     }
 
     fun testDependenciesByClassName() {
-        doCheckResult(gradleFileName, """dependencies{
+        completionCheckResult(gradleFileName, """dependencies{
     compile 'c:feign$caret'
 }""", """dependencies{
     compile 'com.netflix.feign:feign-core:$feignVersion'

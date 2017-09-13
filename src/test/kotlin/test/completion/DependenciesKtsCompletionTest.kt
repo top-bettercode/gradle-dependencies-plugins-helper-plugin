@@ -1,5 +1,7 @@
 package test.completion
 
+import test.CodeInsightTestBase
+
 /**
  *
  * @author Peter Wu
@@ -9,7 +11,7 @@ class DependenciesKtsCompletionTest : CodeInsightTestBase() {
 
     //build.gradle.kts dependencies
     fun testKtsDependencies() {
-        doCheckResult(gradleKtsFileName, """dependencies{
+        completionCheckResult(gradleKtsFileName, """dependencies{
     compile("kotlin-reflect$caret")
 }""", """dependencies{
     compile("org.jetbrains.kotlin:kotlin-reflect")
@@ -17,7 +19,7 @@ class DependenciesKtsCompletionTest : CodeInsightTestBase() {
     }
 
     fun testKtsDependenciesVersion() {
-        doCheckResult(gradleKtsFileName, """dependencies{
+        completionCheckResult(gradleKtsFileName, """dependencies{
     compile("org.jetbrains.kotlin:kotlin-reflect$caret")
 }""", """dependencies{
     compile("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
@@ -26,7 +28,7 @@ class DependenciesKtsCompletionTest : CodeInsightTestBase() {
 
     //build.gradle.kts dependencies kotlin()
     fun testKtsDependenciesKotlin() {
-        doCheckResult(gradleKtsFileName, """dependencies{
+        completionCheckResult(gradleKtsFileName, """dependencies{
     compile(kotlin("$caret"))
 }""", """dependencies{
     compile(kotlin("stdlib-jre8"))
@@ -34,7 +36,7 @@ class DependenciesKtsCompletionTest : CodeInsightTestBase() {
     }
 
     fun testKtsDependenciesKotlinVersion() {
-        doCheckResult(gradleKtsFileName, """dependencies{
+        completionCheckResult(gradleKtsFileName, """dependencies{
     compile(kotlin("stdlib-jre8","$caret"))
 }""", """dependencies{
     compile(kotlin("stdlib-jre8","$kotlinVersion"))
@@ -43,7 +45,7 @@ class DependenciesKtsCompletionTest : CodeInsightTestBase() {
 
     //build.gradle.kts dependencies *
     fun testKtsDependenciesWildcard() {
-        doCheckResult(gradleKtsFileName, """dependencies{
+        completionCheckResult(gradleKtsFileName, """dependencies{
     testCompile("kotlin*junit$caret")
 }""", """dependencies{
     testCompile("org.jetbrains.kotlin:kotlin-test-junit")
@@ -52,14 +54,14 @@ class DependenciesKtsCompletionTest : CodeInsightTestBase() {
 
     //build.gradle.kts dependencies by className
     fun testDependenciesByFullyQualifiedClassName() {
-        doCheckResult(gradleFileName, """dependencies{
+        completionCheckResult(gradleFileName, """dependencies{
     compile("fc:feign.Client$caret")
 }""", """dependencies{
     compile("com.netflix.feign:feign-core:$feignVersion")
 }""", "com.netflix.feign:feign-core:$feignVersion")
     }
     fun testDependenciesByClassName() {
-        doCheckResult(gradleFileName, """dependencies{
+        completionCheckResult(gradleFileName, """dependencies{
     compile("c:feign$caret")
 }""", """dependencies{
     compile("com.netflix.feign:feign-core:$feignVersion")
