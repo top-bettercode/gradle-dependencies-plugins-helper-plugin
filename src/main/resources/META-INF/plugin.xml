@@ -13,14 +13,15 @@
   <description><![CDATA[
     This is an IntelliJ IDEA plugin for searching dependencies/plugins from JCentral/GradlePlugins inside Gradle projects.
     <br/><br/>
-    <a href="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin">GitHub</a> |
-    <a
-      href="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin/issues">Issues</a> |
-    Donate(
-    <a href="https://blockchain.info/address/1CWkfYDshK4LN3JWrZbi5V8gzo3iQNJj5">BTC</a> |
-    <a href="https://bestwu.github.io/images/donate/alipay.png">alipay</a> |
-    <a href="https://bestwu.github.io/images/donate/wechatpay.png">wechatpay</a>
-    )<br/><br/>
+    <!--<a href="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin">GitHub</a> |-->
+    <!--<a-->
+      <!--href="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin/issues">Issues</a> |-->
+    <!--Donate(-->
+    <!--<a href="https://blockchain.info/address/1CWkfYDshK4LN3JWrZbi5V8gzo3iQNJj5">BTC</a> |-->
+    <!--<a href="https://bestwu.github.io/images/donate/alipay.png">alipay</a> |-->
+    <!--<a href="https://bestwu.github.io/images/donate/wechatpay.png">wechatpay</a>-->
+    <!--)-->
+    <!--<br/><br/>-->
     <b>Features</b>
     <ul>
       <li>Use Smart Type Completion in dependencies/plugins script block.</li>
