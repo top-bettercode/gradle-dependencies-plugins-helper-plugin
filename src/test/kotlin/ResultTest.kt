@@ -86,12 +86,12 @@ class ParseResultTest {
     }
 
 
-    @Test
-    fun local() {
-        Assert.assertTrue(Locale.getDefault() == Locale.CHINA)
-        Assert.assertFalse(Locale.getDefault() == Locale.CHINESE)
-        Assert.assertTrue(Locale.getDefault() == Locale.SIMPLIFIED_CHINESE)
-    }
+//    @Test
+//    fun local() {
+//        Assert.assertTrue(Locale.getDefault() == Locale.CHINA)
+//        Assert.assertFalse(Locale.getDefault() == Locale.CHINESE)
+//        Assert.assertTrue(Locale.getDefault() == Locale.SIMPLIFIED_CHINESE)
+//    }
 
     @Test
     fun testkotlinRegex() {
