@@ -8,11 +8,13 @@ plugins {
 }
 group = "cn.bestwu"
 version = "0.1.1"
+
+val ideaVersion: Any? by project
+
 intellij {
     updateSinceUntilBuild = false
 //    downloadSources = false
-//    version ="IC-2017.2.3"
-    version = "2016.1"
+    version = ideaVersion as String
     setPlugins("Groovy", "gradle", "Kotlin", "maven", "properties", "junit")
 }
 
