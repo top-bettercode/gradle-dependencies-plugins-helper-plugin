@@ -19,8 +19,8 @@ intellij {
 }
 
 tasks.withType(PublishTask::class.java) {
-    username(project.property("intellij.publish.username"))
-    password(project.property("intellij.publish.password"))
+    username(project.findProperty("intellij.publish.username"))
+    password(project.findProperty("intellij.publish.password"))
     channels("stable")
 }
 
