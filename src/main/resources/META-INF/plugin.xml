@@ -2,7 +2,7 @@
   <idea-version since-build="145.258"/>
   <id>cn.bestwu.gdph</id>
   <name>Gradle Dependencies And Plugins Helper</name>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
   <vendor email="piterwu@outlook.com"
     url="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin">Peter Wu
   </vendor>
@@ -42,21 +42,9 @@
     ]]></description>
 
   <change-notes><![CDATA[
-    <b>0.1.0</b> (initial release)
+    <b>0.1.1</b>
     <ul>
-      <li>Use Smart Type Completion in dependencies/plugins script block.</li>
-      <li>Support *.gradle,*.gradle.kts.</li>
-      <li>Use jcenter API for Gradle queries,Use Gradle Plugins Search for Gradle Plugins queries.
-      </li>
-      <li>Support wildcard query *.</li>
-      <li>Support search by classname in mavenCentral search.<br/>
-        use "c:"(classname) or "fc:"( fully-qualified classname ) in dependencies script block.<br/>
-        example:<br/>
-        &nbsp;&nbsp;compile("fc:org.junit.Test")<br/>
-        &nbsp;&nbsp;compile("c:Junit")
-      </li>
-      <li>Support Maven Index search option and Nexus search option.</li>
-      <li>Add specified repository to repositories.</li>
+      <li>(improvement) Add specified repository to repositories intentionAction support add jcenter() to repositories.</li>
     </ul>
     ]]>
   </change-notes>

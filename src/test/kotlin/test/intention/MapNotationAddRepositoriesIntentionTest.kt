@@ -17,6 +17,13 @@ class MapNotationAddRepositoriesIntentionTest : CodeInsightTestBase() {
 dependencies{
     compile group: 'io.github.openfeign', name: 'feign-core', version: '9.5.1'
 }"""
+    private val intentionCenterAfter = """repositories {
+    jcenter()
+}
+
+dependencies{
+    compile group: 'org.jsoup', name: 'jsoup', version: '1.10.3'
+}"""
 
     //build.gradle
     fun testAddRepositoriesIntention() {
@@ -126,6 +133,38 @@ dependencies{
 dependencies{
     compile group: '$caret', name: 'feign-core', version: '9.5.1'
 }""")
+    }
+
+
+    fun testAddRepositoriesIntentionCenterNoRepo() {
+        intentionCheckResult(gradleFileName, """dependencies{
+    compile group: 'org.jsoup$caret', name: 'jsoup', version: '1.10.3'
+}""", intentionCenterAfter)
+    }
+
+    fun testAddRepositoriesIntentionCenter() {
+        intentionCheckResult(gradleFileName, """repositories {
+}
+
+dependencies{
+    compile group: 'org.jsoup$caret', name: 'jsoup', version: '1.10.3'
+}""", """repositories {
+jcenter()
+}
+
+dependencies{
+    compile group: 'org.jsoup', name: 'jsoup', version: '1.10.3'
+}""")
+    }
+
+    fun testAddRepositoriesIntentionCenterExist() {
+        intentionCheckResult(gradleFileName, """repositories {
+    jcenter()
+}
+
+dependencies{
+    compile group: 'org.jsoup', name: 'jsoup$caret', version: '1.10.3'
+}""", intentionCenterAfter)
     }
 
 }

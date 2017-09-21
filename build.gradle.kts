@@ -5,10 +5,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.1.4-3"
     id("org.jetbrains.intellij") version "0.2.17"
-    id("cn.bestwu.idea") version "0.0.1"
 }
 group = "cn.bestwu"
-version = "0.1.0"
+version = "0.1.1"
 intellij {
     updateSinceUntilBuild = false
 //    downloadSources = false

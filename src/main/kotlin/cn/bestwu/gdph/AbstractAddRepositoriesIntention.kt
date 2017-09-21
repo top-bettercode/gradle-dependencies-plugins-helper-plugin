@@ -18,18 +18,18 @@ abstract class AbstractAddRepositoriesIntention : Intention() {
 
     protected fun processIntention(searchParam: SearchParam, project: Project, element: PsiElement) {
         val result: LinkedHashSet<ArtifactInfo> = GradleDependenciesCompletionContributor.artifactSearcher.search(GradleArtifactSearcher.keyBintray, searchParam, linkedSetOf(), project, GradleDependenciesCompletionContributor.artifactSearcher::searchInJcenter)
-        if (result.isNotEmpty() && result.first().isSpecifiedRepo()) {
+        if (result.isNotEmpty()) {
             val psiFile = element.containingFile
             val repositoriesClosure = findClosure(psiFile, "repositories")?.closureArguments?.first()
             val factory = GroovyPsiElementFactory.getInstance(project)
-            val mavenRepo = "\t\tmaven { url '${result.first().repo()}' }"
+            val repo = if (result.first().isSpecifiedRepo()) "\t\tmaven { url '${result.first().repo()}' }" else "\t\tjcenter()"
             if (repositoriesClosure == null) {
                 val dependenciesElement = findClosure(psiFile, "dependencies")
-                psiFile.addBefore(factory.createStatementFromText("repositories {\n$mavenRepo\n}"), dependenciesElement)
+                psiFile.addBefore(factory.createStatementFromText("repositories {\n$repo\n}"), dependenciesElement)
                 psiFile.addBefore(factory.createLineTerminator(2), dependenciesElement)
             } else {
-                if (!repositoriesClosure.text.contains(result.first().repo())) {
-                    repositoriesClosure.addStatementBefore(factory.createStatementFromText(mavenRepo), null)
+                if (!repositoriesClosure.text.contains(if (result.first().isSpecifiedRepo()) result.first().repo() else "jcenter")) {
+                    repositoriesClosure.addStatementBefore(factory.createStatementFromText(repo), null)
                 }
             }
         }
