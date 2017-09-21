@@ -1,4 +1,8 @@
-#### GradleDependenciesAndPluginsHelper
+# GradleDependenciesAndPluginsHelper
+[![Build Status](https://travis-ci.org/bestwu/gradle-dependencies-plugins-helper-plugin.svg?branch=master)](https://travis-ci.org/bestwu/gradle-dependencies-plugins-helper-plugin)
+[![Version](http://phpstorm.espend.de/badge/10033/version)](https://plugins.jetbrains.com/plugin/10033-gradle-dependencies-and-plugins-helper)
+[![Downloads](http://phpstorm.espend.de/badge/10033/downloads)](https://plugins.jetbrains.com/plugin/10033-gradle-dependencies-and-plugins-helper)
+[![License](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
 
 [中文说明](https://bestwu.github.io/2017/09/01/gradle-dependencies-plugins-helper-plugin/)
 
@@ -6,7 +10,7 @@ This is an IntelliJ IDEA plugin for searching dependencies/plugins from [JCentra
 
 Inspired by [https://github.com/siosio/GradleDependenciesHelperPlugin](https://github.com/siosio/GradleDependenciesHelperPlugin).
 
-#### Features
+## Features
 
 * Use `Smart Type Completion` in dependencies/plugins script block.
 
@@ -43,7 +47,7 @@ Inspired by [https://github.com/siosio/GradleDependenciesHelperPlugin](https://g
 
 ![](https://bestwu.github.io/images/gradle-dependencies-plugins-helper-plugin/add-repo.gif)
 
-### Settings
+## Settings
 
 * Make sure `Smart Type Completion` is on.
 
