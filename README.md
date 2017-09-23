@@ -25,7 +25,7 @@ Inspired by [https://github.com/siosio/GradleDependenciesHelperPlugin](https://g
 ![](https://bestwu.github.io/images/gradle-dependencies-plugins-helper-plugin/dependencies.kts.gif)
 
 * Use [jcenter API](https://bintray.com/docs/api/) for Gradle dependencies queries, Use [Gradle Plugins](https://plugins.gradle.org) for Gradle plugins queries.
-* Support wildcard query * etc.
+* Support wildcard query * .
 
 ![](https://bestwu.github.io/images/gradle-dependencies-plugins-helper-plugin/wildcard.gif)
 
