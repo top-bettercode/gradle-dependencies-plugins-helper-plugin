@@ -33,7 +33,7 @@ abstract class CodeInsightTestBase : LightCodeInsightFixtureTestCase() {
     companion object {
         val gradleFileName = "build.gradle"
         val gradleKtsFileName = "build.gradle.kts"
-        val kotlinVersion = "1.1.4-3"
+        val kotlinVersion = "1.1.50"
         val feignVersion = "8.18.0"
         val caret = "<caret>"
 
