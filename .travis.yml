@@ -17,11 +17,11 @@ matrix:
     - jdk: oraclejdk8
       env: IDEA_VERSION="2017.1"
     - jdk: oraclejdk8
+      env: IDEA_VERSION="2017.2"
+    - jdk: oraclejdk8
       env: IDEA_VERSION="2017.2.4"
-    - jdk: oraclejdk8
-      env: IDEA_VERSION="LATEST-EAP-SNAPSHOT"
-    - jdk: oraclejdk8
-      env: IDEA_VERSION="LATEST-TRUNK-SNAPSHOT"
+#    - jdk: oraclejdk8
+#      env: IDEA_VERSION="LATEST-EAP-SNAPSHOT"
 
 install: ./gradlew -P ideaVersion=$IDEA_VERSION assemble
 
