@@ -65,7 +65,7 @@ class GradlePluginsCompletionContributor : AbstractGradlePluginsCompletionContri
                 searchResult = pluginsSearcher.searchPlugins(searchText)
             }
             searchResult.forEach {
-                val lookupElementBuilder = if (isVersion) LookupElementBuilder.create(it).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(INSERT_HANDLER) else LookupElementBuilder.create(it).withPresentableText(it.replace(GradlePluginsSearcher.splitRule, ":")).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(INSERT_HANDLER)
+                val lookupElementBuilder = if (isVersion) LookupElementBuilder.create(it).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(insertHandler) else LookupElementBuilder.create(it).withPresentableText(it.replace(GradlePluginsSearcher.splitRule, ":")).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(insertHandler)
                 completionResultSet.addElement(lookupElementBuilder)
             }
         }

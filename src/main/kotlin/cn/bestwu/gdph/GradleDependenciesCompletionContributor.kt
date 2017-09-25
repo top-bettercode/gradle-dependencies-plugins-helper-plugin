@@ -84,12 +84,12 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                 when {
                     GROUP_LABEL == parent.labelName -> {
                         searchResult.forEach {
-                            completionResultSet.addElement(LookupElementBuilder.create(it.groupId).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(INSERT_HANDLER))
+                            completionResultSet.addElement(LookupElementBuilder.create(it.groupId).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(insertHandler))
                         }
                     }
                     NAME_LABEL == parent.labelName -> {
                         searchResult.forEach {
-                            completionResultSet.addElement(LookupElementBuilder.create(it.artifactId).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(INSERT_HANDLER))
+                            completionResultSet.addElement(LookupElementBuilder.create(it.artifactId).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(insertHandler))
                         }
                     }
                     VERSION_LABEL == parent.labelName -> {
@@ -101,7 +101,7 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                                 })
                         )
                         searchResult.forEach {
-                            completionResultSet.addElement(LookupElementBuilder.create(it.version).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(INSERT_HANDLER))
+                            completionResultSet.addElement(LookupElementBuilder.create(it.version).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(insertHandler))
                         }
                     }
                     else -> return
@@ -153,7 +153,7 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                     completionResultSet = completionResultSet.withPrefixMatcher(PrefixMatcher.ALWAYS_TRUE)
                 }
                 searchResult.forEach {
-                    completionResultSet.addElement(LookupElementBuilder.create("${it.gav}${if (it.artifactId.isEmpty()) ":" else ""}").withPresentableText(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(INSERT_HANDLER))
+                    completionResultSet.addElement(LookupElementBuilder.create("${it.gav}${if (it.artifactId.isEmpty()) ":" else ""}").withPresentableText(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(insertHandler))
                 }
             }
         })

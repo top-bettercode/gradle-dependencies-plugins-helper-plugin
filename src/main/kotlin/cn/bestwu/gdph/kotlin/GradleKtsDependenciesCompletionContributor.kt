@@ -97,11 +97,11 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                     val lookupElementBuilder =
                             if (isKotlin) {
                                 if (isVersion)
-                                    LookupElementBuilder.create(it.version).withPresentableText(it.version).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(INSERT_HANDLER)
+                                    LookupElementBuilder.create(it.version).withPresentableText(it.version).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(insertHandler)
                                 else
-                                    LookupElementBuilder.create(it.gav.substringAfter(kotlinPrefix)).withPresentableText(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(INSERT_HANDLER)
+                                    LookupElementBuilder.create(it.gav.substringAfter(kotlinPrefix)).withPresentableText(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(insertHandler)
                             } else
-                                LookupElementBuilder.create("${it.gav}${if (it.artifactId.isEmpty()) ":" else ""}").withPresentableText(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(INSERT_HANDLER)
+                                LookupElementBuilder.create("${it.gav}${if (it.artifactId.isEmpty()) ":" else ""}").withPresentableText(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(insertHandler)
                     completionResultSet.addElement(lookupElementBuilder)
                 }
             }

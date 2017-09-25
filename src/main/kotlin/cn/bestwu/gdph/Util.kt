@@ -35,11 +35,11 @@ private val group = NotificationGroup(
 )
 
 internal fun supportMavenIndex(): Boolean {
-    try {
+    return try {
         Class.forName("org.jetbrains.idea.maven.indices.MavenIndex")
-        return true
+        true
     } catch (e: ClassNotFoundException) {
-        return false
+        false
     }
 }
 
@@ -56,7 +56,7 @@ internal class VersionComparator(private val index: Int) : Comparable<VersionCom
 }
 
 private val stopChars = arrayOf('"', '\'')
-internal var INSERT_HANDLER: InsertHandler<LookupElement> = InsertHandler<LookupElement> { context, _ ->
+internal var insertHandler: InsertHandler<LookupElement> = InsertHandler { context, _ ->
     context.commitDocument()
     val text = context.document.text
     var idStart = context.startOffset
@@ -69,7 +69,12 @@ internal var INSERT_HANDLER: InsertHandler<LookupElement> = InsertHandler<Lookup
     idStart++
 
     var idEnd = context.tailOffset
-    while (!stopChars.contains(text[idEnd])) {
+    if (idEnd >= text.length) {
+        if (text.indexOf('#') != -1)
+            context.document.replaceString(text.indexOf('#'), idEnd, "")
+        return@InsertHandler
+    }
+    while (idEnd < text.length && !stopChars.contains(text[idEnd])) {
         idEnd++
         if (idEnd == text.length || '\n' == text[idEnd]) {
             return@InsertHandler
@@ -83,9 +88,9 @@ internal var INSERT_HANDLER: InsertHandler<LookupElement> = InsertHandler<Lookup
 
         var tailEnd = idEnd
         var tailStart = idEnd + 1
-        while (tailEnd != text.length && '\n' != text[tailEnd]) {
+        while (tailEnd < text.length && '\n' != text[tailEnd]) {
             tailEnd++
-            if (tailEnd != text.length && ')' == text[tailEnd]) {
+            if (tailEnd < text.length && ')' == text[tailEnd]) {
                 tailStart = tailEnd + 1
             }
         }
@@ -100,7 +105,10 @@ internal fun contributorDuringCompletion(context: CompletionInitializationContex
         val offset = context.caret.offset
         val text = context.editor.document.charsSequence
         var idEnd = offset
-        while (!stopChars.contains(text[idEnd])) {
+        if (text.isEmpty()) {
+            return
+        }
+        while (idEnd < text.length && !stopChars.contains(text[idEnd])) {
             idEnd++
             if (idEnd == text.length || '\n' == text[idEnd]) {
                 return
