@@ -85,7 +85,7 @@ internal var INSERT_HANDLER: InsertHandler<LookupElement> = InsertHandler<Lookup
         var tailStart = idEnd + 1
         while (tailEnd != text.length && '\n' != text[tailEnd]) {
             tailEnd++
-            if (')' == text[tailEnd]) {
+            if (tailEnd != text.length && ')' == text[tailEnd]) {
                 tailStart = tailEnd + 1
             }
         }
