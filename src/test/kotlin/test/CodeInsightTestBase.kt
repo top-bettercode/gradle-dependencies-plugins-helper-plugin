@@ -33,8 +33,6 @@ abstract class CodeInsightTestBase : LightCodeInsightFixtureTestCase() {
     companion object {
         val gradleFileName = "build.gradle"
         val gradleKtsFileName = "build.gradle.kts"
-        val kotlinVersion = "1.1.50"
-        val feignVersion = "8.18.0"
         val caret = "<caret>"
 
         private val intention = "Add specified repository to repositories"
@@ -45,34 +43,41 @@ abstract class CodeInsightTestBase : LightCodeInsightFixtureTestCase() {
         Settings.getInstance().useNexus = false
     }
 
-    protected fun completionCheckResult(fileName: String, before: String, after: String, selectItem: String) {
+    protected fun completionCheckResult(fileName: String, before: String, after: (String) -> String, selectItem: String) {
         myFixture.configureByText(fileName, before)
         myFixture.complete(CompletionType.SMART, 1)
-        if (selectItem.isNotEmpty()) {
-            selectLookupItem(selectItem)
-        }
+        val selectItemStr = selectLookupItem(selectItem)
+        val afterStr = after(selectItemStr)
+        println("result:\n$afterStr")
+        myFixture.checkResult(afterStr)
+    }
+
+    protected fun completionCheckResult(fileName: String, before: String, after: String) {
+        myFixture.configureByText(fileName, before)
+        myFixture.complete(CompletionType.SMART, 1)
         myFixture.checkResult(after)
     }
 
-    protected fun completionCheckResultByFile(before: String, after: String, selectItem: String) {
-        myFixture.configureByFiles(before)
-        myFixture.complete(CompletionType.SMART, 1)
-        if (selectItem.isNotEmpty()) {
-            selectLookupItem(selectItem)
-        }
-        myFixture.checkResultByFile(after)
-    }
+//    protected fun completionCheckResultByFile(before: String, after: String, selectItem: String) {
+//        myFixture.configureByFiles(before)
+//        myFixture.complete(CompletionType.SMART, 1)
+//        if (selectItem.isNotEmpty()) {
+//            selectLookupItem(selectItem)
+//        }
+//        myFixture.checkResultByFile(after)
+//    }
 
-    private fun selectLookupItem(selectItem: String) {
+    private fun selectLookupItem(selectItem: String): String {
         val lookupElements = myFixture.lookupElements
         TestCase.assertNotNull("Lookup is empty", lookupElements)
         val toSelect: LookupElement? = lookupElements!!.firstOrNull {
             println(it.lookupString)
-            selectItem == it.lookupString
+            it.lookupString.startsWith(selectItem)
         }
         TestCase.assertNotNull(selectItem + " not found in lookup", toSelect)
         myFixture.lookup.currentItem = toSelect
         myFixture.type(Lookup.NORMAL_SELECT_CHAR)
+        return toSelect!!.lookupString.split("[#:]".toRegex()).last()
     }
 
 

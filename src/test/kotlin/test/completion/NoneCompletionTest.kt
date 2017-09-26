@@ -28,8 +28,10 @@ class NoneCompletionTest : CodeInsightTestBase() {
     //build.gradle dependencies
     fun testEndNone() {
         completionCheckResult(gradleKtsFileName, """plugins {
-    kotlin("jvm$caret""", """plugins {
-    kotlin("jvm""", "")
+    kotlin("jvm$caret""",
+                """plugins {
+    kotlin("jvm"""
+        )
     }
 
     fun testEndNone1() {
@@ -37,11 +39,13 @@ class NoneCompletionTest : CodeInsightTestBase() {
     kotlin("jvm") version "1.1.50"
 }
 
-repo$caret """, """plugins {
+repo$caret """,
+                """plugins {
     kotlin("jvm") version "1.1.50"
 }
 
-repo """, "")
+repo """
+        )
     }
 
     fun testEndNone2() {
@@ -49,16 +53,18 @@ repo """, "")
     kotlin("jvm") version "1.1.50"
 }
 
-repo$caret""", """plugins {
+repo$caret""",
+                """plugins {
     kotlin("jvm") version "1.1.50"
 }
 
-repo""", "")
+repo"""
+        )
     }
 
     //build.gradle dependencies
     fun testNone() {
-        completionCheckResult(gradleFileName, caret, "", "")
+        completionCheckResult(gradleFileName, caret, "")
     }
 
 }

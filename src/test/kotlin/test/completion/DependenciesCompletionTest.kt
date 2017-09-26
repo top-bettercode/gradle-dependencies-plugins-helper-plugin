@@ -29,17 +29,21 @@ class DependenciesCompletionTest : CodeInsightTestBase() {
     fun testStdDependencies() {
         completionCheckResult(gradleFileName, """dependencies {
     compile 'kotlin-reflect$caret'
-}""", """dependencies {
+}""", {
+            """dependencies {
     compile 'org.jetbrains.kotlin:kotlin-reflect'
-}""", "org.jetbrains.kotlin:kotlin-reflect")
+}"""
+        }, "org.jetbrains.kotlin:kotlin-reflect")
     }
 
     fun testStdDependenciesVersion() {
         completionCheckResult(gradleFileName, """dependencies {
     compile 'org.jetbrains.kotlin:kotlin-reflect$caret'
-}""", """dependencies {
-    compile 'org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion'
-}""", "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+}""", {
+            """dependencies {
+    compile 'org.jetbrains.kotlin:kotlin-reflect:$it'
+}"""
+        }, "org.jetbrains.kotlin:kotlin-reflect:")
     }
 
     //build.gradle dependencies map notation
@@ -47,25 +51,31 @@ class DependenciesCompletionTest : CodeInsightTestBase() {
     fun testDependenciesMapGroup() {
         completionCheckResult(gradleFileName, """dependencies {
     compile group:'kotlin$caret'
-}""", """dependencies {
+}""", {
+            """dependencies {
     compile group:'org.jetbrains.kotlin'
-}""", "org.jetbrains.kotlin")
+}"""
+        }, "org.jetbrains.kotlin")
     }
 
     fun testDependenciesMapName() {
         completionCheckResult(gradleFileName, """dependencies {
     compile group:'org.jetbrains.kotlin',name:'$caret'
-}""", """dependencies {
+}""", {
+            """dependencies {
     compile group:'org.jetbrains.kotlin',name:'kotlin-reflect'
-}""", "kotlin-reflect")
+}"""
+        }, "kotlin-reflect")
     }
 
     fun testDependenciesMapVersion() {
         completionCheckResult(gradleFileName, """dependencies {
     compile group:'org.jetbrains.kotlin',name:'kotlin-reflect',version:'$caret'
-}""", """dependencies {
-    compile group:'org.jetbrains.kotlin',name:'kotlin-reflect',version:'$kotlinVersion'
-}""", kotlinVersion)
+}""", {
+            """dependencies {
+    compile group:'org.jetbrains.kotlin',name:'kotlin-reflect',version:'$it'
+}"""
+        }, "")
     }
 
 
@@ -73,26 +83,32 @@ class DependenciesCompletionTest : CodeInsightTestBase() {
     fun testDependenciesWildcard() {
         completionCheckResult(gradleFileName, """dependencies{
     testCompile 'kotlin*junit$caret'
-}""", """dependencies{
+}""", {
+            """dependencies{
     testCompile 'org.jetbrains.kotlin:kotlin-test-junit'
-}""", "org.jetbrains.kotlin:kotlin-test-junit")
+}"""
+        }, "org.jetbrains.kotlin:kotlin-test-junit")
     }
 
     //build.gradle dependencies by className
     fun testDependenciesByFullyQualifiedClassName() {
         completionCheckResult(gradleFileName, """dependencies{
     compile 'fc:feign.Client$caret'
-}""", """dependencies{
-    compile 'com.netflix.feign:feign-core:$feignVersion'
-}""", "com.netflix.feign:feign-core:$feignVersion")
+}""", {
+            """dependencies{
+    compile 'com.netflix.feign:feign-core:$it'
+}"""
+        }, "com.netflix.feign:feign-core:")
     }
 
     fun testDependenciesByClassName() {
         completionCheckResult(gradleFileName, """dependencies{
     compile 'c:feign$caret'
-}""", """dependencies{
-    compile 'com.netflix.feign:feign-core:$feignVersion'
-}""", "com.netflix.feign:feign-core:$feignVersion")
+}""", {
+            """dependencies{
+    compile 'com.netflix.feign:feign-core:$it'
+}"""
+        }, "com.netflix.feign:feign-core:")
     }
 
 
