@@ -20,7 +20,6 @@ import cn.bestwu.gdph.supportMavenIndex
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.Storage
-import java.util.*
 
 
 @com.intellij.openapi.components.State(
@@ -40,7 +39,7 @@ class Settings(var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: St
     }
 
     companion object {
-        val useNexus: Boolean = Locale.getDefault() == Locale.CHINA
+        val useNexus: Boolean = false
         val useMavenIndex: Boolean = false
         val nexusSearchUrl: String = "http://maven.aliyun.com/nexus"
         private val mavenCentralRemoteRepository = "https://repo1.maven.org/maven2/"
