@@ -17,6 +17,7 @@
 package cn.bestwu.gdph.kotlin
 
 import cn.bestwu.gdph.*
+import cn.bestwu.gdph.search.*
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
@@ -47,29 +48,39 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                 result.stopHere()
                 val text = trim(params.originalPosition?.text ?: "")
                 val prefix = params.position.text.substringBefore("IntellijIdeaRulezzz")
-                val searchText = if (!text.startsWith("c:", true) && !text.startsWith("fc:", true)) prefix else text
+                val iSearchParam: ISearchParam
                 var isKotlin = false
                 var isVersion = false
-                val searchParam = if (text.contains(":") && !searchText.contains(":")) {
-                    SearchParam(searchText, "", false, false)
+                var searchResult = if (text.startsWith("c:", true) || text.startsWith("fc:", true)) {
+                    val classNameSearchParam = ClassNameSearchParam(text)
+                    if (classNameSearchParam.q.length < 2)
+                        return
+                    iSearchParam = classNameSearchParam
+                    GradleArtifactSearcher.searchByClassName(classNameSearchParam, params.position.project)
                 } else {
-                    val parent = params.position.parent.parent.parent
-                    val pText = parent.parent.parent.text
-                    if (pText.startsWith("kotlin")) {
-                        isKotlin = true
-                        if ("(" != parent.prevSibling.text) {
-                            isVersion = true
-                            SearchParam(pText.replace(GradleKtsPluginsCompletionContributor.kotlinRegex, "$kotlinPrefix$1:"))
+                    val searchParam = if (text.contains(":") && !prefix.contains(":")) {
+                        SearchParam(prefix, "", false, false)
+                    } else {
+                        val parent = params.position.parent.parent.parent
+                        val pText = parent.parent.parent.text
+                        if (pText.startsWith("kotlin")) {
+                            isKotlin = true
+                            if ("(" != parent.prevSibling.text) {
+                                isVersion = true
+                                SearchParam(kotlinGroup, pText.replace(GradleKtsPluginsCompletionContributor.kotlinRegex, "$kotlinArtifactPrefix$1"), true, true)
+                            } else {
+                                SearchParam(kotlinGroup, "$kotlinArtifactPrefix$prefix", true, false)
+                            }
                         } else
-                            SearchParam("${kotlinPrefix}$searchText")
-                    } else
-                        SearchParam(searchText)
+                            toSearchParam(prefix)
+                    }
+                    if (searchParam.src.length < 2)
+                        return
+                    iSearchParam = searchParam
+                    GradleArtifactSearcher.search(searchParam, params.position.project)
                 }
-                if (searchParam.id.length < 2)
-                    return
-                var searchResult = artifactSearcher.search(searchParam, params.position.project)
                 if (searchResult.isEmpty()) {
-                    show(params.position.project, searchParam.failContent, "find dependencies fail", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
+                    show(params.position.project, iSearchParam.docUrl, "find dependencies fail", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
                 }
                 if (isKotlin) {
                     if (!isVersion)
@@ -89,8 +100,7 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                             }
                         })
                 )
-                val cSearch = searchParam.advancedSearch.isNotEmpty()
-                if (cSearch) {
+                if (iSearchParam is ClassNameSearchParam) {
                     completionResultSet = completionResultSet.withPrefixMatcher(PrefixMatcher.ALWAYS_TRUE)
                 }
                 searchResult.forEach {
@@ -113,7 +123,8 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
     companion object {
         private val DEPENDENCIES_SCRIPT_BLOCK = "dependencies"
         val kotlinPrefix = "org.jetbrains.kotlin:kotlin-"
-        private val artifactSearcher = GradleArtifactSearcher()
+        val kotlinArtifactPrefix = "kotlin-"
+        val kotlinGroup = "org.jetbrains.kotlin"
 
         private val DEPENDENCIES_CALL_PATTERN = PlatformPatterns.psiElement()
                 .inside(true, PlatformPatterns.psiElement(KtCallExpression::class.java).with(

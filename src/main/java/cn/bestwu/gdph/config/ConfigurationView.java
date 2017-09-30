@@ -41,7 +41,8 @@ public class ConfigurationView {
 
   public ConfigurationView() {
     useNexus.addActionListener(
-        actionEvent -> nexusSearchUrlField.setEnabled(useNexus.isSelected()));
+        actionEvent -> nexusSearchUrlField.setEnabled(useNexus.isSelected())
+    );
 //    useMavenIndex.addActionListener(
 //        actionEvent -> addRemoteRepo.setEnabled(useMavenIndex.isSelected()));
 //    addRemoteRepo.addActionListener(e -> {
@@ -78,7 +79,6 @@ public class ConfigurationView {
     useNexus.setSelected(selected);
     nexusSearchUrlField.setEnabled(selected);
   }
-
 
   public Set<String> getRemoteRepositories() {
     return remoteRepositories;

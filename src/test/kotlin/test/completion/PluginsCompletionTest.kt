@@ -16,7 +16,7 @@
 
 package test.completion
 
-import cn.bestwu.gdph.GradlePluginsSearcher
+import cn.bestwu.gdph.search.GradlePluginsSearcher
 import test.CodeInsightTestBase
 
 

@@ -16,6 +16,7 @@
 
 package cn.bestwu.gdph
 
+import cn.bestwu.gdph.search.GradlePluginsSearcher
 import com.intellij.codeInsight.completion.CompletionInitializationContext
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.completion.InsertHandler

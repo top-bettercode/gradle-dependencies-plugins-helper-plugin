@@ -16,6 +16,9 @@
 
 package cn.bestwu.gdph
 
+import cn.bestwu.gdph.search.ArtifactInfo
+import cn.bestwu.gdph.search.JcenterSearcher
+import cn.bestwu.gdph.search.SearchParam
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -33,7 +36,7 @@ abstract class AbstractAddRepositoriesIntention : Intention() {
     }
 
     protected fun processIntention(searchParam: SearchParam, project: Project, element: PsiElement) {
-        val result: LinkedHashSet<ArtifactInfo> = GradleDependenciesCompletionContributor.artifactSearcher.search(GradleArtifactSearcher.keyBintray, searchParam, linkedSetOf(), project, GradleDependenciesCompletionContributor.artifactSearcher::searchInJcenter)
+        val result: LinkedHashSet<ArtifactInfo> = JcenterSearcher.search(searchParam, project, linkedSetOf())
         if (result.isNotEmpty()) {
             val psiFile = element.containingFile
             val repositoriesClosure = findClosure(psiFile, "repositories")?.closureArguments?.first()

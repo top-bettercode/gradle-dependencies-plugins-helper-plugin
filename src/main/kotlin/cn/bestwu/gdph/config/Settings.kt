@@ -28,9 +28,9 @@ import com.intellij.openapi.components.Storage
 )
 class Settings(var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useMavenIndex: Boolean = Settings.useMavenIndex, var remoteRepositories: MutableSet<String> = Settings.remoteRepositories) : PersistentStateComponent<Settings> {
     override fun loadState(state: Settings?) {
-        this.useNexus = state?.useNexus ?: Settings.useNexus
         this.useMavenIndex = (state?.useMavenIndex ?: Settings.useMavenIndex) && supportMavenIndex()
         this.remoteRepositories = state?.remoteRepositories ?: Settings.remoteRepositories
+        this.useNexus = state?.useNexus ?: Settings.useNexus
         this.nexusSearchUrl = state?.nexusSearchUrl ?: Settings.nexusSearchUrl
     }
 

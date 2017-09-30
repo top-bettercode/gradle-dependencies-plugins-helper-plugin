@@ -16,10 +16,10 @@
 
 package cn.bestwu.gdph.kotlin
 
-import cn.bestwu.gdph.ArtifactInfo
-import cn.bestwu.gdph.GradleArtifactSearcher
-import cn.bestwu.gdph.GradleDependenciesCompletionContributor
-import cn.bestwu.gdph.SearchParam
+import cn.bestwu.gdph.search.ArtifactInfo
+import cn.bestwu.gdph.search.JcenterSearcher
+import cn.bestwu.gdph.search.SearchParam
+import cn.bestwu.gdph.search.toSearchParam
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -97,7 +97,7 @@ open class KtsMethodNotationAddRepositoriesIntention : IntentionAction {
     }
 
     private fun processIntention(searchParam: SearchParam, project: Project, element: PsiElement) {
-        val result: LinkedHashSet<ArtifactInfo> = GradleDependenciesCompletionContributor.artifactSearcher.search(GradleArtifactSearcher.keyBintray, searchParam, linkedSetOf(), project, GradleDependenciesCompletionContributor.artifactSearcher::searchInJcenter)
+        val result: LinkedHashSet<ArtifactInfo> = JcenterSearcher.search(searchParam, project, linkedSetOf())
         if (result.isNotEmpty()) {
             val psiFile = element.containingFile
             val repositoriesClosure = findClosure(psiFile, "repositories")?.firstChild?.lastChild?.firstChild?.firstChild as? KtFunctionLiteral
@@ -129,7 +129,7 @@ open class KtsMethodNotationAddRepositoriesIntention : IntentionAction {
         if (stringNotation.count { it == ':' } == 1) {
             stringNotation += ":"
         }
-        processIntention(SearchParam(stringNotation), project, element)
+        processIntention(toSearchParam(stringNotation), project, element)
     }
 
     private fun satisfiedElement(element: PsiElement): Boolean {

@@ -26,7 +26,6 @@ abstract class AbstractGradlePluginsCompletionContributor : CompletionContributo
     companion object {
         val pluginsExtension="plugins"
         val regex = "^id *\\(? *[\"'](.*)[\"'] *\\)? *version.*$".toRegex()
-        val pluginsSearcher = GradlePluginsSearcher()
 
         fun completionSorter(searchResult: List<String>): CompletionSorter {
             return CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("gradleDependencyWeigher") {

@@ -16,6 +16,7 @@
 
 package cn.bestwu.gdph
 
+import cn.bestwu.gdph.search.*
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
@@ -73,11 +74,11 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                     }
                     else -> return
                 }
-                if (searchParam.id.length < 2)
+                if (searchParam.toId().length < 2)
                     return
-                val searchResult = artifactSearcher.search(searchParam, params.position.project)
+                val searchResult = GradleArtifactSearcher.search(searchParam, params.position.project)
                 if (searchResult.isEmpty()) {
-                    show(params.position.project, searchParam.failContent, "find dependencies fail", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
+                    show(params.position.project, searchParam.docUrl, "find dependencies fail", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
                 }
 
                 var completionResultSet = result
@@ -123,23 +124,31 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                 if (parent !is GrLiteral && parent !is GrStringContent) return
                 result.stopHere()
                 val prefix: String
-                if (parent is GrStringContent) {
-                    prefix = params.position.text.substringBefore("IntellijIdeaRulezzz ")
+                prefix = if (parent is GrStringContent) {
+                    params.position.text.substringBefore("IntellijIdeaRulezzz ")
                 } else
-                    prefix = CompletionUtil.findReferenceOrAlphanumericPrefix(params)
+                    CompletionUtil.findReferenceOrAlphanumericPrefix(params)
                 val text = trim(params.originalPosition?.text ?: "")
-                val searchText = if (!text.startsWith("c:", true) && !text.startsWith("fc:", true)) prefix else text
-                val searchParam: SearchParam
-                searchParam = if (text.contains(":") && !searchText.contains(":")) {
-                    SearchParam(searchText, "", false, false)
+                val iSearchParam: ISearchParam
+                val searchResult = if (text.startsWith("c:", true) || text.startsWith("fc:", true)) {
+                    val classNameSearchParam = ClassNameSearchParam(text)
+                    if (classNameSearchParam.q.length < 2)
+                        return
+                    iSearchParam = classNameSearchParam
+                    GradleArtifactSearcher.searchByClassName(classNameSearchParam, params.position.project)
                 } else {
-                    SearchParam(searchText)
+                    val searchParam = if (text.contains(":") && !prefix.contains(":")) {
+                        SearchParam(prefix, "", false, false)
+                    } else {
+                        toSearchParam(prefix)
+                    }
+                    if (searchParam.src.length < 2)
+                        return
+                    iSearchParam = searchParam
+                    GradleArtifactSearcher.search(searchParam, params.position.project)
                 }
-                if (searchParam.id.length < 2)
-                    return
-                val searchResult = artifactSearcher.search(searchParam, params.position.project)
                 if (searchResult.isEmpty()) {
-                    show(params.position.project, searchParam.failContent, "find dependencies fail", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
+                    show(params.position.project, iSearchParam.docUrl, "find dependencies fail", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
                 }
 
                 var completionResultSet = result.withRelevanceSorter(
@@ -149,7 +158,7 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                             }
                         })
                 )
-                if (searchParam.advancedSearch.isNotEmpty()) {
+                if (iSearchParam is ClassNameSearchParam) {
                     completionResultSet = completionResultSet.withPrefixMatcher(PrefixMatcher.ALWAYS_TRUE)
                 }
                 searchResult.forEach {
@@ -166,7 +175,6 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
         private val NAME_LABEL = "name"
         private val VERSION_LABEL = "version"
         private val DEPENDENCIES_SCRIPT_BLOCK = "dependencies"
-        val artifactSearcher = GradleArtifactSearcher()
         private val GRADLE_FILE_PATTERN: ElementPattern<PsiElement> = psiElement()
                 .inFile(psiFile().withName(string().endsWith('.' + GradleConstants.EXTENSION)))
 

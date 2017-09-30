@@ -68,7 +68,7 @@ class KtsPsiElementFactory(val project: Project) {
             throw IncorrectOperationException("count = " + statements.size + ", " + text)
         }
         if (statements[0] !is KtExpression) {
-            throw IncorrectOperationException("type = " + statements[0].javaClass.getName() + ", " + text)
+            throw IncorrectOperationException("type = " + statements[0].javaClass.name + ", " + text)
         }
         return statements[0]
     }

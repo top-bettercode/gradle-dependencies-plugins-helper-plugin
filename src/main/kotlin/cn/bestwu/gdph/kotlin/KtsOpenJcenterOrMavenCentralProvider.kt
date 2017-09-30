@@ -47,18 +47,20 @@ class KtsOpenJcenterOrMavenCentralProvider : AbstractGDPHProvider() {
         }
         val parentText = parent.text
         if (parent != null) {
-            if (parentText.contains("version")) {
-                searchText = if (parentText.startsWith("kotlin")) {
+            when {
+                parentText.contains("version") -> searchText = if (parentText.startsWith("kotlin")) {
                     parentText.replace(GradleKtsPluginsCompletionContributor.kotlinRegex, "${GradleKtsPluginsCompletionContributor.kotlinPrefix}$1").trim()
                 } else {
                     parentText.replace(AbstractGradlePluginsCompletionContributor.regex, "$1").trim()
                 }
-            } else if (parentText.startsWith("kotlin")) {
-                searchText = searchText.replace("^(.*?)\".*$".toRegex(), "$1")
-                searchText = "${GradleKtsPluginsCompletionContributor.kotlinPrefix}$searchText"
-            } else if (parent.parent.parent.text.startsWith("kotlin")) {
-                searchText = trim(element.parent.parent.text).replace("^(.*?)\".*$".toRegex(), "$1")
-                searchText = "${GradleKtsPluginsCompletionContributor.kotlinPrefix}$searchText"
+                parentText.startsWith("kotlin") -> {
+                    searchText = searchText.replace("^(.*?)\".*$".toRegex(), "$1")
+                    searchText = "${GradleKtsPluginsCompletionContributor.kotlinPrefix}$searchText"
+                }
+                parent.parent.parent.text.startsWith("kotlin") -> {
+                    searchText = trim(element.parent.parent.text).replace("^(.*?)\".*$".toRegex(), "$1")
+                    searchText = "${GradleKtsPluginsCompletionContributor.kotlinPrefix}$searchText"
+                }
             }
         }
         return pluginsDoc(searchText)

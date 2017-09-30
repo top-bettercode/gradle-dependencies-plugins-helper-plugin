@@ -16,6 +16,7 @@
 
 package cn.bestwu.gdph
 
+import cn.bestwu.gdph.search.SearchParam
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement

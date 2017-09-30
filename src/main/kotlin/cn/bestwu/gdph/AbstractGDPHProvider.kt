@@ -50,12 +50,11 @@ abstract class AbstractGDPHProvider : DocumentationProvider {
     protected fun dependenciesDoc(dependency: String): String {
         val mavenUrl = split(dependency).let {
             if (it.size >= 2) {
-                if ("c" == it[0]) {
-                    return "<a href='http://search.maven.org/#search|gav|1|c:\"${it[1]}\"'>search in mavenCentral</a><br/>"
-                } else if ("fc" == it[0]) {
-                    return "<a href='http://search.maven.org/#search|gav|1|fc:\"${it[1]}\"'>search in mavenCentral</a><br/>"
-                } else
-                    "http://search.maven.org/#search|gav|1|g:\"${it[0]}\" AND a:\"${it[1]}\""
+                when {
+                    "c" == it[0] -> return "<a href='http://search.maven.org/#search|gav|1|c:\"${it[1]}\"'>search in mavenCentral</a><br/>"
+                    "fc" == it[0] -> return "<a href='http://search.maven.org/#search|gav|1|fc:\"${it[1]}\"'>search in mavenCentral</a><br/>"
+                    else -> "http://search.maven.org/#search|gav|1|g:\"${it[0]}\" AND a:\"${it[1]}\""
+                }
             } else {
                 "http://search.maven.org/#search|gav|1|g:\"${it[0]}\""
             }

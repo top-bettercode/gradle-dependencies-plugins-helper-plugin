@@ -17,9 +17,9 @@
 package cn.bestwu.gdph.kotlin
 
 import cn.bestwu.gdph.AbstractGradlePluginsCompletionContributor
-import cn.bestwu.gdph.GradlePluginsSearcher
-import cn.bestwu.gdph.insertHandler
 import cn.bestwu.gdph.contributorDuringCompletion
+import cn.bestwu.gdph.insertHandler
+import cn.bestwu.gdph.search.GradlePluginsSearcher
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.icons.AllIcons
@@ -72,10 +72,10 @@ class GradleKtsPluginsCompletionContributor : AbstractGradlePluginsCompletionCon
             if (parent?.parent?.parent is KtCallExpression && parent.parent.parent.firstChild.text == "kotlin") {
                 isKotlin = true
                 isVersion = isVersion || "(" != parent.prevSibling.text
-                if (isVersion) {
-                    searchText = parent.parent.parent.text.replace(kotlinRegex, "$kotlinPrefix$1")
+                searchText = if (isVersion) {
+                    parent.parent.parent.text.replace(kotlinRegex, "$kotlinPrefix$1")
                 } else {
-                    searchText = "$kotlinPrefix$searchText"
+                    "$kotlinPrefix$searchText"
                 }
             } else {
                 isKotlin = false
@@ -84,10 +84,13 @@ class GradleKtsPluginsCompletionContributor : AbstractGradlePluginsCompletionCon
             var searchResult: List<String>
             var completionResultSet = result
             if (isVersion) {
-                searchResult = pluginsSearcher.searchPluginVersions(searchText)
+                searchResult = GradlePluginsSearcher.searchPluginVersions(searchText)
                 completionResultSet = result.withRelevanceSorter(completionSorter(searchResult))
             } else {
-                searchResult = pluginsSearcher.searchPlugins(searchText)
+                if (searchText.length < 2) {
+                    return
+                }
+                searchResult = GradlePluginsSearcher.searchPlugins(searchText)
             }
             if (isKotlin && !isVersion) {
                 searchResult = searchResult.filter { it.startsWith(kotlinPrefix) }

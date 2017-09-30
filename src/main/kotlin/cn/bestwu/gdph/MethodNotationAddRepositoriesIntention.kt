@@ -16,6 +16,7 @@
 
 package cn.bestwu.gdph
 
+import cn.bestwu.gdph.search.toSearchParam
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -29,7 +30,7 @@ class MethodNotationAddRepositoriesIntention : AbstractAddRepositoriesIntention(
         if (stringNotation.count { it == ':' } == 1) {
             stringNotation += ":"
         }
-        processIntention(SearchParam(stringNotation), project, element)
+        processIntention(toSearchParam(stringNotation), project, element)
     }
 
     override fun getElementPredicate(): PsiElementPredicate {

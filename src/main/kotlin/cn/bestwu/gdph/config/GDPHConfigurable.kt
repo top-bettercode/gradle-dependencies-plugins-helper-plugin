@@ -44,8 +44,8 @@ class GDPHConfigurable(private val project: Project) : Configurable {
 
         // Reset on click.
         view!!.resetButton.addActionListener {
-            view!!.useNexus = Settings.useNexus
             view!!.useMavenIndex = Settings.useMavenIndex
+            view!!.useNexus = Settings.useNexus
             view!!.nexusSearchUrl = Settings.nexusSearchUrl
             view!!.remoteRepositories = Settings.remoteRepositories
         }
@@ -64,8 +64,8 @@ class GDPHConfigurable(private val project: Project) : Configurable {
     override fun apply() {
         val settings = Settings.getInstance()
         val changeMavenIndex = settings.useMavenIndex != view!!.useMavenIndex || settings.remoteRepositories != view!!.remoteRepositories
-        settings.useNexus = view!!.useNexus
         settings.useMavenIndex = view!!.useMavenIndex
+        settings.useNexus = view!!.useNexus
         settings.nexusSearchUrl = view!!.nexusSearchUrl
         settings.remoteRepositories = view!!.remoteRepositories
         if (changeMavenIndex)
@@ -74,8 +74,8 @@ class GDPHConfigurable(private val project: Project) : Configurable {
 
     override fun reset() {
         val settings = Settings.getInstance()
-        view!!.useNexus = settings.useNexus
         view!!.useMavenIndex = settings.useMavenIndex
+        view!!.useNexus = settings.useNexus
         view!!.nexusSearchUrl = settings.nexusSearchUrl
         view!!.remoteRepositories = settings.remoteRepositories
     }

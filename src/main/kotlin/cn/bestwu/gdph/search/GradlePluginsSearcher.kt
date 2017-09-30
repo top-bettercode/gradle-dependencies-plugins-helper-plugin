@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package cn.bestwu.gdph
+package cn.bestwu.gdph.search
 
 import org.jsoup.Jsoup
 
-class GradlePluginsSearcher {
-    companion object {
-        private val pluginsCaches = HashMap<String, List<String>>()
-        private val pluginVersionsCaches = HashMap<String, List<String>>()
-        val splitRule = "#"
-    }
+object GradlePluginsSearcher {
+    private val pluginsCaches = HashMap<String, List<String>>()
+    private val pluginVersionsCaches = HashMap<String, List<String>>()
+    val splitRule = "#"
 
     fun searchPlugins(text: String): List<String> {
         var result = pluginsCaches[text]
@@ -46,8 +44,8 @@ class GradlePluginsSearcher {
 
     fun searchPluginVersions(text: String): List<String> {
         var result = pluginVersionsCaches[text]
-        if (result == null) {
-            result = ArrayList<String>()
+        result = if (result == null) {
+            ArrayList()
         } else {
             return result
         }

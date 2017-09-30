@@ -16,6 +16,7 @@
 
 package cn.bestwu.gdph
 
+import cn.bestwu.gdph.search.GradlePluginsSearcher
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.icons.AllIcons
@@ -59,10 +60,13 @@ class GradlePluginsCompletionContributor : AbstractGradlePluginsCompletionContri
             val searchResult: List<String>
             var completionResultSet = result
             if (isVersion) {
-                searchResult = pluginsSearcher.searchPluginVersions(searchText)
+                searchResult = GradlePluginsSearcher.searchPluginVersions(searchText)
                 completionResultSet = result.withRelevanceSorter(completionSorter(searchResult))
             } else {
-                searchResult = pluginsSearcher.searchPlugins(searchText)
+                if (searchText.length < 2) {
+                    return
+                }
+                searchResult = GradlePluginsSearcher.searchPlugins(searchText)
             }
             searchResult.forEach {
                 val lookupElementBuilder = if (isVersion) LookupElementBuilder.create(it).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(insertHandler) else LookupElementBuilder.create(it).withPresentableText(it.replace(GradlePluginsSearcher.splitRule, ":")).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(insertHandler)

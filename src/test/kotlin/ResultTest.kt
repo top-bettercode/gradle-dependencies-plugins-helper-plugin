@@ -31,9 +31,10 @@
  */
 
 import cn.bestwu.gdph.AbstractGradlePluginsCompletionContributor
-import cn.bestwu.gdph.ArtifactInfo
-import cn.bestwu.gdph.GradleArtifactSearcher
 import cn.bestwu.gdph.kotlin.GradleKtsPluginsCompletionContributor
+import cn.bestwu.gdph.search.ArtifactInfo
+import cn.bestwu.gdph.search.compareVersion
+import cn.bestwu.gdph.search.regex
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
@@ -60,7 +61,7 @@ class ParseResultTest {
     }
 
     @Test
-    fun GrRegex() {
+    fun grRegex() {
         Assert.assertEquals("org.springframework.boot:spr", "org.springframework.boot:sprIntellijIdeaRulezzz ing-boot-dependencies".substringBefore("IntellijIdeaRulezzz "))
     }
 
@@ -84,7 +85,7 @@ class ParseResultTest {
                 "1.3.0.M1"
         )
         versions.sortWith(kotlin.Comparator { o1, o2 ->
-            GradleArtifactSearcher.compareVersion(o1, o2)
+            compareVersion(o1, o2)
         })
         Assert.assertEquals(arrayListOf(
                 "1.3.0.SNAPSHOTS",
@@ -108,7 +109,7 @@ class ParseResultTest {
     @Test
     fun mavenRegex() {
 
-        GradleArtifactSearcher.regex.findAll(File(this::class.java.getResource("/result.json").path).readText()).forEach {
+        regex.findAll(File(this::class.java.getResource("/result.json").path).readText()).forEach {
             val artifactInfo = ArtifactInfo(it.groupValues[1], it.groupValues[2], it.groupValues[3], "mavenCentral", "Apache")
             Assert.assertTrue(artifactInfo.version.isNotBlank())
             Assert.assertTrue(artifactInfo.artifactId.isNotBlank())
