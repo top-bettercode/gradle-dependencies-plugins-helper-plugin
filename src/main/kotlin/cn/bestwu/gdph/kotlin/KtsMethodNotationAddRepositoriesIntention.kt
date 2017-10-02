@@ -20,7 +20,9 @@ import cn.bestwu.gdph.search.ArtifactInfo
 import cn.bestwu.gdph.search.JcenterSearcher
 import cn.bestwu.gdph.search.SearchParam
 import cn.bestwu.gdph.search.toSearchParam
+import cn.bestwu.gdph.show
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
@@ -108,7 +110,9 @@ open class KtsMethodNotationAddRepositoriesIntention : IntentionAction {
                 dependenciesElement.parent.addBefore(factory.createStatementFromText("repositories {\n$repo\n}"), dependenciesElement)
                 dependenciesElement.parent.addBefore(GroovyPsiElementFactory.getInstance(project).createLineTerminator(2), dependenciesElement)
             } else {
-                if (!repositoriesClosure.text.contains(if (result.first().isSpecifiedRepo()) result.first().repo() else "jcenter")) {
+                if (repositoriesClosure.text.contains(if (result.first().isSpecifiedRepo()) result.first().repo() else "jcenter")) {
+                    show(project, "repository\n$repo\n already in repositories", type = NotificationType.WARNING)
+                }else{
                     repositoriesClosure.addBefore(factory.createStatementFromText(repo), repositoriesClosure.rBrace)
                 }
             }
