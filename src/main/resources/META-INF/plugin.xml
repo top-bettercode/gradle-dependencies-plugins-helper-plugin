@@ -31,7 +31,7 @@
     <br/><br/>
     <!--<a href="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin">GitHub</a> |-->
     <!--<a-->
-      <!--href="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin/issues">Issues</a> |-->
+    <!--href="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin/issues">Issues</a> |-->
     <!--Donate(-->
     <!--<a href="https://blockchain.info/address/1CWkfYDshK4LN3JWrZbi5V8gzo3iQNJj5">BTC</a> |-->
     <!--<a href="https://bestwu.github.io/images/donate/alipay.png">alipay</a> |-->
@@ -60,9 +60,11 @@
   <change-notes><![CDATA[
     <b>0.1.1</b>
     <ul>
-      <li>(improvement) Add specified repository to repositories intentionAction support add jcenter() to repositories.</li>
+      <li>(improvement) Add specified repository to repositories intentionAction support add
+        jcenter() to repositories.
+      </li>
       <li>(improvement) Show warning notification when repository already in repositories.</li>
-      <li>(bugfix) InsertHandler Index out of range</li>
+      <li>(bugfix) InsertHandler Index out of range.</li>
     </ul>
     ]]>
   </change-notes>

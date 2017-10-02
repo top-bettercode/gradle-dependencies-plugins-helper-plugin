@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<idea-plugin>
+<idea-plugin version="2">
   <extensions defaultExtensionNs="com.intellij">
     <postStartupActivity implementation="cn.bestwu.gdph.maven.GradleProjectStartupActivity"/>
     <externalSystemTaskNotificationListener

@@ -175,7 +175,7 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
         private val NAME_LABEL = "name"
         private val VERSION_LABEL = "version"
         private val DEPENDENCIES_SCRIPT_BLOCK = "dependencies"
-        val GRADLE_FILE_PATTERN: ElementPattern<PsiElement> = psiElement()
+        private val GRADLE_FILE_PATTERN: ElementPattern<PsiElement> = psiElement()
                 .inFile(psiFile().withName(string().endsWith('.' + GradleConstants.EXTENSION)))
 
         private fun findNamedArgumentValue(namedArgumentsOwner: GrNamedArgumentsOwner?, label: String): String? {
