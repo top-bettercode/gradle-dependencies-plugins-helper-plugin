@@ -46,8 +46,8 @@ abstract class CodeInsightTestBase : LightCodeInsightFixtureTestCase() {
     protected fun completionCheckResult(fileName: String, before: String, after: (String) -> String, selectItem: String) {
         myFixture.configureByText(fileName, before)
         myFixture.complete(CompletionType.SMART, 1)
-        val selectItemStr = selectLookupItem(selectItem)
-        val afterStr = after(selectItemStr)
+        val selectVersion = selectLookupItem(selectItem)
+        val afterStr = after(selectVersion)
         println("result:\n$afterStr")
         myFixture.checkResult(afterStr)
     }
