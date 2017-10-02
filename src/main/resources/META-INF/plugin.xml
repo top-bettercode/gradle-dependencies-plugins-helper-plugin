@@ -61,6 +61,7 @@
     <b>0.1.1</b>
     <ul>
       <li>(improvement) Add specified repository to repositories intentionAction support add jcenter() to repositories.</li>
+      <li>(improvement) Show warning notification when repository already in repositories.</li>
     </ul>
     ]]>
   </change-notes>

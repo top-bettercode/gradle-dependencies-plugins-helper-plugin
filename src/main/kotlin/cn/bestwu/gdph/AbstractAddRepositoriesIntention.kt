@@ -19,6 +19,7 @@ package cn.bestwu.gdph
 import cn.bestwu.gdph.search.ArtifactInfo
 import cn.bestwu.gdph.search.JcenterSearcher
 import cn.bestwu.gdph.search.SearchParam
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -47,7 +48,9 @@ abstract class AbstractAddRepositoriesIntention : Intention() {
                 psiFile.addBefore(factory.createStatementFromText("repositories {\n$repo\n}"), dependenciesElement)
                 psiFile.addBefore(factory.createLineTerminator(2), dependenciesElement)
             } else {
-                if (!repositoriesClosure.text.contains(if (result.first().isSpecifiedRepo()) result.first().repo() else "jcenter")) {
+                if (repositoriesClosure.text.contains(if (result.first().isSpecifiedRepo()) result.first().repo() else "jcenter")) {
+                    show(project, "repository\n$repo\n already in repositories", type = NotificationType.WARNING)
+                } else {
                     repositoriesClosure.addStatementBefore(factory.createStatementFromText(repo), null)
                 }
             }
