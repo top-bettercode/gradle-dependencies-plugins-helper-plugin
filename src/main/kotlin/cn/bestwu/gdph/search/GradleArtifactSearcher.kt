@@ -25,28 +25,20 @@ object GradleArtifactSearcher {
     fun searchByClassName(searchParam: ClassNameSearchParam, project: Project): Set<ArtifactInfo> {
         val preResult: LinkedHashSet<ArtifactInfo> = linkedSetOf()
         val settings = Settings.getInstance()
-        return if (settings.useMavenIndex) {
-            MavenIndexSearcher.searchByClassName(searchParam, project, preResult)
-        } else {
-            if (settings.useNexus) {
-                NexusSearcher.searchByClassName(searchParam, project, preResult)
-            } else {
-                MavenCentralSearcher.searchByClassName(searchParam, project, preResult)
-            }
+        return when {
+            settings.useMavenIndex -> MavenIndexSearcher.searchByClassName(searchParam, project, preResult)
+            settings.useNexus -> NexusSearcher.searchByClassName(searchParam, project, preResult)
+            else -> MavenCentralSearcher.searchByClassName(searchParam, project, preResult)
         }
     }
 
     fun search(searchParam: SearchParam, project: Project): Set<ArtifactInfo> {
         val preResult: LinkedHashSet<ArtifactInfo> = linkedSetOf()
         val settings = Settings.getInstance()
-        return if (settings.useMavenIndex) {
-            MavenIndexSearcher.search(searchParam, project, preResult)
-        } else {
-            if (settings.useNexus) {
-                NexusSearcher.search(searchParam, project, preResult)
-            } else {
-                JcenterSearcher.search(searchParam, project, preResult)
-            }
+        return when {
+            settings.useMavenIndex -> MavenIndexSearcher.search(searchParam, project, preResult)
+            settings.useNexus -> NexusSearcher.search(searchParam, project, preResult)
+            else -> JcenterSearcher.search(searchParam, project, preResult)
         }
     }
 
