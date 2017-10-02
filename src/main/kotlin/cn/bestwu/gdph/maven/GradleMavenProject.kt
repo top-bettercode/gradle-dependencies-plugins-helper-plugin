@@ -56,7 +56,8 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
             val settings = Settings.getInstance()
             val remoteRepositories: MutableSet<MavenRemoteRepository>
             if (settings.useMavenIndex) {
-                remoteRepositories = settings.remoteRepositories.map { it.toMavenRemoteRepository() }.toMutableSet()
+                remoteRepositories = mutableSetOf()
+                remoteRepositories.add(Settings.mavenCentralRemoteRepository.toMavenRemoteRepository())
                 remoteRepositories.addAll(repositoriesHolder.remoteRepositories)
             } else {
                 remoteRepositories = repositoriesHolder.remoteRepositories

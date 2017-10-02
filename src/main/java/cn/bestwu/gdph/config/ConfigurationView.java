@@ -17,8 +17,6 @@
 package cn.bestwu.gdph.config;
 
 import cn.bestwu.gdph.UtilKt;
-import java.util.HashSet;
-import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -36,8 +34,6 @@ public class ConfigurationView {
   private JPanel mavenIndexPanel;
   private JCheckBox useMavenIndex;
   private JLabel showtip;
-  //  private JButton addRemoteRepo;
-  private Set<String> remoteRepositories = new HashSet<>();
 
   public ConfigurationView() {
     useNexus.addActionListener(
@@ -78,15 +74,6 @@ public class ConfigurationView {
   public void setUseNexus(boolean selected) {
     useNexus.setSelected(selected);
     nexusSearchUrlField.setEnabled(selected);
-  }
-
-  public Set<String> getRemoteRepositories() {
-    return remoteRepositories;
-  }
-
-  public void setRemoteRepositories(
-      Set<String> remoteRepositories) {
-    this.remoteRepositories = remoteRepositories;
   }
 
   public boolean getUseMavenIndex() {

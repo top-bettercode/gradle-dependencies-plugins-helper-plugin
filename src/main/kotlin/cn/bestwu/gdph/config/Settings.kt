@@ -26,10 +26,9 @@ import com.intellij.openapi.components.Storage
         name = "GDPHSettings",
         storages = arrayOf(Storage("gdph.settings.xml"))
 )
-class Settings(var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useMavenIndex: Boolean = Settings.useMavenIndex, var remoteRepositories: MutableSet<String> = Settings.remoteRepositories) : PersistentStateComponent<Settings> {
+class Settings(var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useMavenIndex: Boolean = Settings.useMavenIndex) : PersistentStateComponent<Settings> {
     override fun loadState(state: Settings?) {
         this.useMavenIndex = (state?.useMavenIndex ?: Settings.useMavenIndex) && supportMavenIndex()
-        this.remoteRepositories = state?.remoteRepositories ?: Settings.remoteRepositories
         this.useNexus = state?.useNexus ?: Settings.useNexus
         this.nexusSearchUrl = state?.nexusSearchUrl ?: Settings.nexusSearchUrl
     }
@@ -42,8 +41,7 @@ class Settings(var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: St
         val useNexus: Boolean = false
         val useMavenIndex: Boolean = false
         val nexusSearchUrl: String = "http://maven.aliyun.com/nexus"
-        private val mavenCentralRemoteRepository = "https://repo1.maven.org/maven2/"
-        val remoteRepositories = mutableSetOf(mavenCentralRemoteRepository)
+        val mavenCentralRemoteRepository = "https://repo1.maven.org/maven2/"
 
         fun getInstance(): Settings {
             return ServiceManager.getService(Settings::class.java)
