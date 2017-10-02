@@ -35,7 +35,7 @@ class ArtifactInfo(groupId: String, artifactId: String, version: String, repo: S
     var gav: String
 
 
-    fun type() = "$repo${if (owner.isNotEmpty() && repo != "jcenter") " By $owner" else ""}"
+    fun type() = "$repo${if (owner.isNotEmpty() && repo != "jcenter") " by $owner" else ""}"
     fun repo() = "https://dl.bintray.com/$owner/$repo"
     fun isSpecifiedRepo() = repo.isNotEmpty() && owner.isNotEmpty() && "jcenter" != repo && "mavenCentral" != repo && "Nexus" != repo
 
