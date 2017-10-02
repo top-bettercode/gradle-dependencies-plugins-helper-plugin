@@ -52,7 +52,7 @@ abstract class ArtifactSearcher {
         }
         val result = doSearch(searchParam, project, preResult)
         if (key != jcenterKey)
-            result.removeIf { !it.groupId.contains(searchParam.groupId.filter { it != '*' }) || !it.artifactId.contains(searchParam.artifactId.filter { it != '*' }) }
+            result.removeAll { !it.groupId.contains(searchParam.groupId.filter { it != '*' }) || !it.artifactId.contains(searchParam.artifactId.filter { it != '*' }) }
         return if (result.isEmpty()) {
             handleEmptyResult(searchParam, project, result)
         } else {
