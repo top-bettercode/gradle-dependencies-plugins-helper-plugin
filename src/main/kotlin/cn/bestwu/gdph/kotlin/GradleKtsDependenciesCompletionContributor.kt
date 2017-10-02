@@ -141,9 +141,11 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                             }
                         }))
 
+        val GRADLE_KTS_FILE_PATTERN = PlatformPatterns.psiElement().inFile(PlatformPatterns.psiFile().withName(StandardPatterns.string().endsWith(".gradle.kts")))
+
         val IN_METHOD_DEPENDENCY_NOTATION: PsiElementPattern.Capture<PsiElement> = PlatformPatterns.psiElement()
                 .withParent(KtLiteralStringTemplateEntry::class.java)
-                .and(PlatformPatterns.psiElement().inFile(PlatformPatterns.psiFile().withName(StandardPatterns.string().endsWith(".gradle.kts"))))
+                .and(GRADLE_KTS_FILE_PATTERN)
                 .and(DEPENDENCIES_CALL_PATTERN)
     }
 }

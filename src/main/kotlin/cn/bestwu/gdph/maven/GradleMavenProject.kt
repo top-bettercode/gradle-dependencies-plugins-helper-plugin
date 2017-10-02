@@ -16,6 +16,7 @@
 
 package cn.bestwu.gdph.maven
 
+import cn.bestwu.gdph.config.ProjectSettings
 import cn.bestwu.gdph.config.Settings
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
@@ -54,10 +55,10 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
             if (ApplicationManager.getApplication().isUnitTestMode) return
             val repositoriesHolder = MavenRepositoriesHolder.getInstance(project)
             val settings = Settings.getInstance()
+            val projectSettings = ProjectSettings.getInstance(project)
             val remoteRepositories: MutableSet<MavenRemoteRepository>
             if (settings.useMavenIndex) {
-                remoteRepositories = mutableSetOf()
-                remoteRepositories.add(Settings.mavenCentralRemoteRepository.toMavenRemoteRepository())
+                remoteRepositories = projectSettings.remoteRepositories.split(ProjectSettings.separator).map { it.toMavenRemoteRepository() }.toMutableSet()
                 remoteRepositories.addAll(repositoriesHolder.remoteRepositories)
             } else {
                 remoteRepositories = repositoriesHolder.remoteRepositories

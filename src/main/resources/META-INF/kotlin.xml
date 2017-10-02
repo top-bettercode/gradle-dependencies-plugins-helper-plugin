@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<idea-plugin>
+<idea-plugin version="2">
   <extensions defaultExtensionNs="com.intellij">
     <completion.contributor language="kotlin"
       implementationClass="cn.bestwu.gdph.kotlin.GradleKtsDependenciesCompletionContributor"
@@ -23,7 +23,8 @@
       implementationClass="cn.bestwu.gdph.kotlin.GradleKtsPluginsCompletionContributor"
       order="first"/>
 
-    <documentationProvider implementation="cn.bestwu.gdph.kotlin.KtsOpenJcenterOrMavenCentralProvider"
+    <documentationProvider
+      implementation="cn.bestwu.gdph.kotlin.KtsOpenJcenterOrMavenCentralProvider"
       order="first"/>
 
     <intentionAction>

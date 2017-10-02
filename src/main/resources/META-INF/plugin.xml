@@ -53,16 +53,17 @@
         &nbsp;&nbsp;compile("c:Junit")
       </li>
       <li>Support Maven Index search option and Nexus search option.</li>
-      <li>Add specified repository to repositories.</li>
+      <li>Add specified repository to repositories intentionAction.</li>
     </ul>
     ]]></description>
 
   <change-notes><![CDATA[
     <b>0.1.1</b>
     <ul>
+      <li>(improvement) Add specified repository to maven repositories index intentionAction.</li>
       <li>(improvement) Add specified repository to repositories intentionAction support add jcenter() to repositories.</li>
       <li>(improvement) Show warning notification when repository already in repositories.</li>
-      <li>(bugfix) InsertHandler Index out of range</li>
+      <li>(bugfix) InsertHandler Index out of range.</li>
     </ul>
     ]]>
   </change-notes>
@@ -84,6 +85,9 @@
     <applicationService
       serviceInterface="cn.bestwu.gdph.config.Settings"
       serviceImplementation="cn.bestwu.gdph.config.Settings"/>
+    <projectService
+      serviceInterface="cn.bestwu.gdph.config.ProjectSettings"
+      serviceImplementation="cn.bestwu.gdph.config.ProjectSettings"/>
 
     <intentionAction>
       <category>Gradle</category>

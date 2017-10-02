@@ -41,12 +41,10 @@ class Settings(var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: St
         val useNexus: Boolean = false
         val useMavenIndex: Boolean = false
         val nexusSearchUrl: String = "http://maven.aliyun.com/nexus"
-        val mavenCentralRemoteRepository = "https://repo1.maven.org/maven2/"
 
         fun getInstance(): Settings {
             return ServiceManager.getService(Settings::class.java)
         }
     }
-
 
 }

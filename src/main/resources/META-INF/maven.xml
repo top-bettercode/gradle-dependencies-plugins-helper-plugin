@@ -14,10 +14,19 @@
   ~ limitations under the License.
   -->
 
-<idea-plugin>
+<idea-plugin version="2">
   <extensions defaultExtensionNs="com.intellij">
     <postStartupActivity implementation="cn.bestwu.gdph.maven.GradleProjectStartupActivity"/>
     <externalSystemTaskNotificationListener
       implementation="cn.bestwu.gdph.maven.GradleMavenProjectImportNotificationListener"/>
+
+    <intentionAction>
+      <category>Gradle</category>
+      <className>cn.bestwu.gdph.AddRepoToIndexIntention</className>
+    </intentionAction>
+    <intentionAction>
+      <category>Gradle</category>
+      <className>cn.bestwu.gdph.kotlin.KtsAddRepoToIndexIntention</className>
+    </intentionAction>
   </extensions>
 </idea-plugin>
