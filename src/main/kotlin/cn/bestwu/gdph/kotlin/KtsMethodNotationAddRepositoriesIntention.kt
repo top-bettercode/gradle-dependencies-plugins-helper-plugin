@@ -111,7 +111,7 @@ open class KtsMethodNotationAddRepositoriesIntention : IntentionAction {
                 dependenciesElement.parent.addBefore(GroovyPsiElementFactory.getInstance(project).createLineTerminator(2), dependenciesElement)
             } else {
                 if (repositoriesClosure.text.contains(if (result.first().isSpecifiedRepo()) result.first().repo() else "jcenter")) {
-                    show(project, "repository\n$repo\n already in repositories", type = NotificationType.WARNING)
+                    show(project, "repository:\n$repo\n already in repositories", type = NotificationType.WARNING)
                 }else{
                     repositoriesClosure.addBefore(factory.createStatementFromText(repo), repositoriesClosure.rBrace)
                 }

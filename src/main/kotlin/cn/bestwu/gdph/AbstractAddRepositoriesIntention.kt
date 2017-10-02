@@ -49,7 +49,7 @@ abstract class AbstractAddRepositoriesIntention : Intention() {
                 psiFile.addBefore(factory.createLineTerminator(2), dependenciesElement)
             } else {
                 if (repositoriesClosure.text.contains(if (result.first().isSpecifiedRepo()) result.first().repo() else "jcenter")) {
-                    show(project, "repository\n$repo\n already in repositories", type = NotificationType.WARNING)
+                    show(project, "repository:\n$repo\n already in repositories", type = NotificationType.WARNING)
                 } else {
                     repositoriesClosure.addStatementBefore(factory.createStatementFromText(repo), null)
                 }
