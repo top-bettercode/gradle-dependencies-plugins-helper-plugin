@@ -88,6 +88,7 @@ class ParseResultTest {
             compareVersion(o1, o2)
         })
         Assert.assertEquals(arrayListOf(
+                "1.3.0",
                 "1.3.0.SNAPSHOTS",
                 "1.3.0.ALPHA",
                 "1.3.0.BETA",
@@ -100,9 +101,35 @@ class ParseResultTest {
                 "1.3.0.RC1",
                 "1.3.0.RC2",
                 "1.3.0.RELEASE",
-                "1.3.0",
                 "1.3.0.1",
                 "1.3.1"
+        ), versions)
+    }
+
+    @Test
+    fun sortCloudVersion() {
+        val versions = arrayListOf(
+                        "Finchley",
+                        "Edgware",
+                        "Edgware.M1",
+                        "Angel.SR6",
+                        "Dalston.SR3",
+                        "Brixton.SR7",
+                        "Camden.SR7",
+                        "Finchley.M2"
+        )
+        versions.sortWith(kotlin.Comparator { o1, o2 ->
+            compareVersion(o2, o1)
+        })
+        Assert.assertEquals(arrayListOf(
+                "Finchley.M2",
+                "Finchley",
+                "Edgware.M1",
+                "Edgware",
+                "Dalston.SR3",
+                "Camden.SR7",
+                "Brixton.SR7",
+                "Angel.SR6"
         ), versions)
     }
 
