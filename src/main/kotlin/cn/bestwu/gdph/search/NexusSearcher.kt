@@ -17,7 +17,6 @@
 package cn.bestwu.gdph.search
 
 import cn.bestwu.gdph.config.Settings
-import cn.bestwu.gdph.config.Settings.Companion.nexusSearchUrl
 import com.intellij.openapi.project.Project
 import groovy.json.JsonSlurper
 import java.util.*
@@ -35,7 +34,7 @@ object NexusSearcher : ArtifactSearcher() {
     override val key: String
         get() = "nexus:"
 
-    private fun artifactInfo(groupId: String, artifactId: String, version: String = "", repo: String): ArtifactInfo = ArtifactInfo(groupId, artifactId, version, repo, nexusSearchUrl.replace("^.*?\\.(.*?)\\..*$".toRegex(), "$1 nexus"))
+    private fun artifactInfo(groupId: String, artifactId: String, version: String = "", repo: String): ArtifactInfo = ArtifactInfo(groupId, artifactId, version, repo, Settings.getInstance().nexusSearchUrl.replace("^.*?\\.(.*?)\\..*$".toRegex(), "$1 nexus"))
 
     override fun doSearch(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
         val nexusSearchUrl = Settings.getInstance().nexusSearchUrl
