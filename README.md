@@ -42,7 +42,7 @@ Inspired by [https://github.com/siosio/GradleDependenciesHelperPlugin](https://g
 
 ![](https://bestwu.github.io/images/gradle-dependencies-plugins-helper-plugin/classname-query.gif)
 
-* Support `Use Maven Index for search` and `Use Nexus for search` options.
+* Support `Use Maven Index for search` and `Use Nexus for search` options to speed up the dependencies search.
 * Add specified repository to repositories.Use `Show Intention Actions` action (`Alt + Enter` or ⌥⏎) and choose `Add specified repository to repositories.`
 
 ![](https://bestwu.github.io/images/gradle-dependencies-plugins-helper-plugin/add-repo.gif)
@@ -53,7 +53,7 @@ Inspired by [https://github.com/siosio/GradleDependenciesHelperPlugin](https://g
 
 ![](https://bestwu.github.io/images/gradle-dependencies-plugins-helper-plugin/smart-type-completion.png)
 
-* `Use Maven Index for search` and `Use Nexus for search` is optional.When you can't visit https://api.bintray.com/search/packages/maven or access very slowly,you can use these options to speed up the search.
+* `Use Maven Index for search` and `Use Nexus for search` is optional.When you can't visit https://api.bintray.com/search/packages/maven or access very slowly,you can use these options to speed up the dependencies search.
 
 ![](https://bestwu.github.io/images/gradle-dependencies-plugins-helper-plugin/settings.png)
 
