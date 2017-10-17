@@ -29,7 +29,7 @@
             </constraints>
             <properties>
               <selected value="false"/>
-              <text value="Use Nexus for search"/>
+              <text value="Use Nexus for search (Nexus2)"/>
             </properties>
           </component>
           <component id="6f8e9" class="javax.swing.JLabel">

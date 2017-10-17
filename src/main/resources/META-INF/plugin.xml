@@ -52,7 +52,7 @@
         &nbsp;&nbsp;compile("fc:org.junit.Test")<br/>
         &nbsp;&nbsp;compile("c:Junit")
       </li>
-      <li>Support `Use Maven Index for search` and `Use Nexus for search` options to speed up the dependencies search.</li>
+      <li>Support `Use Maven Index for search` and `Use Nexus for search`(Nexus2) options to speed up the dependencies search.</li>
       <li>Add specified repository to repositories.</li>
     </ul>
     ]]></description>
