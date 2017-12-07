@@ -18,9 +18,11 @@
 
 package test
 
-import cn.bestwu.gdph.search.getConnection
+import cn.bestwu.gdph.quot
+import cn.bestwu.gdph.search.*
 import groovy.json.JsonSlurper
 import org.junit.Test
+import java.util.*
 
 /**
  *
@@ -46,5 +48,28 @@ class NexusSearcherTest {
             println(it.keys)
             println(it["groupId"] as String + ":" + it["artifactId"] as String + ":" + (if (it["latestRelease"] == null) it["version"] else it["latestRelease"]) as String + ":" + repo as String)
         }
+    }
+}
+
+class MavenCentralSearcherTest {
+
+    @Test
+    fun doSearchByClassName() {
+        val result: LinkedHashSet<ArtifactInfo> = LinkedHashSet()
+        val url = "http://search.maven.org/solrsearch/select?q=fc:${quot}com.sun.jna.examples.win32.W32API.HWND$quot&core=gav&rows=1000&wt=json"
+        val connection = getConnection(url)
+        val stream = connection.inputStream
+        regex.findAll(stream.bufferedReader().readText()).forEach {
+            val artifactInfo = MavenCentralSearcher.artifactInfo(it.groupValues[1], it.groupValues[2], it.groupValues[3])
+            val exist = result.find { it.id == artifactInfo.id }
+            if (exist != null) {
+                if (compareVersion(exist.version, artifactInfo.version) < 0) {
+                    exist.version = artifactInfo.version
+                }
+            } else {
+                result.add(artifactInfo)
+            }
+        }
+        println(result)
     }
 }

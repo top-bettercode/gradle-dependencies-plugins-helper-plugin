@@ -30,7 +30,7 @@ import java.net.URL
  */
 val regex = Regex("\\{\"id\":\"(.*?):(.*?):(.*?)\",")
 
-internal fun getConnection(spec: String): HttpURLConnection {
+fun getConnection(spec: String): HttpURLConnection {
     val url = URL(spec)
     return url.openConnection() as HttpURLConnection
 }

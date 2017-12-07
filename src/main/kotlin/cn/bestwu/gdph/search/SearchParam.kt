@@ -16,6 +16,7 @@
 
 package cn.bestwu.gdph.search
 
+import cn.bestwu.gdph.quot
 import cn.bestwu.gdph.split
 
 /**
@@ -38,12 +39,12 @@ class ClassNameSearchParam(override val src: String) : ISearchParam {
             src.startsWith("c:", true) -> {
                 k = "c"
                 q = src.substringAfter("c:").trim()
-                docUrl = "<a href='http://search.maven.org/#search|gav|1|c:\"$q\"'>search in mavenCentral</a>"
+                docUrl = "<a href='http://search.maven.org/#search|gav|1|c:${quot}$q${quot}'>search in mavenCentral</a>"
             }
             src.startsWith("fc:", true) -> {
                 k = "fc"
                 q = src.substringAfter("fc:").trim()
-                docUrl = "<a href='http://search.maven.org/#search|gav|1|fc:\"$q\"'>search in mavenCentral</a>"
+                docUrl = "<a href='http://search.maven.org/#search|gav|1|fc:${quot}$q${quot}'>search in mavenCentral</a>"
             }
             else -> {
                 k = ""
@@ -69,7 +70,7 @@ class SearchParam(groupIdParam: String, artifactIdParam: String, val fg: Boolean
 
     fun toQ() = if (groupId.isEmpty()) "q=*$src*" else "g=${fullQuery(fg, groupId)}${if (artifactId.isEmpty()) "" else "&a=${fullQuery(fa, artifactId)}"}"
 
-    fun toMq() = if (groupId.isEmpty()) "a:\"$src\"" else "g:\"$groupId\"${if (artifactId.isEmpty()) "" else "+AND+a:\"$artifactId\""}"
+    fun toMq() = if (groupId.isEmpty()) "a:$quot$src$quot" else "g:$quot$groupId$quot${if (artifactId.isEmpty()) "" else "+AND+a:$quot$artifactId$quot"}"
 
     fun toNq() = if (groupId.isEmpty()) "q=$src" else "g=${halfQuery(fg, groupId)}${if (artifactId.isEmpty()) "" else "&a=${halfQuery(fa, artifactId)}"}"
 

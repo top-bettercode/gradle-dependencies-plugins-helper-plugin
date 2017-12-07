@@ -51,12 +51,12 @@ abstract class AbstractGDPHProvider : DocumentationProvider {
         val mavenUrl = split(dependency).let {
             if (it.size >= 2) {
                 when {
-                    "c" == it[0] -> return "<a href='http://search.maven.org/#search|gav|1|c:\"${it[1]}\"'>search in mavenCentral</a><br/>"
-                    "fc" == it[0] -> return "<a href='http://search.maven.org/#search|gav|1|fc:\"${it[1]}\"'>search in mavenCentral</a><br/>"
-                    else -> "http://search.maven.org/#search|gav|1|g:\"${it[0]}\" AND a:\"${it[1]}\""
+                    "c" == it[0] -> return "<a href='http://search.maven.org/#search|gav|1|c:$quot${it[1]}$quot'>search in mavenCentral</a><br/>"
+                    "fc" == it[0] -> return "<a href='http://search.maven.org/#search|gav|1|fc:$quot${it[1]}$quot'>search in mavenCentral</a><br/>"
+                    else -> "http://search.maven.org/#search|gav|1|g:$quot${it[0]}$quot AND a:$quot${it[1]}$quot"
                 }
             } else {
-                "http://search.maven.org/#search|gav|1|g:\"${it[0]}\""
+                "http://search.maven.org/#search|gav|1|g:$quot${it[0]}$quot"
             }
         }
         return "<a href='https://bintray.com/search?query=$dependency'>search in jcenter</a><br/>" +

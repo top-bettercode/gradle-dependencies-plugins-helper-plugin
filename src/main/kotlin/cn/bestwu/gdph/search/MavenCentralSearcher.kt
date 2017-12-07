@@ -16,6 +16,7 @@
 
 package cn.bestwu.gdph.search
 
+import cn.bestwu.gdph.quot
 import com.intellij.openapi.project.Project
 import java.util.*
 
@@ -31,7 +32,7 @@ object MavenCentralSearcher : ArtifactSearcher() {
     override val key: String
         get() = "maven:"
 
-    private fun artifactInfo(groupId: String, artifactId: String, version: String = ""): ArtifactInfo = ArtifactInfo(groupId, artifactId, version, "mavenCentral")
+    fun artifactInfo(groupId: String, artifactId: String, version: String = ""): ArtifactInfo = ArtifactInfo(groupId, artifactId, version, "mavenCentral")
 
     override fun doSearch(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
         val url = "http://search.maven.org/solrsearch/select?q=${searchParam.toMq()}&rows=50&core=gav&wt=json"
@@ -56,7 +57,7 @@ object MavenCentralSearcher : ArtifactSearcher() {
     }
 
     override fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
-        val url = "http://search.maven.org/solrsearch/select?q=${searchParam.k}:\"${searchParam.q}\"&core=gav&rows=1000&wt=json"
+        val url = "http://search.maven.org/solrsearch/select?q=${searchParam.k}:${quot}${searchParam.q}$quot&core=gav&rows=1000&wt=json"
         val connection = getConnection(url)
         val stream = getResponse(connection, project) ?: return result
         regex.findAll(stream.bufferedReader().readText()).forEach {
