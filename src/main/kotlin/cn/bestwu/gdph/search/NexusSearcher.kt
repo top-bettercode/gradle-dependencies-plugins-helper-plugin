@@ -80,7 +80,7 @@ object NexusSearcher : ArtifactSearcher() {
             } else {
                 it["latestSnapshotRepositoryId"]
             }
-            artifactInfo(it["groupId"] as String, it["artifactId"] as String, it["latestRelease"] as String, repo as String)
+            artifactInfo(it["groupId"] as String, it["artifactId"] as String, (if (it["latestRelease"] == null) it["version"] else it["latestRelease"]) as String, repo as String)
         }
         return result
     }
