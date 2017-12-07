@@ -18,7 +18,7 @@
   <idea-version since-build="145.258"/>
   <id>cn.bestwu.gdph</id>
   <name>Gradle Dependencies And Plugins Helper</name>
-  <version>0.1.1</version>
+  <version>0.1.2</version>
   <vendor email="piterwu@outlook.com"
     url="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin">Peter Wu
   </vendor>
@@ -58,13 +58,10 @@
     ]]></description>
 
   <change-notes><![CDATA[
-    <b>0.1.1</b>
+    <b>0.1.2</b>
     <ul>
-      <li>(improvement) Add specified repository to repositories intentionAction support add
-        jcenter() to repositories.
-      </li>
-      <li>(improvement) Show warning notification when repository already in repositories.</li>
-      <li>(bugfix) InsertHandler Index out of range.</li>
+      <li>(bugfix) MavenCentralSearcher, Server returned HTTP response code: 400.</li>
+      <li>(bugfix) NexusSearcher, null cannot be cast to non-null type kotlin.String.</li>
     </ul>
     ]]>
   </change-notes>
