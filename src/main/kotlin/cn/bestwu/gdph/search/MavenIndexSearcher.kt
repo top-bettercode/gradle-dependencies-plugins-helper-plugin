@@ -16,6 +16,7 @@
 
 package cn.bestwu.gdph.search
 
+import cn.bestwu.gdph.checkNotIndexedRepositories
 import cn.bestwu.gdph.config.Settings
 import com.intellij.openapi.project.Project
 import org.jetbrains.idea.maven.indices.MavenArtifactSearcher
@@ -40,12 +41,7 @@ object MavenIndexSearcher : ArtifactSearcher() {
     private fun artifactInfo(groupId: String, artifactId: String = "", version: String = ""): ArtifactInfo = ArtifactInfo(groupId, artifactId, version, "mavenIndex")
 
     override fun doSearch(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
-        val repositoriesHolder = MavenRepositoriesHolder.getInstance(project)
-        try {
-            repositoriesHolder::class.java.getMethod("checkNotIndexedRepositories").invoke(repositoriesHolder)
-        } catch (e: NoSuchMethodException) {
-        }
-
+        checkNotIndexedRepositories(MavenRepositoriesHolder.getInstance(project))
         val m = MavenProjectIndicesManager.getInstance(project)
         if (searchParam.groupId.isNotEmpty()) {
             if (searchParam.artifactId.isEmpty() && !searchParam.fg)
@@ -88,11 +84,7 @@ object MavenIndexSearcher : ArtifactSearcher() {
     }
 
     override fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
-        val repositoriesHolder = MavenRepositoriesHolder.getInstance(project)
-        try {
-            repositoriesHolder::class.java.getMethod("checkNotIndexedRepositories").invoke(repositoriesHolder)
-        } catch (e: NoSuchMethodException) {
-        }
+        checkNotIndexedRepositories(MavenRepositoriesHolder.getInstance(project))
         val searcher = MavenClassSearcher()
         val searchResults = searcher.search(project, searchParam.q.toMavenIndexParam(), 1000)
         searchResults.filter { it.versions.isNotEmpty() }

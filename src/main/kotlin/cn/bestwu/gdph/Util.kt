@@ -24,12 +24,13 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.notification.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
+import org.jetbrains.plugins.gradle.integrations.maven.MavenRepositoriesHolder
 import org.jetbrains.plugins.groovy.lang.psi.util.GrStringUtil.removeQuotes
 import java.net.URLEncoder
 
 internal fun split(dependency: String) = Regex(":").split(dependency)
 internal fun trim(dependency: String) = removeQuotes(dependency).trim('(', ')')
-val quot= URLEncoder.encode("\"","UTF-8")
+val quot= URLEncoder.encode("\"","UTF-8")!!
 private val group = NotificationGroup(
         "GradleDependencies",
         NotificationDisplayType.NONE,
@@ -42,6 +43,13 @@ internal fun supportMavenIndex(): Boolean {
         true
     } catch (e: ClassNotFoundException) {
         false
+    }
+}
+
+internal fun checkNotIndexedRepositories(repositoriesHolder: MavenRepositoriesHolder) {
+    try {
+        repositoriesHolder::class.java.getMethod("checkNotIndexedRepositories").invoke(repositoriesHolder)
+    } catch (e: NoSuchMethodException) {
     }
 }
 

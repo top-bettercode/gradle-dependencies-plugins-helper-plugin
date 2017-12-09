@@ -16,21 +16,12 @@
 
 package cn.bestwu.gdph.maven
 
+import cn.bestwu.gdph.checkNotIndexedRepositories
 import cn.bestwu.gdph.config.Settings
-import com.intellij.CommonBundle
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationDisplayType
-import com.intellij.notification.NotificationListener
-import com.intellij.notification.impl.NotificationsConfigurationImpl
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
-import com.intellij.openapi.externalSystem.service.notification.ExternalSystemNotificationManager
-import com.intellij.openapi.externalSystem.service.notification.NotificationCategory
-import com.intellij.openapi.externalSystem.service.notification.NotificationData
-import com.intellij.openapi.externalSystem.service.notification.NotificationSource
-import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.util.ProgressIndicatorUtils
@@ -38,18 +29,9 @@ import com.intellij.openapi.progress.util.ReadTask
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
-import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.util.text.StringUtil
-import com.intellij.util.Consumer
-import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.idea.maven.indices.MavenIndex
-import org.jetbrains.idea.maven.indices.MavenProjectIndicesManager
-import org.jetbrains.idea.maven.indices.MavenRepositoriesConfigurable
 import org.jetbrains.idea.maven.model.MavenRemoteRepository
 import org.jetbrains.plugins.gradle.integrations.maven.MavenRepositoriesHolder
-import org.jetbrains.plugins.gradle.util.GradleBundle
 import org.jetbrains.plugins.gradle.util.GradleConstants
-import javax.swing.event.HyperlinkEvent
 
 /**
  *
@@ -63,8 +45,6 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
 
     companion object {
         private fun String.toMavenRemoteRepository() = MavenRemoteRepository(this, null, this, null, null, null)
-        private val UNINDEXED_MAVEN_REPOSITORIES_NOTIFICATION_GROUP = "Unindexed maven repositories gradle detection"
-
         fun performTask(project: Project) {
             if (project.isDisposed) return
             if (ApplicationManager.getApplication().isUnitTestMode) return
@@ -79,52 +59,7 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
                 remoteRepositories = repositoriesHolder.remoteRepositories
             }
             repositoriesHolder.update(remoteRepositories)
-            MavenProjectIndicesManager.getInstance(project).scheduleUpdateIndicesList(Consumer<List<MavenIndex>> { indexes ->
-                if (project.isDisposed) return@Consumer
-
-                val repositoriesWithEmptyIndex = ContainerUtil.mapNotNull<MavenIndex, String>(indexes) { index ->
-                    if (index.updateTimestamp == -1L && MavenRepositoriesHolder.getInstance(project).contains(index.repositoryPathOrUrl))
-                        index.repositoryPathOrUrl
-                    else
-                        null
-                }
-                if (!repositoriesWithEmptyIndex.isEmpty()) {
-                    val notificationData = NotificationData(
-                            GradleBundle.message("gradle.integrations.maven.notification.not_updated_repository.title"),
-                            "\n<br>" + GradleBundle.message("gradle.integrations.maven.notification.not_updated_repository.text", StringUtil.join(repositoriesWithEmptyIndex, "<br>")),
-                            NotificationCategory.WARNING,
-                            NotificationSource.PROJECT_SYNC)
-                    notificationData.isBalloonNotification = true
-                    notificationData.balloonGroup = UNINDEXED_MAVEN_REPOSITORIES_NOTIFICATION_GROUP
-                    notificationData.setListener("#open", object : NotificationListener.Adapter() {
-                        override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
-                            ShowSettingsUtil.getInstance().showSettingsDialog(project, MavenRepositoriesConfigurable::class.java)
-                        }
-                    })
-
-                    notificationData.setListener("#disable", object : NotificationListener.Adapter() {
-                        override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
-                            val result = Messages.showYesNoDialog(project,
-                                    "Notification will be disabled for all projects.\n\n" +
-                                            "Settings | Appearance & Behavior | Notifications | " +
-                                            UNINDEXED_MAVEN_REPOSITORIES_NOTIFICATION_GROUP +
-                                            "\ncan be used to configure the notification.",
-                                    "Unindexed Maven Repositories Gradle Detection",
-                                    "Disable Notification", CommonBundle.getCancelButtonText(),
-                                    Messages.getWarningIcon())
-                            if (result == Messages.YES) {
-                                NotificationsConfigurationImpl.getInstanceImpl().changeSettings(UNINDEXED_MAVEN_REPOSITORIES_NOTIFICATION_GROUP,
-                                        NotificationDisplayType.NONE, false, false)
-
-                                notification.hideBalloon()
-                            }
-                        }
-                    })
-
-                    ExternalSystemNotificationManager.getInstance(project).showNotification(GradleConstants.SYSTEM_ID, notificationData)
-                }
-            })
-
+            checkNotIndexedRepositories(MavenRepositoriesHolder.getInstance(project))
         }
     }
 
