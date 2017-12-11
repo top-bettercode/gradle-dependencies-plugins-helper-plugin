@@ -29,9 +29,12 @@ import com.intellij.openapi.progress.util.ReadTask
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
+import org.jetbrains.idea.maven.indices.MavenIndex
+import org.jetbrains.idea.maven.indices.MavenProjectIndicesManager
 import org.jetbrains.idea.maven.model.MavenRemoteRepository
 import org.jetbrains.plugins.gradle.integrations.maven.MavenRepositoriesHolder
 import org.jetbrains.plugins.gradle.util.GradleConstants
+import java.util.stream.Collectors
 
 /**
  *
@@ -59,6 +62,23 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
                 remoteRepositories = repositoriesHolder.remoteRepositories
             }
             repositoriesHolder.update(remoteRepositories)
+            MavenProjectIndicesManager.getInstance(project).scheduleUpdateIndicesList { indexes ->
+                if (project.isDisposed) return@scheduleUpdateIndicesList
+
+                val repositoriesWithEmptyIndex = indexes.stream()
+                        .filter({ index ->
+                            index.updateTimestamp == -1L &&
+                                    index.failureMessage == null &&
+                                    repositoriesHolder.contains(index.repositoryPathOrUrl)
+                        })
+                        .map(MavenIndex::getRepositoryPathOrUrl)
+                        .collect(Collectors.toList<String>())
+                try {
+                    repositoriesHolder::class.java.getMethod("updateNotIndexedUrls").invoke(repositoriesHolder, repositoriesWithEmptyIndex)
+                } catch (e: NoSuchMethodException) {
+                }
+            }
+
             checkNotIndexedRepositories(MavenRepositoriesHolder.getInstance(project))
         }
     }
