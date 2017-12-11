@@ -24,7 +24,7 @@ import com.intellij.openapi.components.Storage
 
 @com.intellij.openapi.components.State(
         name = "GDPHSettings",
-        storages = arrayOf(Storage("gdph.settings.xml"))
+        storages = [(Storage("gdph.settings.xml"))]
 )
 class Settings(var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useMavenIndex: Boolean = Settings.useMavenIndex) : PersistentStateComponent<Settings> {
     override fun loadState(state: Settings?) {

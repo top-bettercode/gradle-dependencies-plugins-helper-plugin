@@ -57,7 +57,7 @@ object MavenCentralSearcher : ArtifactSearcher() {
     }
 
     override fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
-        val url = "http://search.maven.org/solrsearch/select?q=${searchParam.k}:${quot}${searchParam.q}$quot&core=gav&rows=1000&wt=json"
+        val url = "http://search.maven.org/solrsearch/select?q=${searchParam.k}:$quot${searchParam.q}$quot&core=gav&rows=1000&wt=json"
         val connection = getConnection(url)
         val stream = getResponse(connection, project) ?: return result
         regex.findAll(stream.bufferedReader().readText()).forEach {

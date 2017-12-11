@@ -39,12 +39,12 @@ class ClassNameSearchParam(override val src: String) : ISearchParam {
             src.startsWith("c:", true) -> {
                 k = "c"
                 q = src.substringAfter("c:").trim()
-                docUrl = "<a href='http://search.maven.org/#search|gav|1|c:${quot}$q${quot}'>search in mavenCentral</a>"
+                docUrl = "<a href='http://search.maven.org/#search|gav|1|c:$quot$q$quot'>search in mavenCentral</a>"
             }
             src.startsWith("fc:", true) -> {
                 k = "fc"
                 q = src.substringAfter("fc:").trim()
-                docUrl = "<a href='http://search.maven.org/#search|gav|1|fc:${quot}$q${quot}'>search in mavenCentral</a>"
+                docUrl = "<a href='http://search.maven.org/#search|gav|1|fc:$quot$q$quot'>search in mavenCentral</a>"
             }
             else -> {
                 k = ""
