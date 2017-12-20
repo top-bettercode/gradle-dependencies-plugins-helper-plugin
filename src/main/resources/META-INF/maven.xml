@@ -16,6 +16,7 @@
 
 <idea-plugin version="2">
   <extensions defaultExtensionNs="com.intellij">
+    <copyPastePreProcessor implementation="cn.bestwu.gdph.maven.GradleToMavenDependenciesCopyPasteProcessor" order="first"/>
     <postStartupActivity implementation="cn.bestwu.gdph.maven.GradleProjectStartupActivity"/>
     <externalSystemTaskNotificationListener
       implementation="cn.bestwu.gdph.maven.GradleMavenProjectImportNotificationListener"/>

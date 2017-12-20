@@ -60,12 +60,12 @@ class DependenciesCompletionTest : CodeInsightTestBase() {
 
     fun testDependenciesMapName() {
         completionCheckResult(gradleFileName, """dependencies {
-    compile group:'org.jetbrains.kotlin',name:'$caret'
+    compile group:'org.jetbrains.kotlin',name:'kotlin-stdlib-$caret'
 }""", {
             """dependencies {
-    compile group:'org.jetbrains.kotlin',name:'kotlin-reflect'
+    compile group:'org.jetbrains.kotlin',name:'kotlin-stdlib-jre8'
 }"""
-        }, "kotlin-reflect")
+        }, "kotlin-stdlib-jre8")
     }
 
     fun testDependenciesMapVersion() {

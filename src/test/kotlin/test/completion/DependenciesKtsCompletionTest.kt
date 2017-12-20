@@ -45,7 +45,7 @@ class DependenciesKtsCompletionTest : CodeInsightTestBase() {
     //build.gradle.kts dependencies kotlin()
     fun testKtsDependenciesKotlin() {
         completionCheckResult(gradleKtsFileName, """dependencies{
-    compile(kotlin("$caret"))
+    compile(kotlin("stdlib-$caret"))
 }""", {"""dependencies{
     compile(kotlin("stdlib-jre8"))
 }"""}, "stdlib-jre8")
