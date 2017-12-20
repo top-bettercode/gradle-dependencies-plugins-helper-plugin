@@ -39,7 +39,7 @@ plugins {
     id("org.jetbrains.intellij") version "0.2.17"
 }
 group = "cn.bestwu"
-version = "0.1.2"
+version = "0.1.3"
 
 val ideaVersion: Any? by project
 
