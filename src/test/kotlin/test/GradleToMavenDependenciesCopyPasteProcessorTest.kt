@@ -41,6 +41,18 @@ class GradleToMavenDependenciesCopyPasteProcessorTest : LightPlatformCodeInsight
 </dependency>""")
     }
 
+    fun test2Convert() {
+        myFixture.configureByText("pom.xml", "<caret>")
+        val toPaste = "org.jetbrains.kotlin:kotlin-stdlib"
+
+        runPasteAction(toPaste)
+
+        myFixture.checkResult("""<dependency>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-stdlib</artifactId>
+</dependency>""")
+    }
+
     fun testKtsCompileConvert() {
         myFixture.configureByText("pom.xml", "<caret>")
         val toPaste = "    compile(\"org.jetbrains.kotlin:kotlin-stdlib:1.2.0\")\n"
@@ -53,6 +65,7 @@ class GradleToMavenDependenciesCopyPasteProcessorTest : LightPlatformCodeInsight
     <version>1.2.0</version>
 </dependency>""")
     }
+
     fun testKtsCompileMultiConvert() {
         myFixture.configureByText("pom.xml", "<caret>")
         val toPaste = """    compile("org.jetbrains.kotlin:kotlin-stdlib:1.2.0")

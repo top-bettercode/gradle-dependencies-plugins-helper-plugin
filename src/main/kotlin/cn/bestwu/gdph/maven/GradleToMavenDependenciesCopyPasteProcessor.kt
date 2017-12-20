@@ -61,14 +61,15 @@ class GradleToMavenDependenciesCopyPasteProcessor : CopyPastePreProcessor {
             }
             dependency = groupValues[2]
         }
-        val split = dependency.split(":")
-        if (split.size == 3) {
-
-            return "<dependency>\n\t<groupId>${split[0]}</groupId>\n\t<artifactId>${split[1]}</artifactId>\n\t<version>${split[2]}</version>${if (scope != "compile") "\n\t<scope>$scope</scope>" else ""}\n</dependency>"
-        } else if (split.size == 2) {
-            return "<dependency>\n\t<groupId>${split[0]}</groupId>\n\t<artifactId>${split[1]}</artifactId>${if (scope != "compile") "\n\t<scope>$scope</scope>" else ""}\n</dependency>"
+        return if (dependency.matches(Regex("[.A-Za-z0-9\\-]*:[.A-Za-z0-9\\-]*(:[.A-Za-z0-9\\-]*)?"))) {
+            val split = dependency.split(":")
+            when {
+                split.size == 3 -> "<dependency>\n\t<groupId>${split[0]}</groupId>\n\t<artifactId>${split[1]}</artifactId>\n\t<version>${split[2]}</version>${if (scope != "compile") "\n\t<scope>$scope</scope>" else ""}\n</dependency>"
+                split.size == 2 -> "<dependency>\n\t<groupId>${split[0]}</groupId>\n\t<artifactId>${split[1]}</artifactId>${if (scope != "compile") "\n\t<scope>$scope</scope>" else ""}\n</dependency>"
+                else -> text
+            }
         } else
-            return text
+            text
     }
 
 }
