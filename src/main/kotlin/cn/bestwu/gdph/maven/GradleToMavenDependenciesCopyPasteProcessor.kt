@@ -32,7 +32,13 @@ class GradleToMavenDependenciesCopyPasteProcessor : CopyPastePreProcessor {
     override fun preprocessOnPaste(project: Project, file: PsiFile, editor: Editor, text: String, rawText: RawText?): String {
         return if (!canPasteForFile(file)) {
             text
-        } else preprocessedText(text)
+        } else {
+            var result = ""
+            for (s in text.split("\n")) {
+                result += preprocessedText(s) + "\n"
+            }
+            return result.trimEnd('\n')
+        }
     }
 
     private fun canPasteForFile(file: PsiFile): Boolean {
@@ -40,18 +46,27 @@ class GradleToMavenDependenciesCopyPasteProcessor : CopyPastePreProcessor {
     }
 
     private fun preprocessedText(text: String): String {
-        val split = text.split(":")
+        val dependency: String
+        val scope: String
+        val matchResult = Regex("^ *(.*?)[( ]*['\"](.*?)['\"][) ]*$").find(text)
+        if (matchResult == null) {
+            dependency = text
+            scope = "compile"
+        } else {
+            val groupValues = matchResult.groupValues
+            scope = when (groupValues[1]) {
+                "providedCompile", "provided" -> "provided"
+                "testCompile" -> "test"
+                else -> "compile"
+            }
+            dependency = groupValues[2]
+        }
+        val split = dependency.split(":")
         if (split.size == 3) {
-            return """<dependency>
-            <groupId>${split[0]}</groupId>
-            <artifactId>${split[1]}</artifactId>
-            <version>${split[2]}</version>
-        </dependency>"""
+
+            return "<dependency>\n\t<groupId>${split[0]}</groupId>\n\t<artifactId>${split[1]}</artifactId>\n\t<version>${split[2]}</version>${if (scope != "compile") "\n\t<scope>$scope</scope>" else ""}\n</dependency>"
         } else if (split.size == 2) {
-            return """<dependency>
-            <groupId>${split[0]}</groupId>
-            <artifactId>${split[1]}</artifactId>
-        </dependency>"""
+            return "<dependency>\n\t<groupId>${split[0]}</groupId>\n\t<artifactId>${split[1]}</artifactId>${if (scope != "compile") "\n\t<scope>$scope</scope>" else ""}\n</dependency>"
         } else
             return text
     }

@@ -30,17 +30,159 @@ class GradleToMavenDependenciesCopyPasteProcessorTest : LightPlatformCodeInsight
 
     fun testConvert() {
         myFixture.configureByText("pom.xml", "<caret>")
-        val toPaste = "org.apache.maven:maven-embedder:2.0"
+        val toPaste = "org.jetbrains.kotlin:kotlin-stdlib:1.2.0"
 
         runPasteAction(toPaste)
 
         myFixture.checkResult("""<dependency>
-    <groupId>org.apache.maven</groupId>
-    <artifactId>maven-embedder</artifactId>
-    <version>2.0</version>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-stdlib</artifactId>
+    <version>1.2.0</version>
 </dependency>""")
     }
 
+    fun testKtsCompileConvert() {
+        myFixture.configureByText("pom.xml", "<caret>")
+        val toPaste = "    compile(\"org.jetbrains.kotlin:kotlin-stdlib:1.2.0\")\n"
+
+        runPasteAction(toPaste)
+
+        myFixture.checkResult("""<dependency>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-stdlib</artifactId>
+    <version>1.2.0</version>
+</dependency>""")
+    }
+    fun testKtsCompileMultiConvert() {
+        myFixture.configureByText("pom.xml", "<caret>")
+        val toPaste = """    compile("org.jetbrains.kotlin:kotlin-stdlib:1.2.0")
+            testCompile("org.jsoup:jsoup:1.11.2")
+        """.trimMargin()
+
+        runPasteAction(toPaste)
+
+        myFixture.checkResult("""<dependency>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-stdlib</artifactId>
+    <version>1.2.0</version>
+</dependency>
+<dependency>
+<groupId>org.jsoup</groupId>
+<artifactId>jsoup</artifactId>
+<version>1.11.2</version>
+<scope>test</scope>
+</dependency>""")
+    }
+
+    fun testCompileConvert() {
+        myFixture.configureByText("pom.xml", "<caret>")
+        val toPaste = "    compile \"org.jetbrains.kotlin:kotlin-stdlib:1.2.0\"\n"
+
+        runPasteAction(toPaste)
+
+        myFixture.checkResult("""<dependency>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-stdlib</artifactId>
+    <version>1.2.0</version>
+</dependency>""")
+    }
+
+    fun testCompile2Convert() {
+        myFixture.configureByText("pom.xml", "<caret>")
+        val toPaste = "    compile 'org.jetbrains.kotlin:kotlin-stdlib:1.2.0'\n"
+
+        runPasteAction(toPaste)
+
+        myFixture.checkResult("""<dependency>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-stdlib</artifactId>
+    <version>1.2.0</version>
+</dependency>""")
+    }
+
+    fun testProvidedCompileConvert() {
+        myFixture.configureByText("pom.xml", "<caret>")
+        val toPaste = "    providedCompile 'org.jetbrains.kotlin:kotlin-stdlib:1.2.0'\n"
+
+        runPasteAction(toPaste)
+
+        myFixture.checkResult("""<dependency>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-stdlib</artifactId>
+    <version>1.2.0</version>
+    <scope>provided</scope>
+</dependency>""")
+    }
+
+    fun testTestCompileConvert() {
+        myFixture.configureByText("pom.xml", "<caret>")
+        val toPaste = "    testCompile 'org.jetbrains.kotlin:kotlin-stdlib:1.2.0'\n"
+
+        runPasteAction(toPaste)
+
+        myFixture.checkResult("""<dependency>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-stdlib</artifactId>
+    <version>1.2.0</version>
+    <scope>test</scope>
+</dependency>""")
+    }
+
+    fun testProvidedConvert() {
+        myFixture.configureByText("pom.xml", "<caret>")
+        val toPaste = "    provided 'org.jetbrains.kotlin:kotlin-stdlib:1.2.0'\n"
+
+        runPasteAction(toPaste)
+
+        myFixture.checkResult("""<dependency>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-stdlib</artifactId>
+    <version>1.2.0</version>
+    <scope>provided</scope>
+</dependency>""")
+    }
+
+    fun testKtsProvidedConvert() {
+        myFixture.configureByText("pom.xml", "<caret>")
+        val toPaste = "    provided(\"org.jetbrains.kotlin:kotlin-stdlib:1.2.0\")\n"
+
+        runPasteAction(toPaste)
+
+        myFixture.checkResult("""<dependency>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-stdlib</artifactId>
+    <version>1.2.0</version>
+    <scope>provided</scope>
+</dependency>""")
+    }
+
+    fun testKtsProvidedCompileConvert() {
+        myFixture.configureByText("pom.xml", "<caret>")
+        val toPaste = "    providedCompile(\"org.jetbrains.kotlin:kotlin-stdlib:1.2.0\")\n"
+
+        runPasteAction(toPaste)
+
+        myFixture.checkResult("""<dependency>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-stdlib</artifactId>
+    <version>1.2.0</version>
+    <scope>provided</scope>
+</dependency>""")
+    }
+
+    fun testKtsTestCompileConvert() {
+        myFixture.configureByText("pom.xml", "<caret>")
+        val toPaste = "    testCompile(\"org.jetbrains.kotlin:kotlin-stdlib:1.2.0\")\n"
+
+        runPasteAction(toPaste)
+
+        myFixture.checkResult("""<dependency>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-stdlib</artifactId>
+    <version>1.2.0</version>
+    <scope>test</scope>
+</dependency>""")
+    }
 
     private fun runPasteAction(toPaste: String) {
         val producer = Producer<Transferable> { StringSelection(toPaste) }
