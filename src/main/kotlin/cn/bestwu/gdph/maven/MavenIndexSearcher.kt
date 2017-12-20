@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package cn.bestwu.gdph.search
+package cn.bestwu.gdph.maven
 
 import cn.bestwu.gdph.checkNotIndexedRepositories
 import cn.bestwu.gdph.config.Settings
+import cn.bestwu.gdph.search.*
 import com.intellij.openapi.project.Project
 import org.jetbrains.idea.maven.indices.MavenArtifactSearcher
 import org.jetbrains.idea.maven.indices.MavenClassSearcher

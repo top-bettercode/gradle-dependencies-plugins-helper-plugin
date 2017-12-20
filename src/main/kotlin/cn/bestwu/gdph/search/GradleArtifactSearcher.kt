@@ -17,6 +17,7 @@
 package cn.bestwu.gdph.search
 
 import cn.bestwu.gdph.config.Settings
+import cn.bestwu.gdph.maven.MavenIndexSearcher
 import com.intellij.openapi.project.Project
 import java.util.*
 
