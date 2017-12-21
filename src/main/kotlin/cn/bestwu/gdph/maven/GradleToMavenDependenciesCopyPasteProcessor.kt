@@ -24,6 +24,9 @@ import com.intellij.psi.PsiFile
 
 class GradleToMavenDependenciesCopyPasteProcessor : CopyPastePreProcessor {
 
+    companion object {
+        val dependencyRegex = Regex("^ *([A-Za-z]*?)[( ]*['\"]?([.A-Za-z0-9\\-]*:[.A-Za-z0-9\\-]*(:[.A-Za-z0-9\\-]*)?)['\"]?[) ]*$")
+    }
 
     override fun preprocessOnCopy(file: PsiFile, startOffsets: IntArray, endOffsets: IntArray, text: String): String? {
         return null
@@ -48,10 +51,9 @@ class GradleToMavenDependenciesCopyPasteProcessor : CopyPastePreProcessor {
     private fun preprocessedText(text: String): String {
         val dependency: String
         val scope: String
-        val matchResult = Regex("^ *(.*?)[( ]*['\"](.*?)['\"][) ]*$").find(text)
+        val matchResult = dependencyRegex.find(text)
         if (matchResult == null) {
-            dependency = text
-            scope = "compile"
+            return text
         } else {
             val groupValues = matchResult.groupValues
             scope = when (groupValues[1]) {
@@ -60,16 +62,14 @@ class GradleToMavenDependenciesCopyPasteProcessor : CopyPastePreProcessor {
                 else -> "compile"
             }
             dependency = groupValues[2]
-        }
-        return if (dependency.matches(Regex("[.A-Za-z0-9\\-]*:[.A-Za-z0-9\\-]*(:[.A-Za-z0-9\\-]*)?"))) {
+
             val split = dependency.split(":")
-            when {
+            return when {
                 split.size == 3 -> "<dependency>\n\t<groupId>${split[0]}</groupId>\n\t<artifactId>${split[1]}</artifactId>\n\t<version>${split[2]}</version>${if (scope != "compile") "\n\t<scope>$scope</scope>" else ""}\n</dependency>"
                 split.size == 2 -> "<dependency>\n\t<groupId>${split[0]}</groupId>\n\t<artifactId>${split[1]}</artifactId>${if (scope != "compile") "\n\t<scope>$scope</scope>" else ""}\n</dependency>"
                 else -> text
             }
-        } else
-            text
+        }
     }
 
 }

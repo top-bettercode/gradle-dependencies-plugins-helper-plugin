@@ -32,6 +32,7 @@
 
 import cn.bestwu.gdph.AbstractGradlePluginsCompletionContributor
 import cn.bestwu.gdph.kotlin.GradleKtsPluginsCompletionContributor
+import cn.bestwu.gdph.maven.GradleToMavenDependenciesCopyPasteProcessor
 import cn.bestwu.gdph.search.ArtifactInfo
 import cn.bestwu.gdph.search.compareVersion
 import cn.bestwu.gdph.search.regex
@@ -46,6 +47,21 @@ import kotlin.test.assertEquals
  * @since
  */
 class ParseResultTest {
+
+    @Test
+    fun dependencyRegex() {
+        Assert.assertTrue("org.jetbrains.kotlin:kotlin-stdlib:1.2.0".matches(GradleToMavenDependenciesCopyPasteProcessor.dependencyRegex))
+        Assert.assertTrue("org.jetbrains.kotlin:kotlin-stdlib".matches(GradleToMavenDependenciesCopyPasteProcessor.dependencyRegex))
+        Assert.assertTrue("    compile(\"org.jetbrains.kotlin:kotlin-stdlib:1.2.0\")".matches(GradleToMavenDependenciesCopyPasteProcessor.dependencyRegex))
+        Assert.assertTrue("    compile \"org.jetbrains.kotlin:kotlin-stdlib:1.2.0\"".matches(GradleToMavenDependenciesCopyPasteProcessor.dependencyRegex))
+        Assert.assertTrue("    compile 'org.jetbrains.kotlin:kotlin-stdlib:1.2.0'".matches(GradleToMavenDependenciesCopyPasteProcessor.dependencyRegex))
+        Assert.assertTrue("    providedCompile 'org.jetbrains.kotlin:kotlin-stdlib:1.2.0'".matches(GradleToMavenDependenciesCopyPasteProcessor.dependencyRegex))
+        Assert.assertTrue("    testCompile 'org.jetbrains.kotlin:kotlin-stdlib:1.2.0'".matches(GradleToMavenDependenciesCopyPasteProcessor.dependencyRegex))
+        Assert.assertTrue("    provided 'org.jetbrains.kotlin:kotlin-stdlib:1.2.0'".matches(GradleToMavenDependenciesCopyPasteProcessor.dependencyRegex))
+        Assert.assertTrue("    provided(\"org.jetbrains.kotlin:kotlin-stdlib:1.2.0\")".matches(GradleToMavenDependenciesCopyPasteProcessor.dependencyRegex))
+        Assert.assertTrue("    providedCompile(\"org.jetbrains.kotlin:kotlin-stdlib:1.2.0\")".matches(GradleToMavenDependenciesCopyPasteProcessor.dependencyRegex))
+        Assert.assertTrue("    testCompile(\"org.jetbrains.kotlin:kotlin-stdlib:1.2.0\")".matches(GradleToMavenDependenciesCopyPasteProcessor.dependencyRegex))
+    }
 
     @Test
     fun regexVersion() {
