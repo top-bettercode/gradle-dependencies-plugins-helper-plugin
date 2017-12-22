@@ -28,7 +28,21 @@ import java.awt.datatransfer.Transferable
 
 class GradleToMavenDependenciesCopyPasteProcessorTest : LightPlatformCodeInsightFixtureTestCase() {
 
-    fun testConvert() {
+    fun test4Convert() {
+        myFixture.configureByText("pom.xml", "<caret>")
+        val toPaste = "org.jetbrains.kotlin:kotlin-stdlib:1.2.0:abc"
+
+        runPasteAction(toPaste)
+
+        myFixture.checkResult("""<dependency>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-stdlib</artifactId>
+    <version>1.2.0</version>
+    <classifier>abc</classifier>
+</dependency>""")
+    }
+
+    fun test3Convert() {
         myFixture.configureByText("pom.xml", "<caret>")
         val toPaste = "org.jetbrains.kotlin:kotlin-stdlib:1.2.0"
 
@@ -165,6 +179,21 @@ class GradleToMavenDependenciesCopyPasteProcessorTest : LightPlatformCodeInsight
     <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>kotlin-stdlib</artifactId>
     <version>1.2.0</version>
+    <scope>provided</scope>
+</dependency>""")
+    }
+
+    fun testKtsProvided4Convert() {
+        myFixture.configureByText("pom.xml", "<caret>")
+        val toPaste = "    provided(\"org.jetbrains.kotlin:kotlin-stdlib:1.2.0:abc\")\n"
+
+        runPasteAction(toPaste)
+
+        myFixture.checkResult("""<dependency>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-stdlib</artifactId>
+    <version>1.2.0</version>
+    <classifier>abc</classifier>
     <scope>provided</scope>
 </dependency>""")
     }

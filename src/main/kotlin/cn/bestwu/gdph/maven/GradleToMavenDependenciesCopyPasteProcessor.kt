@@ -25,7 +25,7 @@ import com.intellij.psi.PsiFile
 class GradleToMavenDependenciesCopyPasteProcessor : CopyPastePreProcessor {
 
     companion object {
-        val dependencyRegex = Regex("^ *([A-Za-z]*?)[( ]*['\"]?([.A-Za-z0-9\\-]*:[.A-Za-z0-9\\-]*(:[.A-Za-z0-9\\-]*)?)['\"]?[) ]*$")
+        val dependencyRegex = Regex("^ *([A-Za-z]*?)[( ]*['\"]?([.A-Za-z0-9\\-]*:[.A-Za-z0-9\\-]*(:[.A-Za-z0-9\\-]*)?(:[.A-Za-z0-9\\-]*)?)['\"]?[) ]*$")
     }
 
     override fun preprocessOnCopy(file: PsiFile, startOffsets: IntArray, endOffsets: IntArray, text: String): String? {
@@ -49,22 +49,21 @@ class GradleToMavenDependenciesCopyPasteProcessor : CopyPastePreProcessor {
     }
 
     private fun preprocessedText(text: String): String {
-        val dependency: String
-        val scope: String
         val matchResult = dependencyRegex.find(text)
         if (matchResult == null) {
             return text
         } else {
             val groupValues = matchResult.groupValues
-            scope = when (groupValues[1]) {
+            val scope = when (groupValues[1]) {
                 "providedCompile", "provided" -> "provided"
                 "testCompile" -> "test"
                 else -> "compile"
             }
-            dependency = groupValues[2]
+            val dependency = groupValues[2]
 
             val split = dependency.split(":")
             return when {
+                split.size == 4 -> "<dependency>\n\t<groupId>${split[0]}</groupId>\n\t<artifactId>${split[1]}</artifactId>\n\t<version>${split[2]}</version>${if (split[3].isNotBlank()) "\n\t<classifier>${split[3]}</classifier>" else ""}${if (scope != "compile") "\n\t<scope>$scope</scope>" else ""}\n</dependency>"
                 split.size == 3 -> "<dependency>\n\t<groupId>${split[0]}</groupId>\n\t<artifactId>${split[1]}</artifactId>\n\t<version>${split[2]}</version>${if (scope != "compile") "\n\t<scope>$scope</scope>" else ""}\n</dependency>"
                 split.size == 2 -> "<dependency>\n\t<groupId>${split[0]}</groupId>\n\t<artifactId>${split[1]}</artifactId>${if (scope != "compile") "\n\t<scope>$scope</scope>" else ""}\n</dependency>"
                 else -> text
