@@ -16,7 +16,7 @@
 
 @file:Suppress("UNCHECKED_CAST")
 
-package test
+package test.gdph
 
 import cn.bestwu.gdph.quot
 import cn.bestwu.gdph.search.*

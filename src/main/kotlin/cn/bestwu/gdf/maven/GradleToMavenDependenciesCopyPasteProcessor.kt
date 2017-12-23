@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cn.bestwu.gdph.maven
+package cn.bestwu.gdf.maven
 
 import com.intellij.codeInsight.editorActions.CopyPastePreProcessor
 import com.intellij.openapi.editor.Editor

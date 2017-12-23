@@ -17,6 +17,7 @@
 package test
 
 import cn.bestwu.gdph.config.Settings
+import com.intellij.codeInsight.actions.CodeInsightAction
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
@@ -55,6 +56,12 @@ abstract class CodeInsightTestBase : LightCodeInsightFixtureTestCase() {
     protected fun completionCheckResult(fileName: String, before: String, after: String) {
         myFixture.configureByText(fileName, before)
         myFixture.complete(CompletionType.SMART, 1)
+        myFixture.checkResult(after)
+    }
+
+    protected fun actionCheckResult(fileName: String, before: String, after: String, action: CodeInsightAction) {
+        myFixture.configureByText(fileName, before)
+        action.actionPerformedImpl(project,editor)
         myFixture.checkResult(after)
     }
 

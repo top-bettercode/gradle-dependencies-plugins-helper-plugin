@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package test.completion
+package test.gdph.completion
 
 import cn.bestwu.gdph.search.GradlePluginsSearcher
 import test.CodeInsightTestBase

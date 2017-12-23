@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package test.intention
+package test.gdph.intention
 
 import test.CodeInsightTestBase
 

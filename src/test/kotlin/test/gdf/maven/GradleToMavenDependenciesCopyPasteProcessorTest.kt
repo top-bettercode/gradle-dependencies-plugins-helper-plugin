@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package test
+package test.gdf.maven
 
 import com.intellij.codeInsight.editorActions.PasteHandler
 import com.intellij.ide.DataManager
