@@ -97,8 +97,8 @@
   </extensions>
   <actions>
     <action class="cn.bestwu.gdf.gradle.MapNotationToStringNotationAction"
-      id="mapNotationToStringNotation" text="Convert to string notation"
-      description="Convert to string notation">
+      id="mapNotationToStringNotation" text="Convert to String Notation"
+      description="Convert to String Notation">
       <add-to-group group-id="CodeMenu" anchor="last"/>
     </action>
   </actions>
