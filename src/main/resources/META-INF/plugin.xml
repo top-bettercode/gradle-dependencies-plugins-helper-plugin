@@ -95,5 +95,11 @@
       <className>cn.bestwu.gdph.MethodNotationAddRepositoriesIntention</className>
     </intentionAction>
   </extensions>
-
+  <actions>
+    <action class="cn.bestwu.gdf.gradle.MapNotationToStringNotationAction"
+      id="mapNotationToStringNotation" text="Convert to string notation"
+      description="Convert to string notation">
+      <add-to-group group-id="CodeMenu" anchor="last"/>
+    </action>
+  </actions>
 </idea-plugin>
