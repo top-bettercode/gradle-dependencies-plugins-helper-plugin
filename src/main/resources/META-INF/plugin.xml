@@ -64,6 +64,8 @@
 
     <ul>
       <li>Add GradleToMavenDependenciesCopyPasteProcessor</li>
+      <li>Add MapNotationToStringNotationAction</li>
+      <li>Add GradleDslToGradleKtsDslAction</li>
     </ul>
     ]]>
   </change-notes>
@@ -96,9 +98,15 @@
     </intentionAction>
   </extensions>
   <actions>
+    <separator/>
     <action class="cn.bestwu.gdf.gradle.MapNotationToStringNotationAction"
       id="mapNotationToStringNotation" text="Convert to String Notation"
       description="Convert to String Notation">
+      <add-to-group group-id="CodeMenu"/>
+    </action>
+    <action class="cn.bestwu.gdf.gradle.GradleDslToGradleKtsDslAction"
+      id="gradleDslToGradleKtsDslAction" text="Convert GradleDsl File to GradleKtsDsl File"
+      description="Convert GradleDsl File to GradleKtsDsl File">
       <add-to-group group-id="CodeMenu" anchor="last"/>
     </action>
   </actions>

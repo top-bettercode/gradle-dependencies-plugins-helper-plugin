@@ -65,7 +65,7 @@ class MapNotationToStringNotationAction : CodeInsightAction() {
                 fun toStringNotation(methodCall: GrMethodCall): String {
                     val text = methodCall.text
                     if (methodCall.argumentList.allArguments.size != 3 && methodCall.argumentList.allArguments.size != 4) {
-                        return text.replace("^( *[A-Za-z]+) '(.*)' *$".toRegex(), "$1(\"$2\")")
+                        return text.replace("^( *[A-Za-z]+) ('?)(.*)('?) *$".toRegex(), "$1($2$3$4)")
                     }
                     val coordinate = Coordinate.fromMap(DependencyUtil.toMap(methodCall.namedArguments))
                     return text.replace(methodCall.argumentList.text, "(\"${coordinate.toStringNotation()}\")").replace(" ", "").replace("'", "\"")
