@@ -26,7 +26,7 @@ import test.CodeInsightTestBase
  */
 class MapNotationToStringNotationTest :  CodeInsightTestBase(){
 
-    fun testtestToStringNotation() {
+    fun testToStringNotation() {
         actionCheckResult(gradleFileName,"""dependencies {
     compile 'com.google.code.gson:gson:2.1'
     compile group: 'commons-beanutils', name: 'commons-beanutils-core', version: '1.7.0'
