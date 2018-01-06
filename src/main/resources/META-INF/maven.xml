@@ -23,4 +23,21 @@
     <externalSystemTaskNotificationListener
       implementation="cn.bestwu.gdph.maven.GradleMavenProjectImportNotificationListener"/>
   </extensions>
+
+  <actions>
+    <action class="cn.bestwu.gdph.ShowMavenRepositoriesAction"
+      id="ShowMavenRepositoriesAction" text="Show Maven Repositories"
+      description="Show Maven Repositories">
+      <add-to-group group-id="ToolsMenu" anchor="first"/>
+    </action>
+    <action class="cn.bestwu.gdph.UpdateAllMavenRepositoriesIndexAction"
+      id="UpdateAllMavenRepositoriesIndexAction" text="Update All Maven Repositories Index"
+      description="Update All Maven Repositories Index">
+      <add-to-group group-id="ToolsMenu" anchor="first"/>
+    </action>
+    <group id="UpdateMavenRepositoriesIndexActionGroup" class="cn.bestwu.gdph.UpdateMavenRepositoriesIndexActionGroup" popup="true"
+      text="Update Maven Repositories Index" description="Update Maven Repositories Index">
+      <add-to-group group-id="ToolsMenu" anchor="first"/>
+    </group>
+  </actions>
 </idea-plugin>
