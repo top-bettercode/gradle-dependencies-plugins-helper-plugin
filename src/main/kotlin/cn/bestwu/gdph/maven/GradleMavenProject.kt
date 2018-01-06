@@ -79,7 +79,7 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
                 }
             }
 
-            checkNotIndexedRepositories(MavenRepositoriesHolder.getInstance(project))
+            checkNotIndexedRepositories(repositoriesHolder)
         }
     }
 
