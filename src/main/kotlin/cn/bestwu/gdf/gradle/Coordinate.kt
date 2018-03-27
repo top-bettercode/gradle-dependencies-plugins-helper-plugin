@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cn.bestwu.gdf
+package cn.bestwu.gdf.gradle
 
 import com.google.common.base.*
 import com.google.common.base.Objects

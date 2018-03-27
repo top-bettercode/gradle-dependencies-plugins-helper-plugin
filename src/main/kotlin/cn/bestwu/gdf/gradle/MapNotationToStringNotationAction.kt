@@ -16,7 +16,6 @@
 
 package cn.bestwu.gdf.gradle
 
-import cn.bestwu.gdf.Coordinate
 import cn.bestwu.gdf.DependencyUtil
 import com.intellij.codeInsight.CodeInsightActionHandler
 import com.intellij.codeInsight.actions.CodeInsightAction
