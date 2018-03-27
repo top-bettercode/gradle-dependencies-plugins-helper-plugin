@@ -29,15 +29,6 @@
   <description><![CDATA[
     This is an IntelliJ IDEA plugin for searching dependencies/plugins from JCentral/GradlePlugins inside Gradle projects.
     <br/><br/>
-    <!--<a href="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin">GitHub</a> |-->
-    <!--<a-->
-    <!--href="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin/issues">Issues</a> |-->
-    <!--Donate(-->
-    <!--<a href="https://blockchain.info/address/1CWkfYDshK4LN3JWrZbi5V8gzo3iQNJj5">BTC</a> |-->
-    <!--<a href="https://bestwu.github.io/images/donate/alipay.png">alipay</a> |-->
-    <!--<a href="https://bestwu.github.io/images/donate/wechatpay.png">wechatpay</a>-->
-    <!--)-->
-    <!--<br/><br/>-->
     <b>Features</b>
     <ul>
       <li>Use Smart Type Completion in dependencies/plugins script block.</li>
@@ -63,9 +54,9 @@
     <b>0.1.3</b><br/><br/>
 
     <ul>
-      <!--<li>Add GradleToMavenDependenciesCopyPasteProcessor</li>-->
-      <!--<li>Add MapNotationToStringNotationAction</li>-->
-      <!--<li>Add GradleDslToGradleKtsDslAction</li>-->
+      <li>Add GradleToMavenDependenciesCopyPasteProcessor</li>
+      <li>Add MapNotationToStringNotationAction</li>
+      <li>Add GradleDslToGradleKtsDslAction</li>
       <li>Add Update Maven Repositories Index and Show Maven Repositories Action</li>
     </ul>
     ]]>
@@ -98,16 +89,16 @@
       <className>cn.bestwu.gdph.MethodNotationAddRepositoriesIntention</className>
     </intentionAction>
   </extensions>
-  <!--<actions>-->
-    <!--<action class="cn.bestwu.gdf.gradle.MapNotationToStringNotationAction"-->
-      <!--id="MapNotationToStringNotationAction" text="Convert to String Notation"-->
-      <!--description="Convert to String Notation">-->
-      <!--<add-to-group group-id="CodeMenu"/>-->
-    <!--</action>-->
-    <!--<action class="cn.bestwu.gdf.gradle.GradleDslToGradleKtsDslAction"-->
-      <!--id="GradleDslToGradleKtsDslAction" text="Convert GradleDsl File to GradleKtsDsl File"-->
-      <!--description="Convert GradleDsl File to GradleKtsDsl File">-->
-      <!--<add-to-group group-id="CodeMenu" anchor="last"/>-->
-    <!--</action>-->
-  <!--</actions>-->
+  <actions>
+    <action class="cn.bestwu.gdf.gradle.MapNotationToStringNotationAction"
+      id="MapNotationToStringNotationAction" text="Convert to String Notation"
+      description="Convert to String Notation">
+      <add-to-group group-id="CodeMenu"/>
+    </action>
+    <action class="cn.bestwu.gdf.gradle.GradleDslToGradleKtsDslAction"
+      id="GradleDslToGradleKtsDslAction" text="Convert GradleDsl File to GradleKtsDsl File"
+      description="Convert GradleDsl File to GradleKtsDsl File">
+      <add-to-group group-id="CodeMenu" anchor="last"/>
+    </action>
+  </actions>
 </idea-plugin>
