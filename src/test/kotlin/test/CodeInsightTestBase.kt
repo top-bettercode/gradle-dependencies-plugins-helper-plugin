@@ -32,16 +32,16 @@ import junit.framework.TestCase
  */
 abstract class CodeInsightTestBase : LightCodeInsightFixtureTestCase() {
     companion object {
-        val gradleFileName = "build.gradle"
-        val gradleKtsFileName = "build.gradle.kts"
-        val caret = "<caret>"
+        const val gradleFileName = "build.gradle"
+        const val gradleKtsFileName = "build.gradle.kts"
+        const val caret = "<caret>"
 
-        private val intention = "Add specified repository to repositories"
+        private const val intention = "Add specified repository to repositories"
     }
 
     override fun setUp() {
         super.setUp()
-        Settings.getInstance().useNexus = false
+        Settings.getInstance().useNexus = true
     }
 
     protected fun completionCheckResult(fileName: String, before: String, after: (String) -> String, selectItem: String) {
@@ -81,7 +81,7 @@ abstract class CodeInsightTestBase : LightCodeInsightFixtureTestCase() {
             println(it.lookupString)
             it.lookupString.startsWith(selectItem)
         }
-        TestCase.assertNotNull(selectItem + " not found in lookup", toSelect)
+        TestCase.assertNotNull("$selectItem not found in lookup", toSelect)
         myFixture.lookup.currentItem = toSelect
         myFixture.type(Lookup.NORMAL_SELECT_CHAR)
         return toSelect!!.lookupString.split("[#:]".toRegex()).last()

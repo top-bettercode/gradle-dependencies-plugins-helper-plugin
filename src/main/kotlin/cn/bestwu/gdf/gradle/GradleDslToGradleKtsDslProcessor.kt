@@ -16,6 +16,7 @@
 
 package cn.bestwu.gdf.gradle
 
+import com.intellij.internal.statistic.UsageTrigger
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -53,6 +54,8 @@ class GradleDslToGradleKtsDslProcessor(project: Project, vararg val myFiles: Gro
 
     //private static String
     override fun performRefactoring(usages: Array<UsageInfo>) {
+        UsageTrigger.trigger("refactoring.convert.gradleDslToGradleKtsDsl")
+
         for (file in myFiles) {
             var text = file.text
 
