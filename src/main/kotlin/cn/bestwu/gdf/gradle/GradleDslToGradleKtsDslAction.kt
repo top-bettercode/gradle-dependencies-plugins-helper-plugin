@@ -29,7 +29,7 @@ import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.actions.BaseRefactoringAction
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.plugins.groovy.GroovyLanguage
+import org.jetbrains.plugins.groovy.GroovyFileType
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
 
 /**
@@ -47,7 +47,7 @@ class GradleDslToGradleKtsDslAction : BaseRefactoringAction() {
     }
 
     override fun isAvailableForLanguage(language: Language): Boolean {
-        return GroovyLanguage == language
+        return language.isKindOf(GroovyFileType.GROOVY_FILE_TYPE.language)
     }
 
     override fun isEnabledOnElements(elements: Array<PsiElement>): Boolean {
