@@ -80,7 +80,7 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                     GradleArtifactSearcher.search(searchParam, params.position.project)
                 }
                 if (searchResult.isEmpty()) {
-                    show(params.position.project, iSearchParam.docUrl, "find dependencies fail", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
+                    show(params.position.project, iSearchParam.docUrl, "No dependencies found", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
                 }
                 if (isKotlin) {
                     if (!isVersion)

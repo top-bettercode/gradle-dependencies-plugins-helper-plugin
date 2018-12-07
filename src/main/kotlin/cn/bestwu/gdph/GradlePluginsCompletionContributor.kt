@@ -20,6 +20,8 @@ import cn.bestwu.gdph.search.GradlePluginsSearcher
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.icons.AllIcons
+import com.intellij.notification.NotificationListener
+import com.intellij.notification.NotificationType
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.StandardPatterns
@@ -28,6 +30,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals.GrLiteral
 import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.path.GrMethodCallExpressionImpl
+import java.net.SocketTimeoutException
 
 
 class GradlePluginsCompletionContributor : AbstractGradlePluginsCompletionContributor() {
@@ -49,28 +52,33 @@ class GradlePluginsCompletionContributor : AbstractGradlePluginsCompletionContri
                 params: CompletionParameters,
                 context: ProcessingContext,
                 result: CompletionResultSet) {
-            val parent = params.position.parent?.parent?.parent
-            result.stopHere()
-            val isVersion = parent != null && parent.text.contains("version")
-            val searchText = if (isVersion) {
-                val text = parent!!.text
-                text.replace(regex, "$1")
-            } else
-                CompletionUtil.findReferenceOrAlphanumericPrefix(params)
-            val searchResult: List<String>
-            var completionResultSet = result
-            if (isVersion) {
-                searchResult = GradlePluginsSearcher.searchPluginVersions(searchText)
-                completionResultSet = result.withRelevanceSorter(completionSorter(searchResult))
-            } else {
-                if (searchText.length < 2) {
-                    return
+            try {
+                val parent = params.position.parent?.parent?.parent
+                result.stopHere()
+                val isVersion = parent != null && parent.text.contains("version")
+                val searchText = if (isVersion) {
+                    val text = parent!!.text
+                    text.replace(regex, "$1")
+                } else
+                    CompletionUtil.findReferenceOrAlphanumericPrefix(params)
+                val searchResult: List<String>
+                var completionResultSet = result
+                if (isVersion) {
+                    searchResult = GradlePluginsSearcher.searchPluginVersions(searchText)
+                    completionResultSet = result.withRelevanceSorter(completionSorter(searchResult))
+                } else {
+                    if (searchText.length < 2) {
+                        return
+                    }
+                    searchResult = GradlePluginsSearcher.searchPlugins(searchText)
                 }
-                searchResult = GradlePluginsSearcher.searchPlugins(searchText)
-            }
-            searchResult.forEach {
-                val lookupElementBuilder = if (isVersion) LookupElementBuilder.create(it).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(insertHandler) else LookupElementBuilder.create(it).withPresentableText(it.replace(GradlePluginsSearcher.splitRule, ":")).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(insertHandler)
-                completionResultSet.addElement(lookupElementBuilder)
+                searchResult.forEach {
+                    val lookupElementBuilder = if (isVersion) LookupElementBuilder.create(it).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(insertHandler) else LookupElementBuilder.create(it).withPresentableText(it.replace(GradlePluginsSearcher.splitRule, ":")).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(insertHandler)
+                    completionResultSet.addElement(lookupElementBuilder)
+                }
+            } catch (e: SocketTimeoutException) {
+                val url = "https://plugins.gradle.org/search"
+                show(params.position.project, "<a href='$url'>$url</a>", "Request timeout", NotificationType.WARNING, NotificationListener.URL_OPENING_LISTENER)
             }
         }
     }

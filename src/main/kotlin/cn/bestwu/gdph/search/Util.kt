@@ -17,10 +17,12 @@
 package cn.bestwu.gdph.search
 
 import cn.bestwu.gdph.show
+import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import java.io.InputStream
 import java.net.HttpURLConnection
+import java.net.SocketTimeoutException
 import java.net.URL
 
 /**
@@ -39,12 +41,18 @@ fun getConnection(spec: String): HttpURLConnection {
 }
 
 internal fun getResponse(connection: HttpURLConnection, project: Project): InputStream? {
-    if (connection.responseCode != 200) {
-        show(project, "response:${connection.errorStream?.bufferedReader()?.readText()
-                ?: connection.inputStream.bufferedReader().readText()}.", "find dependencies fail", NotificationType.WARNING)
+    try {
+        if (connection.responseCode != 200) {
+            show(project, "response:${connection.errorStream?.bufferedReader()?.readText()
+                    ?: connection.inputStream.bufferedReader().readText()}.", "No dependencies found", NotificationType.WARNING)
+            return null
+        }
+        return connection.inputStream
+    } catch (e: SocketTimeoutException) {
+        val url = connection.url.toString()
+        show(project, "<a href='$url'>$url</a>", "Request timeout", NotificationType.WARNING, NotificationListener.URL_OPENING_LISTENER)
         return null
     }
-    return connection.inputStream
 }
 
 internal val versionTails = arrayOf("SNAPSHOTS", "ALPHA", "BETA", "M", "RC", "RELEASE")
