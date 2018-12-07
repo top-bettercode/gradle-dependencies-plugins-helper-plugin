@@ -21,6 +21,7 @@ import com.intellij.codeInsight.actions.CodeInsightAction
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import junit.framework.TestCase
@@ -41,7 +42,7 @@ abstract class CodeInsightTestBase : LightCodeInsightFixtureTestCase() {
 
     override fun setUp() {
         super.setUp()
-        Settings.getInstance().useNexus = true
+        Settings.getInstance().useNexus = false
     }
 
     protected fun completionCheckResult(fileName: String, before: String, after: (String) -> String, selectItem: String) {
@@ -59,8 +60,8 @@ abstract class CodeInsightTestBase : LightCodeInsightFixtureTestCase() {
         myFixture.checkResult(after)
     }
 
-    protected fun actionCheckResult(fileName: String, before: String, after: String, action: CodeInsightAction) {
-        myFixture.configureByText(fileName, before)
+    protected fun actionCheckResult(fileType: FileType, before: String, after: String, action: CodeInsightAction) {
+        myFixture.configureByText(fileType, before)
         action.actionPerformedImpl(project,editor)
         myFixture.checkResult(after)
     }
