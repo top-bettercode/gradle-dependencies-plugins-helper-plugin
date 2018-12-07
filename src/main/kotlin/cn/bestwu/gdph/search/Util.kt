@@ -32,12 +32,16 @@ val regex = Regex("\\{\"id\":\"(.*?):(.*?):(.*?)\",")
 
 fun getConnection(spec: String): HttpURLConnection {
     val url = URL(spec)
-    return url.openConnection() as HttpURLConnection
+    val httpURLConnection = url.openConnection() as HttpURLConnection
+    httpURLConnection.connectTimeout = 5000
+    httpURLConnection.readTimeout = 5000
+    return httpURLConnection
 }
 
 internal fun getResponse(connection: HttpURLConnection, project: Project): InputStream? {
     if (connection.responseCode != 200) {
-        show(project, "response:${connection.errorStream?.bufferedReader()?.readText() ?: connection.inputStream.bufferedReader().readText()}.", "find dependencies fail", NotificationType.WARNING)
+        show(project, "response:${connection.errorStream?.bufferedReader()?.readText()
+                ?: connection.inputStream.bufferedReader().readText()}.", "find dependencies fail", NotificationType.WARNING)
         return null
     }
     return connection.inputStream
@@ -77,8 +81,10 @@ fun compareVersion(version1: String, version2: String): Int {
             return -1
         else if (toIntOrNull1 != null && toIntOrNull2 == null)
             return 1
-        var v2 = toIntOrNull2 ?: versionTails.indexOf(version2s[i].replace(versionTailRegex, "$1").toUpperCase())
-        var v1 = toIntOrNull1 ?: versionTails.indexOf(version1s[i].replace(versionTailRegex, "$1").toUpperCase())
+        var v2 = toIntOrNull2
+                ?: versionTails.indexOf(version2s[i].replace(versionTailRegex, "$1").toUpperCase())
+        var v1 = toIntOrNull1
+                ?: versionTails.indexOf(version1s[i].replace(versionTailRegex, "$1").toUpperCase())
         if (v1 != -1 && v1 == v2 && toIntOrNull1 == null && toIntOrNull2 == null) {
             v2 = version2s[i].replace(versionTailRegex, "$2").toIntOrNull() ?: 0
             v1 = version1s[i].replace(versionTailRegex, "$2").toIntOrNull() ?: 0

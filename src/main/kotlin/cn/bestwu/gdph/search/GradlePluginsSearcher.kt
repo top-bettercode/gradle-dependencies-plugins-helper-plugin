@@ -21,14 +21,16 @@ import org.jsoup.Jsoup
 object GradlePluginsSearcher {
     private val pluginsCaches = HashMap<String, List<String>>()
     private val pluginVersionsCaches = HashMap<String, List<String>>()
-    val splitRule = "#"
+    const val splitRule = "#"
 
     fun searchPlugins(text: String): List<String> {
         var result = pluginsCaches[text]
         if (result != null) {
             return result
         }
-        val elements = Jsoup.connect("https://plugins.gradle.org/search?term=${text.trim()}").get().select("#search-results tbody tr")
+        val connect = Jsoup.connect("https://plugins.gradle.org/search?term=${text.trim()}")
+        connect.timeout(5000)
+        val elements = connect.get().select("#search-results tbody tr")
         result = elements.mapNotNull {
             val pluginId = it.select(".plugin-id a").text()
             if (pluginId.isEmpty()) {
@@ -37,7 +39,7 @@ object GradlePluginsSearcher {
             pluginId + splitRule + it.select(".latest-version").text()
         }
         if (result.isNotEmpty()) {
-            pluginsCaches.put(text, result)
+            pluginsCaches[text] = result
         }
         return result
     }
@@ -49,7 +51,9 @@ object GradlePluginsSearcher {
         } else {
             return result
         }
-        val plugin = Jsoup.connect("https://plugins.gradle.org/plugin/${text.trim()}").get()
+        val connect = Jsoup.connect("https://plugins.gradle.org/plugin/${text.trim()}")
+        connect.timeout(5000)
+        val plugin = connect.get()
         result.add(plugin.select(".version-info h3").text().replace("^Version (.*) \\(latest\\)$".toRegex(), "$1"))
         val elements = plugin.select(".other-versions li")
         elements.mapTo(result) { it.select("a").text() }

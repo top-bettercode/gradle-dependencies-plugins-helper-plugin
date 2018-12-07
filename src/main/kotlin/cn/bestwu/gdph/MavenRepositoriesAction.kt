@@ -48,7 +48,7 @@ class UpdateMavenRepositoriesIndexActionGroup: ActionGroup(){
             val mvenProjectIndicesManager = MavenProjectIndicesManager.getInstance(e.project)
             mvenProjectIndicesManager.indices.forEach {
                 actions.add(object :AnAction("Update ${it.repositoryPathOrUrl}"){
-                    override fun actionPerformed(e: AnActionEvent?) {
+                    override fun actionPerformed(e: AnActionEvent) {
                         mvenProjectIndicesManager.scheduleUpdate(listOf(it))
                     }
                 })

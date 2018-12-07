@@ -231,13 +231,10 @@ class GradleToMavenDependenciesCopyPasteProcessorTest : LightPlatformCodeInsight
         val actionManager = EditorActionManager.getInstance()
         val pasteActionHandler = actionManager.getActionHandler(ACTION_EDITOR_PASTE)
         val pasteHandler = PasteHandler(pasteActionHandler)
-        object : WriteCommandAction.Simple<String>(project) {
-            override fun run() {
-                val component = myFixture.editor.component
-                val dataContext = DataManager.getInstance().getDataContext(component)
-                pasteHandler.execute(myFixture.editor, dataContext, producer)
-            }
-        }.execute()
-
+        WriteCommandAction.writeCommandAction(project).run<Throwable> {
+            val component = myFixture.editor.component
+            val dataContext = DataManager.getInstance().getDataContext(component)
+            pasteHandler.execute(myFixture.editor, dataContext, producer)
+        }
     }
 }

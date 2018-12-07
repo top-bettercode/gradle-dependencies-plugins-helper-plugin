@@ -37,48 +37,47 @@ class MapNotationToStringNotationAction : CodeInsightAction() {
     override fun getHandler() = object : CodeInsightActionHandler {
 
         override fun invoke(project: Project, editor: Editor, file: PsiFile) {
-            object : WriteCommandAction.Simple<Any>(project, file) {
-                override fun run() {
-                    val dependenciesClosure = findDependenciesClosure(file)
-                    if (dependenciesClosure != null) {
-                        val factory = GroovyPsiElementFactory.getInstance(project)
-                        convertToStringNotation(dependenciesClosure, factory)
-                        removeEmptyLines(dependenciesClosure, factory)
-                    }
+            WriteCommandAction.writeCommandAction(project).run<Throwable> {
+                val dependenciesClosure = findDependenciesClosure(file)
+                if (dependenciesClosure != null) {
+                    val factory = GroovyPsiElementFactory.getInstance(project)
+                    convertToStringNotation(dependenciesClosure, factory)
+                    removeEmptyLines(dependenciesClosure, factory)
                 }
+            }
+        }
 
-                private fun findDependenciesClosure(psiFile: PsiFile): GrClosableBlock? {
-                    val methodCalls = PsiTreeUtil.getChildrenOfTypeAsList(psiFile, GrMethodCall::class.java)
-                    val dependenciesBlock = methodCalls.find { it.invokedExpression.text == "dependencies" } ?: return null
-                    return dependenciesBlock.closureArguments.first()
-                }
+        private fun findDependenciesClosure(psiFile: PsiFile): GrClosableBlock? {
+            val methodCalls = PsiTreeUtil.getChildrenOfTypeAsList(psiFile, GrMethodCall::class.java)
+            val dependenciesBlock = methodCalls.find { it.invokedExpression.text == "dependencies" }
+                    ?: return null
+            return dependenciesBlock.closureArguments.first()
+        }
 
-                private fun convertToStringNotation(dependenciesClosure: GrClosableBlock, factory: GroovyPsiElementFactory) {
-                    val statements = PsiTreeUtil.getChildrenOfTypeAsList(dependenciesClosure, GrMethodCall::class.java)
-                    statements.forEach { it.delete() }
-                    statements.forEach {
-                        dependenciesClosure.addStatementBefore(factory.createExpressionFromText(toStringNotation(it)), null)
-                    }
-                }
+        private fun convertToStringNotation(dependenciesClosure: GrClosableBlock, factory: GroovyPsiElementFactory) {
+            val statements = PsiTreeUtil.getChildrenOfTypeAsList(dependenciesClosure, GrMethodCall::class.java)
+            statements.forEach { it.delete() }
+            statements.forEach {
+                dependenciesClosure.addStatementBefore(factory.createExpressionFromText(toStringNotation(it)), null)
+            }
+        }
 
-                fun toStringNotation(methodCall: GrMethodCall): String {
-                    val text = methodCall.text
-                    if (methodCall.argumentList.allArguments.size != 3 && methodCall.argumentList.allArguments.size != 4) {
-                        return text.replace("^( *[A-Za-z]+) ('?)(.*)('?) *$".toRegex(), "$1($2$3$4)")
-                    }
-                    val coordinate = Coordinate.fromMap(DependencyUtil.toMap(methodCall.namedArguments))
-                    return text.replace(methodCall.argumentList.text, "(\"${coordinate.toStringNotation()}\")").replace(" ", "").replace("'", "\"")
-                }
+        fun toStringNotation(methodCall: GrMethodCall): String {
+            val text = methodCall.text
+            if (methodCall.argumentList.allArguments.size != 3 && methodCall.argumentList.allArguments.size != 4) {
+                return text.replace("^( *[A-Za-z]+) ('?)(.*)('?) *$".toRegex(), "$1($2$3$4)")
+            }
+            val coordinate = Coordinate.fromMap(DependencyUtil.toMap(methodCall.namedArguments))
+            return text.replace(methodCall.argumentList.text, "(\"${coordinate.toStringNotation()}\")").replace(" ", "").replace("'", "\"")
+        }
 
 
-                private fun removeEmptyLines(dependenciesClosure: GrClosableBlock, factory: GroovyPsiElementFactory) {
-                    val dependenciesClosureText = dependenciesClosure.text
-                    val withoutEmptyLines = dependenciesClosureText.replace(Regex("\n[ \t]*(?=\n)"), "")
-                    if (withoutEmptyLines != dependenciesClosureText) {
-                        dependenciesClosure.replace(factory.createClosureFromText(withoutEmptyLines))
-                    }
-                }
-            }.execute()
+        private fun removeEmptyLines(dependenciesClosure: GrClosableBlock, factory: GroovyPsiElementFactory) {
+            val dependenciesClosureText = dependenciesClosure.text
+            val withoutEmptyLines = dependenciesClosureText.replace(Regex("\n[ \t]*(?=\n)"), "")
+            if (withoutEmptyLines != dependenciesClosureText) {
+                dependenciesClosure.replace(factory.createClosureFromText(withoutEmptyLines))
+            }
         }
 
         override fun startInWriteAction(): Boolean = false

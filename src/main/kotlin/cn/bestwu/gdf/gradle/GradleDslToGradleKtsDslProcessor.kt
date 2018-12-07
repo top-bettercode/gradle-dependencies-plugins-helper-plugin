@@ -16,7 +16,6 @@
 
 package cn.bestwu.gdf.gradle
 
-import com.intellij.internal.statistic.UsageTrigger
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -54,8 +53,6 @@ class GradleDslToGradleKtsDslProcessor(project: Project, vararg val myFiles: Gro
 
     //private static String
     override fun performRefactoring(usages: Array<UsageInfo>) {
-        UsageTrigger.trigger("refactoring.convert.gradleDslToGradleKtsDsl")
-
         for (file in myFiles) {
             var text = file.text
 
@@ -115,15 +112,14 @@ class GradleDslToGradleKtsDslProcessor(project: Project, vararg val myFiles: Gro
     }
 
     private fun doPostProcessing(newFile: PsiElement) {
-        val newFile1 = newFile
         if (ApplicationManager.getApplication().isUnitTestMode) {
             return
         }
-        if (newFile1 !is KotlinFileType) {
+        if (newFile !is KotlinFileType) {
             LOG.info(".kts is not assigned to Kotlin file type")
             return
         }
-        CodeStyleManager.getInstance(myProject).reformat(newFile1)
+        CodeStyleManager.getInstance(myProject).reformat(newFile)
     }
 
     override fun getCommandName(): String {
