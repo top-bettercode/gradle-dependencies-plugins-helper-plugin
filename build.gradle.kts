@@ -35,13 +35,13 @@ import org.jetbrains.intellij.tasks.PublishTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.2.10"
-    id("org.jetbrains.intellij") version "0.2.17"
+    kotlin("jvm") version "1.3.11"
+    id("org.jetbrains.intellij") version "0.3.12"
 }
 group = "cn.bestwu"
 version = "0.1.3"
 
-val ideaVersion: Any? by project
+val ideaVersion = property("ideaVersion")
 
 intellij {
     updateSinceUntilBuild = false
@@ -61,13 +61,9 @@ repositories {
 }
 
 dependencies {
-    compile("org.jetbrains.kotlin:kotlin-stdlib:1.2.10")
-    compile("org.jsoup:jsoup:1.11.2")
+    compile("org.jetbrains.kotlin:kotlin-stdlib:1.3.11")
+    compile("org.jsoup:jsoup:1.11.3")
 
-    testCompile("org.jetbrains.kotlin:kotlin-test-junit:1.2.10")
-}
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-    apiVersion = "1.2"
+    testCompile("org.jetbrains.kotlin:kotlin-test-junit:1.3.11")
 }
 

@@ -21,7 +21,6 @@ import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.Storage
 
-
 @com.intellij.openapi.components.State(
         name = "GDPHSettings",
         storages = [(Storage("gdph.settings.xml"))]
@@ -40,7 +39,7 @@ class Settings(var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: St
     companion object {
         val useNexus: Boolean = false
         val useMavenIndex: Boolean = false
-        val nexusSearchUrl: String = "http://maven.aliyun.com/nexus"
+        val nexusSearchUrl: String = "https://oss.sonatype.org"
         val mavenCentralRemoteRepository = "https://repo1.maven.org/maven2/"
 
         fun getInstance(): Settings {

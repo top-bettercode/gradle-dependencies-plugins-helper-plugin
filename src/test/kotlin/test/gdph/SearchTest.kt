@@ -33,8 +33,8 @@ class NexusSearcherTest {
 
     @Test
     fun doSearchByClassName() {
-//        val url = "http://maven.aliyun.com/nexus/service/local/lucene/search?cn=com.sun.jna.examples.win32.W32API.HWND"
-        val url = "http://maven.aliyun.com/nexus/service/local/lucene/search?cn=org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"
+//        val url = "https://oss.sonatype.org/service/local/lucene/search?cn=com.sun.jna.examples.win32.W32API.HWND"
+        val url = "https://oss.sonatype.org/service/local/lucene/search?cn=org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"
         val connection = getConnection(url)
         connection.setRequestProperty("Accept", "application/json")
         val stream = connection.inputStream

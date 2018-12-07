@@ -49,7 +49,7 @@
               </grid>
             </constraints>
             <properties>
-              <text value="http://maven.aliyun.com/nexus"/>
+              <text value="https://oss.sonatype.org"/>
             </properties>
           </component>
         </children>
