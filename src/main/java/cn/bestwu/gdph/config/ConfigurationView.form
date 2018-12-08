@@ -41,7 +41,7 @@
             <properties>
               <font style="0"/>
               <labelFor value="8a9de"/>
-              <text value="Nexus Url:"/>
+              <text value="Nexus2 Url:"/>
             </properties>
           </component>
           <component id="8a9de" class="javax.swing.JTextField" binding="nexusSearchUrlField">
