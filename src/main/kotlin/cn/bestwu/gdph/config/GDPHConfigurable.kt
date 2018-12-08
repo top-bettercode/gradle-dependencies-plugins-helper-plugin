@@ -44,6 +44,7 @@ class GDPHConfigurable(private val project: Project) : Configurable {
 
         // Reset on click.
         view!!.resetButton.addActionListener {
+            view!!.useMavenCentral = Settings.useMavenCentral
             view!!.useMavenIndex = Settings.useMavenIndex
             view!!.useNexus = Settings.useNexus
             view!!.nexusSearchUrl = Settings.nexusSearchUrl
@@ -56,13 +57,14 @@ class GDPHConfigurable(private val project: Project) : Configurable {
 
     override fun isModified(): Boolean {
         val settings = Settings.getInstance()
-        return settings.useNexus != view!!.useNexus || settings.useMavenIndex != view!!.useMavenIndex || settings.nexusSearchUrl != view!!.nexusSearchUrl
+        return settings.useNexus != view!!.useNexus || settings.useMavenCentral != view!!.useMavenCentral || settings.useMavenIndex != view!!.useMavenIndex || settings.nexusSearchUrl != view!!.nexusSearchUrl
     }
 
     @Throws(ConfigurationException::class)
     override fun apply() {
         val settings = Settings.getInstance()
         val changeMavenIndex = settings.useMavenIndex != view!!.useMavenIndex
+        settings.useMavenCentral = view!!.useMavenCentral
         settings.useMavenIndex = view!!.useMavenIndex
         settings.useNexus = view!!.useNexus
         settings.nexusSearchUrl = view!!.nexusSearchUrl
@@ -72,6 +74,7 @@ class GDPHConfigurable(private val project: Project) : Configurable {
 
     override fun reset() {
         val settings = Settings.getInstance()
+        view!!.useMavenCentral = settings.useMavenCentral
         view!!.useMavenIndex = settings.useMavenIndex
         view!!.useNexus = settings.useNexus
         view!!.nexusSearchUrl = settings.nexusSearchUrl

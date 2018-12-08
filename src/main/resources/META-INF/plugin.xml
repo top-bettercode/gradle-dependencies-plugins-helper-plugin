@@ -18,7 +18,7 @@
   <idea-version since-build="145.258"/>
   <id>cn.bestwu.gdph</id>
   <name>Gradle Dependencies And Plugins Helper</name>
-  <version>0.1.3</version>
+  <version>0.1.4</version>
   <vendor email="piterwu@outlook.com"
     url="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin">Peter Wu
   </vendor>

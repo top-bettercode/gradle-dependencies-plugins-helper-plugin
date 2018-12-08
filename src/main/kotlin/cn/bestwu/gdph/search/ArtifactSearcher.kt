@@ -27,13 +27,14 @@ import java.util.*
 abstract class ArtifactSearcher {
     companion object {
         internal val artifactsCaches = HashMap<String, LinkedHashSet<ArtifactInfo>>()
-        internal val jcenterKey = "jcenter:"
+        internal const val jcenterKey = "jcenter:"
     }
 
     abstract val cache: Boolean
     abstract val key: String
     protected abstract fun doSearch(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo>
     protected abstract fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo>
+
     protected open fun handleEmptyResult(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
         return result
     }
@@ -57,7 +58,7 @@ abstract class ArtifactSearcher {
             handleEmptyResult(searchParam, project, result)
         } else {
             if (cache)
-                artifactsCaches.put(cacheKey, result)
+                artifactsCaches[cacheKey] = result
             result
         }
     }
@@ -72,7 +73,7 @@ abstract class ArtifactSearcher {
         return if (result.isEmpty()) {
             handleEmptyResultByClassName(searchParam, project, result)
         } else {
-            artifactsCaches.put(cacheKey, result)
+            artifactsCaches[cacheKey] = result
             result
         }
     }

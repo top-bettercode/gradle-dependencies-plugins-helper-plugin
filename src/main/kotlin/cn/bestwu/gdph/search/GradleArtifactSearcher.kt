@@ -39,6 +39,7 @@ object GradleArtifactSearcher {
         return when {
             settings.useMavenIndex -> MavenIndexSearcher.search(searchParam, project, preResult)
             settings.useNexus -> NexusSearcher.search(searchParam, project, preResult)
+            settings.useMavenCentral -> MavenCentralSearcher.search(searchParam, project, preResult)
             else -> JcenterSearcher.search(searchParam, project, preResult)
         }
     }

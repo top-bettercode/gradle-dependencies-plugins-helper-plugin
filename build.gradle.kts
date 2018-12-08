@@ -39,7 +39,7 @@ plugins {
     id("org.jetbrains.intellij") version "0.3.12"
 }
 group = "cn.bestwu"
-version = "0.1.3"
+version = "0.1.4"
 
 val ideaVersion = property("ideaVersion")
 

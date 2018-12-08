@@ -34,21 +34,13 @@ public class ConfigurationView {
   private JPanel mavenIndexPanel;
   private JCheckBox useMavenIndex;
   private JLabel showtip;
+  private JPanel useMavenCentralPanel;
+  private JCheckBox useMavenCentral;
 
   public ConfigurationView() {
     useNexus.addActionListener(
         actionEvent -> nexusSearchUrlField.setEnabled(useNexus.isSelected())
     );
-//    useMavenIndex.addActionListener(
-//        actionEvent -> addRemoteRepo.setEnabled(useMavenIndex.isSelected()));
-//    addRemoteRepo.addActionListener(e -> {
-//      final StringEditor repositoryEditor = new StringEditor(
-//          "Add Maven Remote Repository", "", "", new EditValidator());
-//      if (repositoryEditor.showAndGet()) {
-//        remoteRepositories.add(new MavenString(repositoryEditor.getName(), null,
-//            repositoryEditor.getValue(), null, null, null));
-//      }
-//    });
     if (!UtilKt.supportMavenIndex()) {
       mavenIndexPanel.setVisible(false);
     }
@@ -82,7 +74,14 @@ public class ConfigurationView {
 
   public void setUseMavenIndex(boolean selected) {
     useMavenIndex.setSelected(selected);
-//    addRemoteRepo.setEnabled(selected);
+  }
+
+  public boolean getUseMavenCentral() {
+    return useMavenCentral.isSelected();
+  }
+
+  public void setUseMavenCentral(boolean useMavenCentral) {
+    this.useMavenCentral.setSelected(useMavenCentral);
   }
 
   public JButton getResetButton() {
