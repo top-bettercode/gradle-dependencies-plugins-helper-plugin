@@ -78,10 +78,11 @@ object MavenIndexSearcher : ArtifactSearcher() {
     }
 
     override fun handleEmptyResult(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
-        return if (Settings.getInstance().useNexus)
-            NexusSearcher.search(searchParam, project, result)
-        else
-            JcenterSearcher.search(searchParam, project, result)
+        return when {
+            Settings.getInstance().useNexus -> NexusSearcher.search(searchParam, project, result)
+            Settings.getInstance().useMavenCentral -> MavenCentralSearcher.search(searchParam, project, result)
+            else -> JcenterSearcher.search(searchParam, project, result)
+        }
     }
 
     override fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
@@ -92,15 +93,15 @@ object MavenIndexSearcher : ArtifactSearcher() {
                 .flatMap {
                     it.versions.map { artifactInfo(it.groupId, it.artifactId, it.version) }
                 }.forEach { artifactInfo ->
-            val exist = result.find { it.id == artifactInfo.id }
-            if (exist != null) {
-                if (compareVersion(exist.version, artifactInfo.version) < 0) {
-                    exist.version = artifactInfo.version
+                    val exist = result.find { it.id == artifactInfo.id }
+                    if (exist != null) {
+                        if (compareVersion(exist.version, artifactInfo.version) < 0) {
+                            exist.version = artifactInfo.version
+                        }
+                    } else {
+                        result.add(artifactInfo)
+                    }
                 }
-            } else {
-                result.add(artifactInfo)
-            }
-        }
 
 
         return result
