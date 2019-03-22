@@ -30,16 +30,14 @@
  * limitations under the License.
  */
 
-import org.gradle.kotlin.dsl.*
 import org.jetbrains.intellij.tasks.PublishTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.3.11"
     id("org.jetbrains.intellij") version "0.3.12"
 }
 group = "cn.bestwu"
-version = "0.1.4"
+version = "0.1.5"
 
 val ideaVersion = property("ideaVersion")
 
