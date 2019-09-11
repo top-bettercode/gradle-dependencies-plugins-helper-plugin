@@ -48,6 +48,7 @@ class GDPHConfigurable(private val project: Project) : Configurable {
             view!!.useMavenIndex = Settings.useMavenIndex
             view!!.useNexus = Settings.useNexus
             view!!.nexusSearchUrl = Settings.nexusSearchUrl
+            view!!.remoteRepository = Settings.mavenCentralRemoteRepository
         }
 
         reset()
@@ -57,19 +58,25 @@ class GDPHConfigurable(private val project: Project) : Configurable {
 
     override fun isModified(): Boolean {
         val settings = Settings.getInstance()
-        return settings.useNexus != view!!.useNexus || settings.useMavenCentral != view!!.useMavenCentral || settings.useMavenIndex != view!!.useMavenIndex || settings.nexusSearchUrl != view!!.nexusSearchUrl
+        return settings.useNexus != view!!.useNexus || settings.useMavenCentral != view!!.useMavenCentral || settings.useMavenIndex != view!!.useMavenIndex || settings.nexusSearchUrl != view!!.nexusSearchUrl || settings.remoteRepository != view!!.remoteRepository
     }
 
     @Throws(ConfigurationException::class)
     override fun apply() {
         val settings = Settings.getInstance()
-        val changeMavenIndex = settings.useMavenIndex != view!!.useMavenIndex
+        val changeMavenIndex = settings.useMavenIndex != view!!.useMavenIndex || settings.remoteRepository != view!!.remoteRepository
         settings.useMavenCentral = view!!.useMavenCentral
         settings.useMavenIndex = view!!.useMavenIndex
         settings.useNexus = view!!.useNexus
         settings.nexusSearchUrl = view!!.nexusSearchUrl
-        if (changeMavenIndex)
-            ImportMavenRepositoriesTask.performTask(project)
+        val oldRemoteRepository =
+                if (settings.remoteRepository != view!!.remoteRepository)
+                    settings.remoteRepository
+                else null
+        settings.remoteRepository = view!!.remoteRepository
+        if (changeMavenIndex) {
+            ImportMavenRepositoriesTask.performTask(project, oldRemoteRepository)
+        }
     }
 
     override fun reset() {
@@ -78,6 +85,7 @@ class GDPHConfigurable(private val project: Project) : Configurable {
         view!!.useMavenIndex = settings.useMavenIndex
         view!!.useNexus = settings.useNexus
         view!!.nexusSearchUrl = settings.nexusSearchUrl
+        view!!.remoteRepository = settings.remoteRepository
     }
 
     override fun disposeUIResources() {

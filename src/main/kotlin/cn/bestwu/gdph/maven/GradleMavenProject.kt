@@ -48,7 +48,7 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
 
     companion object {
         private fun String.toMavenRemoteRepository() = MavenRemoteRepository(this, null, this, null, null, null)
-        fun performTask(project: Project) {
+        fun performTask(project: Project, oldRemoteRepository: String? = null) {
             if (project.isDisposed) return
             if (ApplicationManager.getApplication().isUnitTestMode) return
             val repositoriesHolder = MavenRepositoriesHolder.getInstance(project)
@@ -56,21 +56,23 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
             val remoteRepositories: MutableSet<MavenRemoteRepository>
             if (settings.useMavenIndex) {
                 remoteRepositories = mutableSetOf()
-                remoteRepositories.add(Settings.mavenCentralRemoteRepository.toMavenRemoteRepository())
+                remoteRepositories.add(settings.remoteRepository.toMavenRemoteRepository())
                 remoteRepositories.addAll(repositoriesHolder.remoteRepositories)
+                if (oldRemoteRepository != null) {
+                    remoteRepositories.remove(oldRemoteRepository.toMavenRemoteRepository())
+                }
             } else {
                 remoteRepositories = repositoriesHolder.remoteRepositories
             }
             repositoriesHolder.update(remoteRepositories)
             MavenProjectIndicesManager.getInstance(project).scheduleUpdateIndicesList { indexes ->
                 if (project.isDisposed) return@scheduleUpdateIndicesList
-
                 val repositoriesWithEmptyIndex = indexes.stream()
-                        .filter({ index ->
+                        .filter { index ->
                             index.updateTimestamp == -1L &&
                                     index.failureMessage == null &&
                                     repositoriesHolder.contains(index.repositoryPathOrUrl)
-                        })
+                        }
                         .map(MavenIndex::getRepositoryPathOrUrl)
                         .collect(Collectors.toList<String>())
                 try {
@@ -88,11 +90,11 @@ class ImportMavenRepositoriesTask(project: Project) : ReadTask() {
     }
 
     @Throws(ProcessCanceledException::class)
-    override fun runBackgroundProcess(indicator: ProgressIndicator): ReadTask.Continuation {
-        return myDumbService.runReadActionInSmartMode<ReadTask.Continuation> {
-            Continuation({
+    override fun runBackgroundProcess(indicator: ProgressIndicator): Continuation {
+        return myDumbService.runReadActionInSmartMode<Continuation> {
+            Continuation {
                 performTask(myProject)
-            })
+            }
         }
     }
 

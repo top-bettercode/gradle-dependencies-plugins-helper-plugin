@@ -19,23 +19,20 @@ package cn.bestwu.gdph.config;
 import cn.bestwu.gdph.UtilKt;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 
 public class ConfigurationView {
 
-  private JPanel nexusPanel;
   private JButton resetButton;
   private JCheckBox useNexus;
   private JTextField nexusSearchUrlField;
   private JPanel dpPanel;
   private JPanel mavenIndexPanel;
   private JCheckBox useMavenIndex;
-  private JLabel showtip;
-  private JPanel useMavenCentralPanel;
   private JCheckBox useMavenCentral;
+  private JTextField remoteRepository;
 
   public ConfigurationView() {
     useNexus.addActionListener(
@@ -50,13 +47,20 @@ public class ConfigurationView {
     return dpPanel;
   }
 
-
   public String getNexusSearchUrl() {
     return nexusSearchUrlField.getText();
   }
 
   public void setNexusSearchUrl(String nexusSearchUrl) {
     this.nexusSearchUrlField.setText(nexusSearchUrl);
+  }
+
+  public String getRemoteRepository() {
+    return remoteRepository.getText();
+  }
+
+  public void setRemoteRepository(String remoteRepository) {
+    this.remoteRepository.setText(remoteRepository);
   }
 
   public boolean getUseNexus() {
