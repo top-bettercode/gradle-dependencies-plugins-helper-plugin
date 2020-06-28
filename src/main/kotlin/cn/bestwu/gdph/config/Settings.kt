@@ -25,7 +25,7 @@ import com.intellij.openapi.components.Storage
         name = "GDPHSettings",
         storages = [(Storage("gdph.settings.xml"))]
 )
-class Settings(var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useMavenIndex: Boolean = Settings.useMavenIndex, var remoteRepository: String = mavenCentralRemoteRepository, var useMavenCentral: Boolean = Settings.useMavenCentral) : PersistentStateComponent<Settings> {
+class Settings(var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useMavenIndex: Boolean = Settings.useMavenIndex, var remoteRepository: String = mavenCentralRemoteRepository, var useMavenCentral: Boolean = Settings.useMavenCentral, var useLocalMavenIndex: Boolean = Settings.useLocalMavenIndex, var indexParentDir: String = Settings.indexParentDir) : PersistentStateComponent<Settings> {
 
     override fun loadState(state: Settings) {
         this.useMavenIndex = state.useMavenIndex && supportMavenIndex()
@@ -33,6 +33,8 @@ class Settings(var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: St
         this.useNexus = state.useNexus
         this.useMavenCentral = state.useMavenCentral
         this.nexusSearchUrl = state.nexusSearchUrl
+        this.useLocalMavenIndex = state.useLocalMavenIndex
+        this.indexParentDir = state.indexParentDir
     }
 
     override fun getState(): Settings? {
@@ -40,9 +42,11 @@ class Settings(var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: St
     }
 
     companion object {
-        const val useNexus: Boolean = false
+        const val useNexus: Boolean = true
+        const val useLocalMavenIndex: Boolean = true
         const val useMavenIndex: Boolean = false
-        const val useMavenCentral: Boolean = false
+        const val useMavenCentral: Boolean = true
+        const val indexParentDir: String = "/data/tech/maven-index/index"
         const val nexusSearchUrl: String = "https://oss.sonatype.org"
         const val mavenCentralRemoteRepository = "https://repo1.maven.org/maven2/"
 

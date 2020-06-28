@@ -17,12 +17,18 @@
 package cn.bestwu.gdph.config;
 
 import cn.bestwu.gdph.UtilKt;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.ui.TextComponentAccessor;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import java.io.File;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-
+/**
+ * @author peter
+ */
 public class ConfigurationView {
 
   private JButton resetButton;
@@ -33,14 +39,36 @@ public class ConfigurationView {
   private JCheckBox useMavenIndex;
   private JCheckBox useMavenCentral;
   private JTextField remoteRepository;
+  private JCheckBox useLocalMavenIndex;
+  private TextFieldWithBrowseButton indexParentDir;
 
   public ConfigurationView() {
     useNexus.addActionListener(
         actionEvent -> nexusSearchUrlField.setEnabled(useNexus.isSelected())
     );
+    useLocalMavenIndex.addActionListener(
+        actionEvent -> indexParentDir.setEnabled(useLocalMavenIndex.isSelected())
+    );
     if (!UtilKt.supportMavenIndex()) {
       mavenIndexPanel.setVisible(false);
     }
+    indexParentDir.addBrowseFolderListener(null, null, null,
+        new FileChooserDescriptor(false, true, false, false, false, false),
+        new TextComponentAccessor<JTextField>() {
+          @Override
+          public String getText(JTextField component) {
+            return component.getText();
+          }
+
+          @Override
+          public void setText(JTextField component, String text) {
+            final int len = text.length();
+            if (len > 0 && text.charAt(len - 1) == File.separatorChar) {
+              text = text.substring(0, len - 1);
+            }
+            component.setText(text);
+          }
+        });
   }
 
   public JPanel getDpPanel() {
@@ -61,6 +89,23 @@ public class ConfigurationView {
 
   public void setRemoteRepository(String remoteRepository) {
     this.remoteRepository.setText(remoteRepository);
+  }
+
+  public boolean getUseLocalMavenIndex() {
+    return useLocalMavenIndex.isSelected();
+  }
+
+  public void setUseLocalMavenIndex(boolean useLocalMavenIndex) {
+    this.useLocalMavenIndex.setSelected(useLocalMavenIndex);
+    indexParentDir.setEnabled(useLocalMavenIndex);
+  }
+
+  public String getIndexParentDir() {
+    return indexParentDir.getText();
+  }
+
+  public void setIndexParentDir(String indexParentDir) {
+    this.indexParentDir.setText(indexParentDir);
   }
 
   public boolean getUseNexus() {

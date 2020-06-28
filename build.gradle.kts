@@ -37,7 +37,7 @@ plugins {
     id("org.jetbrains.intellij") version "0.4.21"
 }
 group = "cn.bestwu"
-version = "0.1.5"
+version = "0.1.6"
 
 val ideaVersion = property("ideaVersion")
 
@@ -60,6 +60,11 @@ repositories {
 
 dependencies {
     implementation("org.jsoup:jsoup:1.13.1")
+
+    implementation("org.apache.maven.indexer:indexer-core:6.0.0")
+    implementation("org.eclipse.sisu:org.eclipse.sisu.plexus:0.3.3")
+    compile("org.apache.lucene:lucene-core:5.5.5")
+    implementation("com.google.inject.extensions:guice-servlet:4.1.0")
 
 }
 

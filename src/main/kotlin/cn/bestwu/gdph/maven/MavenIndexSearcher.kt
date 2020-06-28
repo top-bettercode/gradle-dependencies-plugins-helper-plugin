@@ -39,7 +39,7 @@ object MavenIndexSearcher : ArtifactSearcher() {
         get() = "index:"
 
     private fun String.toMavenIndexParam() = replace("[*-]".toRegex(), " ")
-    private fun artifactInfo(groupId: String, artifactId: String = "", version: String = ""): ArtifactInfo = ArtifactInfo(groupId, artifactId, version, "mavenIndex")
+    private fun artifactInfo(groupId: String, artifactId: String = "", version: String = ""): ArtifactInfo = ArtifactInfo(groupId, artifactId, version, "Maven Index")
 
     override fun doSearch(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
         checkNotIndexedRepositories(MavenRepositoriesHolder.getInstance(project))

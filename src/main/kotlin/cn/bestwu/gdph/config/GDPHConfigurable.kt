@@ -16,11 +16,13 @@
 
 package cn.bestwu.gdph.config
 
+import cn.bestwu.gdph.index.LocalMavenIndexSearcher
 import cn.bestwu.gdph.maven.ImportMavenRepositoriesTask
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.Nls
+import java.io.File
 import javax.swing.JComponent
 
 
@@ -49,6 +51,8 @@ class GDPHConfigurable(private val project: Project) : Configurable {
             view!!.useNexus = Settings.useNexus
             view!!.nexusSearchUrl = Settings.nexusSearchUrl
             view!!.remoteRepository = Settings.mavenCentralRemoteRepository
+            view!!.useLocalMavenIndex = Settings.useLocalMavenIndex
+            view!!.indexParentDir = Settings.indexParentDir
         }
 
         reset()
@@ -59,6 +63,7 @@ class GDPHConfigurable(private val project: Project) : Configurable {
     override fun isModified(): Boolean {
         val settings = Settings.getInstance()
         return settings.useNexus != view!!.useNexus || settings.useMavenCentral != view!!.useMavenCentral || settings.useMavenIndex != view!!.useMavenIndex || settings.nexusSearchUrl != view!!.nexusSearchUrl || settings.remoteRepository != view!!.remoteRepository
+                || settings.useLocalMavenIndex != view!!.useLocalMavenIndex || settings.indexParentDir != view!!.indexParentDir
     }
 
     @Throws(ConfigurationException::class)
@@ -69,6 +74,24 @@ class GDPHConfigurable(private val project: Project) : Configurable {
         settings.useMavenIndex = view!!.useMavenIndex
         settings.useNexus = view!!.useNexus
         settings.nexusSearchUrl = view!!.nexusSearchUrl
+        if (view!!.useLocalMavenIndex) {
+            if (view!!.indexParentDir.isNullOrBlank()) {
+                throw ConfigurationException("local index parent path must not be null")
+            }
+            val file = File(view!!.indexParentDir)
+            if (!file.exists() || file.listFiles().isNullOrEmpty()) {
+                throw ConfigurationException("local index parent path error")
+            }
+            if (settings.useLocalMavenIndex != view!!.useLocalMavenIndex || settings.indexParentDir != view!!.indexParentDir) {
+                LocalMavenIndexSearcher.close()
+                LocalMavenIndexSearcher.configIndexingContext(file)
+            }
+        } else {
+            LocalMavenIndexSearcher.close()
+        }
+        settings.useLocalMavenIndex = view!!.useLocalMavenIndex
+        settings.indexParentDir = view!!.indexParentDir
+
         val oldRemoteRepository =
                 if (settings.remoteRepository != view!!.remoteRepository)
                     settings.remoteRepository
@@ -77,7 +100,9 @@ class GDPHConfigurable(private val project: Project) : Configurable {
         if (changeMavenIndex) {
             ImportMavenRepositoriesTask.performTask(project, oldRemoteRepository)
         }
+
     }
+
 
     override fun reset() {
         val settings = Settings.getInstance()
@@ -86,6 +111,8 @@ class GDPHConfigurable(private val project: Project) : Configurable {
         view!!.useNexus = settings.useNexus
         view!!.nexusSearchUrl = settings.nexusSearchUrl
         view!!.remoteRepository = settings.remoteRepository
+        view!!.useLocalMavenIndex = settings.useLocalMavenIndex
+        view!!.indexParentDir = settings.indexParentDir
     }
 
     override fun disposeUIResources() {
