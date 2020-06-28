@@ -36,14 +36,21 @@ object GradleArtifactSearcher {
     fun search(searchParam: SearchParam, project: Project): Set<ArtifactInfo> {
         val preResult: LinkedHashSet<ArtifactInfo> = linkedSetOf()
         val settings = Settings.getInstance()
-        return when {
+        val result: Set<ArtifactInfo> = when {
             settings.useMavenIndex -> MavenIndexSearcher.search(searchParam, project, preResult)
             settings.useNexus -> NexusSearcher.search(searchParam, project, preResult)
             settings.useMavenCentral -> MavenCentralSearcher.search(searchParam, project, preResult)
             else -> JcenterSearcher.search(searchParam, project, preResult)
         }
+        return if (searchParam.fg && searchParam.fa) {
+            result
+        } else {
+            val newResult = result.distinctBy { it.id }.toSet()
+            return if (newResult.size > 1)
+                newResult
+            else
+                result
+        }
     }
-
-
 }
 

@@ -76,9 +76,9 @@ fun compareVersion(version1: String, version2: String): Int {
     val version2s = version2.split(separator.toRegex()).toMutableList()
 
     if (version1s.size < version2s.size) {
-        version1s.addAll(List(version2s.size - version1s.size, { "" }))
+        version1s.addAll(List(version2s.size - version1s.size) { "" })
     } else {
-        version2s.addAll(List(version1s.size - version2s.size, { "" }))
+        version2s.addAll(List(version1s.size - version2s.size) { "" })
     }
     val length = version1s.size
 

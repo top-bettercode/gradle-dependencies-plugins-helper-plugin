@@ -31,7 +31,7 @@ import java.net.URLEncoder
 internal fun split(dependency: String) = Regex(":").split(dependency)
 internal fun trim(dependency: String) = removeQuotes(dependency).trim('(', ')')
 val quot= URLEncoder.encode("\"","UTF-8")!!
-private val group = NotificationGroup(
+internal val group = NotificationGroup(
         "GradleDependencies",
         NotificationDisplayType.NONE,
         true

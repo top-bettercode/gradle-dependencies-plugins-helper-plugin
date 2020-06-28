@@ -33,8 +33,8 @@
 import org.jetbrains.intellij.tasks.PublishTask
 
 plugins {
-    kotlin("jvm") version "1.3.11"
-    id("org.jetbrains.intellij") version "0.3.12"
+    kotlin("jvm") version "1.3.61"
+    id("org.jetbrains.intellij") version "0.4.21"
 }
 group = "cn.bestwu"
 version = "0.1.5"
@@ -59,9 +59,9 @@ repositories {
 }
 
 dependencies {
-    compile("org.jetbrains.kotlin:kotlin-stdlib:1.3.11")
-    compile("org.jsoup:jsoup:1.11.3")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.3.61")
+    implementation("org.jsoup:jsoup:1.13.1")
 
-    testCompile("org.jetbrains.kotlin:kotlin-test-junit:1.3.11")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.3.61")
 }
 
