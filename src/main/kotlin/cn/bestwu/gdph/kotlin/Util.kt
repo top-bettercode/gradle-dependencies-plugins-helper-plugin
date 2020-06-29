@@ -34,7 +34,7 @@ import javax.swing.Icon
  */
 
 object KotlinScriptFileType : LanguageFileType(KotlinLanguage.INSTANCE) {
-    val extension = "gradle.kts"
+    const val extension = "gradle.kts"
 
     private val myIcon = object : NotNullLazyValue<Icon>() {
         override fun compute(): Icon {

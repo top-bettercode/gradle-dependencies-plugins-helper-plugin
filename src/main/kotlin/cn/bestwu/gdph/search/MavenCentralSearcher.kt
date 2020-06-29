@@ -62,7 +62,7 @@ object MavenCentralSearcher : ArtifactSearcher() {
         val stream = getResponse(connection, project) ?: return result
         regex.findAll(stream.bufferedReader().readText()).forEach {
             val artifactInfo = artifactInfo(it.groupValues[1], it.groupValues[2], it.groupValues[3])
-            val exist = result.find { it.id == artifactInfo.id }
+            val exist = result.find { r -> r.id == artifactInfo.id }
             if (exist != null) {
                 if (compareVersion(exist.version, artifactInfo.version) < 0) {
                     exist.version = artifactInfo.version

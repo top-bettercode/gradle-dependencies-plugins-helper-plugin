@@ -60,17 +60,17 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                 result.stopHere()
                 val searchText = CompletionUtil.findReferenceOrAlphanumericPrefix(params)
                 val searchParam: SearchParam
-                searchParam = when {
-                    GROUP_LABEL == parent.labelName -> SearchParam(searchText, "", false, false)
-                    NAME_LABEL == parent.labelName -> {
+                searchParam = when (parent.labelName) {
+                    GROUP_LABEL -> SearchParam(searchText, "", fg = false, fa = false)
+                    NAME_LABEL -> {
                         val groupId = findNamedArgumentValue(parent.parent as GrNamedArgumentsOwner, GROUP_LABEL) ?: return
-                        SearchParam(groupId, searchText, true, false)
+                        SearchParam(groupId, searchText, fg = true, fa = false)
                     }
-                    VERSION_LABEL == parent.labelName -> {
+                    VERSION_LABEL -> {
                         val namedArgumentsOwner = parent.parent as GrNamedArgumentsOwner
                         val groupId = findNamedArgumentValue(namedArgumentsOwner, GROUP_LABEL) ?: return
                         val artifactId = findNamedArgumentValue(namedArgumentsOwner, NAME_LABEL) ?: return
-                        SearchParam(groupId, artifactId, true, true)
+                        SearchParam(groupId, artifactId, fg = true, fa = true)
                     }
                     else -> return
                 }
@@ -82,18 +82,18 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                 }
 
                 var completionResultSet = result
-                when {
-                    GROUP_LABEL == parent.labelName -> {
+                when (parent.labelName) {
+                    GROUP_LABEL -> {
                         searchResult.forEach {
                             completionResultSet.addElement(LookupElementBuilder.create(it.groupId).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(insertHandler))
                         }
                     }
-                    NAME_LABEL == parent.labelName -> {
+                    NAME_LABEL -> {
                         searchResult.forEach {
                             completionResultSet.addElement(LookupElementBuilder.create(it.artifactId).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(insertHandler))
                         }
                     }
-                    VERSION_LABEL == parent.labelName -> {
+                    VERSION_LABEL -> {
                         completionResultSet = result.withRelevanceSorter(
                                 CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("gradleDependencyWeigher") {
                                     override fun weigh(element: LookupElement): Comparable<*> {
@@ -138,7 +138,7 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                     GradleArtifactSearcher.searchByClassName(classNameSearchParam, params.position.project)
                 } else {
                     val searchParam = if (text.contains(":") && !prefix.contains(":")) {
-                        SearchParam(prefix, "", false, false)
+                        SearchParam(prefix, "", fg = false, fa = false)
                     } else {
                         toSearchParam(prefix)
                     }
@@ -171,10 +171,10 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
     override fun duringCompletion(context: CompletionInitializationContext) = contributorDuringCompletion(context)
 
     companion object {
-        private val GROUP_LABEL = "group"
-        private val NAME_LABEL = "name"
-        private val VERSION_LABEL = "version"
-        private val DEPENDENCIES_SCRIPT_BLOCK = "dependencies"
+        private const val GROUP_LABEL = "group"
+        private const val NAME_LABEL = "name"
+        private const val VERSION_LABEL = "version"
+        private const val DEPENDENCIES_SCRIPT_BLOCK = "dependencies"
         private val GRADLE_FILE_PATTERN: ElementPattern<PsiElement> = psiElement()
                 .inFile(psiFile().withName(string().endsWith('.' + GradleConstants.EXTENSION)))
 

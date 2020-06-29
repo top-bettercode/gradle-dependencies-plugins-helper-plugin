@@ -63,9 +63,9 @@ class MavenToGradleMapperImpl : MavenToGradleMapper {
 
     companion object {
 
-        private val ASTERISK = "*"
-        private val SYSTEM_PATH = "systemPath"
-        private val TYPE = "type"
-        private val TRUE = "true"
+        private const val ASTERISK = "*"
+        private const val SYSTEM_PATH = "systemPath"
+        private const val TYPE = "type"
+        private const val TRUE = "true"
     }
 }

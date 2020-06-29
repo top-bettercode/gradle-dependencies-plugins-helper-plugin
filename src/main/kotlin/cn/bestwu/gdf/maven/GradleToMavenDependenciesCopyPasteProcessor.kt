@@ -62,10 +62,10 @@ class GradleToMavenDependenciesCopyPasteProcessor : CopyPastePreProcessor {
             val dependency = groupValues[2]
 
             val split = dependency.split(":")
-            return when {
-                split.size == 4 -> "<dependency>\n\t<groupId>${split[0]}</groupId>\n\t<artifactId>${split[1]}</artifactId>\n\t<version>${split[2]}</version>${if (split[3].isNotBlank()) "\n\t<classifier>${split[3]}</classifier>" else ""}${if (scope != "compile") "\n\t<scope>$scope</scope>" else ""}\n</dependency>"
-                split.size == 3 -> "<dependency>\n\t<groupId>${split[0]}</groupId>\n\t<artifactId>${split[1]}</artifactId>\n\t<version>${split[2]}</version>${if (scope != "compile") "\n\t<scope>$scope</scope>" else ""}\n</dependency>"
-                split.size == 2 -> "<dependency>\n\t<groupId>${split[0]}</groupId>\n\t<artifactId>${split[1]}</artifactId>${if (scope != "compile") "\n\t<scope>$scope</scope>" else ""}\n</dependency>"
+            return when (split.size) {
+                4 -> "<dependency>\n\t<groupId>${split[0]}</groupId>\n\t<artifactId>${split[1]}</artifactId>\n\t<version>${split[2]}</version>${if (split[3].isNotBlank()) "\n\t<classifier>${split[3]}</classifier>" else ""}${if (scope != "compile") "\n\t<scope>$scope</scope>" else ""}\n</dependency>"
+                3 -> "<dependency>\n\t<groupId>${split[0]}</groupId>\n\t<artifactId>${split[1]}</artifactId>\n\t<version>${split[2]}</version>${if (scope != "compile") "\n\t<scope>$scope</scope>" else ""}\n</dependency>"
+                2 -> "<dependency>\n\t<groupId>${split[0]}</groupId>\n\t<artifactId>${split[1]}</artifactId>${if (scope != "compile") "\n\t<scope>$scope</scope>" else ""}\n</dependency>"
                 else -> text
             }
         }

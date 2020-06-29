@@ -59,7 +59,7 @@ class Coordinate(private val group: Optional<String>, val name: String, val vers
     private fun toMap(): Map<String, String> {
         val map = LinkedHashMap<String, String>()
         putIfPresent(map, group, GROUP_KEY)
-        map.put(NAME_KEY, name)
+        map[NAME_KEY] = name
         putIfPresent(map, version, VERSION_KEY)
         putIfPresent(map, classifier, CLASSIFIER_KEY)
         putIfPresent(map, extension, EXT_KEY)
@@ -68,7 +68,7 @@ class Coordinate(private val group: Optional<String>, val name: String, val vers
 
     private fun putIfPresent(map: MutableMap<String, String>, value: Optional<String>, key: String) {
         if (value.isPresent) {
-            map.put(key, value.get())
+            map[key] = value.get()
         }
     }
 
@@ -166,11 +166,11 @@ class Coordinate(private val group: Optional<String>, val name: String, val vers
 
 
     companion object {
-        private val NAME_KEY = "name"
-        private val GROUP_KEY = "group"
-        private val VERSION_KEY = "version"
-        private val CLASSIFIER_KEY = "classifier"
-        private val EXT_KEY = "ext"
+        private const val NAME_KEY = "name"
+        private const val GROUP_KEY = "group"
+        private const val VERSION_KEY = "version"
+        private const val CLASSIFIER_KEY = "classifier"
+        private const val EXT_KEY = "ext"
         private val ALL_KEYS = ImmutableSet
                 .of(GROUP_KEY, NAME_KEY, VERSION_KEY, CLASSIFIER_KEY, EXT_KEY)
         private val REQUIRED_KEYS = ImmutableSet.of(GROUP_KEY, NAME_KEY)
@@ -179,7 +179,7 @@ class Coordinate(private val group: Optional<String>, val name: String, val vers
         private val OPTIONAL_COMPARATOR = NaturalAbsentFirstOptionalOrdering<String>()
 
         fun parse(stringNotation: String): Coordinate {
-            Preconditions.checkArgument(!stringNotation.trim { it <= ' ' }.isEmpty(), "Coordinate is empty!")
+            Preconditions.checkArgument(stringNotation.trim { it <= ' ' }.isNotEmpty(), "Coordinate is empty!")
             val parts = Lists.newArrayList(ON_SEMICOLON_SPLITTER.split(stringNotation))
             val numberOfParts = parts.size
             Preconditions.checkArgument(numberOfParts > 1, "Cannot parse coordinate!")
@@ -202,7 +202,7 @@ class Coordinate(private val group: Optional<String>, val name: String, val vers
         }
 
         private fun getNotEmptyAt(list: List<String>, index: Int): String {
-            Preconditions.checkArgument(!list[index].trim { it <= ' ' }.isEmpty(), "Cannot parse coordinate!")
+            Preconditions.checkArgument(list[index].trim { it <= ' ' }.isNotEmpty(), "Cannot parse coordinate!")
             return getAt(list, index)
         }
 
@@ -218,8 +218,7 @@ class Coordinate(private val group: Optional<String>, val name: String, val vers
         }
 
         fun fromMap(map: Map<String, String>): Coordinate {
-            val name = map[NAME_KEY]!!
-            Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "'name' element is required. ")
+            val name = map[NAME_KEY] ?: error("'name' element is required. ")
             val coordinateBuilder = CoordinateBuilder(name)
             val group = map[GROUP_KEY]
             if (group != null && group.isNotBlank()) {

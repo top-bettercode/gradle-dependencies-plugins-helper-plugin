@@ -34,7 +34,7 @@ class Dependency(val group: String, val name: String, val version: String?, priv
     }
 
     fun hasExtraOptions(): Boolean {
-        return !extraOptions.isEmpty()
+        return extraOptions.isNotEmpty()
     }
 
     fun hasVersion(): Boolean {

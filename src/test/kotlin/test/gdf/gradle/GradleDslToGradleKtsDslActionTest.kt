@@ -43,7 +43,7 @@ class GradleDslToGradleKtsDslActionTest : CodeInsightTestBase() {
 
     private fun testGradleDslToGradleKtsDsl(action: AnAction) {
         val fileName = getTestName(false).substringAfter("test").decapitalize()
-        val file = FileUtil.findFirstThatExist(testDataPath + '/'.toString() + "$fileName.gradle", "$fileName.gradle")!!
+        val file = FileUtil.findFirstThatExist("$testDataPath/$fileName.gradle", "$fileName.gradle")!!
         myFixture.configureByText(GroovyFileType.GROOVY_FILE_TYPE, file.readText())
         val dataContext = SimpleDataContext.getSimpleContext(map, DataManager.getInstance().getDataContext(editor.component))
         val event = AnActionEvent.createFromAnAction(action, null, "", dataContext)

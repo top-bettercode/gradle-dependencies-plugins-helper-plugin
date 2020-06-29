@@ -24,7 +24,6 @@ import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PlatformPatterns.psiElement
-import com.intellij.patterns.StandardPatterns
 import com.intellij.patterns.StandardPatterns.string
 import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
@@ -38,7 +37,7 @@ class GradlePluginsCompletionContributor : AbstractGradlePluginsCompletionContri
     init {
         extend(CompletionType.SMART,
                 psiElement(PsiElement::class.java)
-                        .and(psiElement().inFile(PlatformPatterns.psiFile().withName(StandardPatterns.string().endsWith(".gradle"))))
+                        .and(psiElement().inFile(PlatformPatterns.psiFile().withName(string().endsWith(".gradle"))))
                         .withParent(GrLiteral::class.java)
                         .withAncestor(10, psiElement(GrMethodCallExpressionImpl::class.java)
                                 .withText(string().startsWith(pluginsExtension)))

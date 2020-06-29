@@ -59,7 +59,7 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                     GradleArtifactSearcher.searchByClassName(classNameSearchParam, params.position.project)
                 } else {
                     val searchParam = if (text.contains(":") && !prefix.contains(":")) {
-                        SearchParam(prefix, "", false, false)
+                        SearchParam(prefix, "", fg = false, fa = false)
                     } else {
                         val parent = params.position.parent.parent.parent
                         val pText = parent.parent.parent.text
@@ -67,9 +67,9 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                             isKotlin = true
                             if ("(" != parent.prevSibling.text) {
                                 isVersion = true
-                                SearchParam(kotlinGroup, pText.replace(GradleKtsPluginsCompletionContributor.kotlinRegex, "$kotlinArtifactPrefix$1"), true, true)
+                                SearchParam(kotlinGroup, pText.replace(GradleKtsPluginsCompletionContributor.kotlinRegex, "$kotlinArtifactPrefix$1"), fg = true, fa = true)
                             } else {
-                                SearchParam(kotlinGroup, "$kotlinArtifactPrefix$prefix", true, false)
+                                SearchParam(kotlinGroup, "$kotlinArtifactPrefix$prefix", fg = true, fa = false)
                             }
                         } else
                             toSearchParam(prefix)
@@ -121,10 +121,10 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
     override fun duringCompletion(context: CompletionInitializationContext) = contributorDuringCompletion(context)
 
     companion object {
-        private val DEPENDENCIES_SCRIPT_BLOCK = "dependencies"
-        val kotlinPrefix = "org.jetbrains.kotlin:kotlin-"
-        val kotlinArtifactPrefix = "kotlin-"
-        val kotlinGroup = "org.jetbrains.kotlin"
+        private const val DEPENDENCIES_SCRIPT_BLOCK = "dependencies"
+        const val kotlinPrefix = "org.jetbrains.kotlin:kotlin-"
+        const val kotlinArtifactPrefix = "kotlin-"
+        const val kotlinGroup = "org.jetbrains.kotlin"
 
         private val DEPENDENCIES_CALL_PATTERN = PlatformPatterns.psiElement()
                 .inside(true, PlatformPatterns.psiElement(KtCallExpression::class.java).with(

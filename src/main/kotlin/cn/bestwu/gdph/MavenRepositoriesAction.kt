@@ -19,19 +19,9 @@ package cn.bestwu.gdph
 import com.intellij.openapi.actionSystem.ActionGroup
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.options.ShowSettingsUtil
-import com.intellij.openapi.util.Pair
-import com.intellij.util.containers.ContainerUtil
-import gnu.trove.THashSet
-import org.jetbrains.idea.maven.indices.MavenIndicesManager
 import org.jetbrains.idea.maven.indices.MavenProjectIndicesManager
 import org.jetbrains.idea.maven.indices.MavenRepositoriesConfigurable
-import org.jetbrains.idea.maven.indices.MavenRepositoryProvider
-import org.jetbrains.idea.maven.model.MavenRemoteRepository
-import org.jetbrains.idea.maven.project.MavenProjectsManager
-import java.io.File
-import java.util.*
 
 /**
  *

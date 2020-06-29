@@ -95,7 +95,7 @@ fun toSearchParam(src: String): SearchParam {
             val fa = src.count { it == ':' } > 1 && artifactId.isNotEmpty()
             SearchParam(groupId, artifactId, true, fa)
         }
-        src.contains(":") -> SearchParam(src, "", true, false)
-        else -> SearchParam("", "", false, false, src)
+        src.contains(":") -> SearchParam(src, "", fg = true, fa = false)
+        else -> SearchParam("", "", fg = false, fa = false, src = src)
     }
 }

@@ -29,7 +29,7 @@ class MapNotationAddRepositoriesIntention : AbstractAddRepositoriesIntention() {
     private var name: String? = null
 
     override fun processIntention(element: PsiElement, project: Project, editor: Editor) {
-        processIntention(SearchParam(group!!, name!!, true, true), project, element)
+        processIntention(SearchParam(group!!, name!!, fg = true, fa = true), project, element)
     }
 
     override fun getElementPredicate(): PsiElementPredicate {

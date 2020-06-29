@@ -58,7 +58,7 @@ object GradlePluginsSearcher {
         val elements = plugin.select(".other-versions li")
         elements.mapTo(result) { it.select("a").text() }
         if (result.isNotEmpty()) {
-            pluginVersionsCaches.put(text, result)
+            pluginVersionsCaches[text] = result
         }
         return result
     }

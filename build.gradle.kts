@@ -59,7 +59,6 @@ repositories {
 }
 
 dependencies {
-//    compileOnly("com.intellij:openapi:7.0.3")
     implementation("org.jsoup:jsoup:1.13.1")
 
 }

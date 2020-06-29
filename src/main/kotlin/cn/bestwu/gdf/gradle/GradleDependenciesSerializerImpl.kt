@@ -26,7 +26,7 @@ class GradleDependenciesSerializerImpl : GradleDependenciesSerializer {
     }
 
     companion object {
-        private val NEW_LINE = '\n'
+        private const val NEW_LINE = '\n'
         private val NEW_LINE_JOINER = Joiner.on(NEW_LINE)
         private val COMMA_JOINER = Joiner.on(", ")
         private val EXTRA_OPTION_FORMATTER: (Entry<String, String>) -> String = {
@@ -60,7 +60,7 @@ class GradleDependenciesSerializerImpl : GradleDependenciesSerializer {
 
         private fun useClosure(dependency: Dependency): Boolean {
             val exclusions = dependency.exclusions
-            return !exclusions.isEmpty() || !dependency.isTransitive
+            return exclusions.isNotEmpty() || !dependency.isTransitive
         }
 
         private fun toStringNotation(dependency: Dependency): String {
