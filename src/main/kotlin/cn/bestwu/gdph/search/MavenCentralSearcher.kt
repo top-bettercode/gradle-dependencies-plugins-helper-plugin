@@ -37,8 +37,8 @@ object MavenCentralSearcher : ArtifactSearcher() {
     override fun doSearch(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
         val url = "http://search.maven.org/solrsearch/select?q=${searchParam.toMq()}&rows=50&core=gav&wt=json"
         val connection = getConnection(url)
-        val stream = getResponse(connection, project) ?: return result
-        regex.findAll(stream.bufferedReader().readText()).forEach {
+        val text = getResponseText(connection, project) ?: return result
+        regex.findAll(text).forEach {
             if (searchParam.fg && it.groupValues[1] != searchParam.groupId)
                 return@forEach
             val artifactInfo = artifactInfo(it.groupValues[1], if (searchParam.artifactId.isEmpty() && !searchParam.fg && searchParam.groupId.isNotEmpty() && searchParam.groupId != it.groupValues[1]) "" else it.groupValues[2])
@@ -59,8 +59,8 @@ object MavenCentralSearcher : ArtifactSearcher() {
     override fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
         val url = "http://search.maven.org/solrsearch/select?q=${searchParam.k}:$quot${searchParam.q}$quot&core=gav&rows=1000&wt=json"
         val connection = getConnection(url)
-        val stream = getResponse(connection, project) ?: return result
-        regex.findAll(stream.bufferedReader().readText()).forEach {
+        val text = getResponseText(connection, project) ?: return result
+        regex.findAll(text).forEach {
             val artifactInfo = artifactInfo(it.groupValues[1], it.groupValues[2], it.groupValues[3])
             val exist = result.find { r -> r.id == artifactInfo.id }
             if (exist != null) {

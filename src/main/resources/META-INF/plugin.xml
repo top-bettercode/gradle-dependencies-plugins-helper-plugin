@@ -18,14 +18,13 @@
   <idea-version since-build="191.8026.42"/>
   <id>cn.bestwu.gdph</id>
   <name>Gradle Dependencies And Plugins Helper</name>
-  <version>0.1.5</version>
+  <version>0.1.6</version>
   <vendor email="piterwu@outlook.com"
     url="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin">Peter Wu
   </vendor>
   <depends>com.intellij.modules.java</depends>
   <depends>com.intellij.java</depends>
   <depends>org.jetbrains.plugins.gradle</depends>
-  <depends optional="true" config-file="maven.xml">org.jetbrains.idea.maven</depends>
   <depends optional="true" config-file="kotlin.xml">org.jetbrains.kotlin</depends>
 
   <description><![CDATA[
@@ -53,10 +52,11 @@
     ]]></description>
 
   <change-notes><![CDATA[
-    <b>0.1.5</b><br/><br/>
+    <b>0.1.6</b><br/><br/>
 
     <ul>
-      <li>remove deprecated class usage</li>
+      <li>remove usages of deprecated API</li>
+      <li>remove maven indexes search</li>
     </ul>
     ]]>
   </change-notes>
@@ -73,7 +73,7 @@
     <documentationProvider implementation="cn.bestwu.gdph.OpenJcenterOrMavenCentralProvider"
       order="first"/>
 
-    <projectConfigurable
+    <applicationConfigurable id="bestwu.book"
       instance="cn.bestwu.gdph.config.GDPHConfigurable"/>
     <applicationService
       serviceInterface="cn.bestwu.gdph.config.Settings"
@@ -88,16 +88,4 @@
       <className>cn.bestwu.gdph.MethodNotationAddRepositoriesIntention</className>
     </intentionAction>
   </extensions>
-  <actions>
-    <action class="cn.bestwu.gdf.gradle.MapNotationToStringNotationAction"
-      id="MapNotationToStringNotationAction" text="Convert to String Notation"
-      description="Convert to String Notation">
-      <add-to-group group-id="CodeMenu"/>
-    </action>
-    <action class="cn.bestwu.gdf.gradle.GradleDslToGradleKtsDslAction"
-      id="GradleDslToGradleKtsDslAction" text="Convert GradleDsl File to GradleKtsDsl File"
-      description="Convert GradleDsl File to GradleKtsDsl File">
-      <add-to-group group-id="CodeMenu" anchor="last"/>
-    </action>
-  </actions>
 </idea-plugin>

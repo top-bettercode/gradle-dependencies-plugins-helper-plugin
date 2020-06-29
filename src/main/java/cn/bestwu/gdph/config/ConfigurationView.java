@@ -16,7 +16,6 @@
 
 package cn.bestwu.gdph.config;
 
-import cn.bestwu.gdph.UtilKt;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
@@ -29,18 +28,12 @@ public class ConfigurationView {
   private JCheckBox useNexus;
   private JTextField nexusSearchUrlField;
   private JPanel dpPanel;
-  private JPanel mavenIndexPanel;
-  private JCheckBox useMavenIndex;
   private JCheckBox useMavenCentral;
-  private JTextField remoteRepository;
 
   public ConfigurationView() {
     useNexus.addActionListener(
         actionEvent -> nexusSearchUrlField.setEnabled(useNexus.isSelected())
     );
-    if (!UtilKt.supportMavenIndex()) {
-      mavenIndexPanel.setVisible(false);
-    }
   }
 
   public JPanel getDpPanel() {
@@ -55,14 +48,6 @@ public class ConfigurationView {
     this.nexusSearchUrlField.setText(nexusSearchUrl);
   }
 
-  public String getRemoteRepository() {
-    return remoteRepository.getText();
-  }
-
-  public void setRemoteRepository(String remoteRepository) {
-    this.remoteRepository.setText(remoteRepository);
-  }
-
   public boolean getUseNexus() {
     return useNexus.isSelected();
   }
@@ -70,14 +55,6 @@ public class ConfigurationView {
   public void setUseNexus(boolean selected) {
     useNexus.setSelected(selected);
     nexusSearchUrlField.setEnabled(selected);
-  }
-
-  public boolean getUseMavenIndex() {
-    return useMavenIndex.isSelected();
-  }
-
-  public void setUseMavenIndex(boolean selected) {
-    useMavenIndex.setSelected(selected);
   }
 
   public boolean getUseMavenCentral() {

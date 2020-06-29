@@ -23,7 +23,7 @@ import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.impl.source.PostprocessReformattingAspect
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
 import junit.framework.TestCase
 
 /**
@@ -31,7 +31,7 @@ import junit.framework.TestCase
  * @author Peter Wu
  * @since
  */
-abstract class CodeInsightTestBase : LightCodeInsightFixtureTestCase() {
+abstract class CodeInsightTestBase : LightJavaCodeInsightFixtureTestCase() {
     companion object {
         const val gradleFileName = "build.gradle"
         const val gradleKtsFileName = "build.gradle.kts"

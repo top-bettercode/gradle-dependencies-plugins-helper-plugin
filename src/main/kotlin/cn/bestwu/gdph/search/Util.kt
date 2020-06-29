@@ -20,6 +20,7 @@ import cn.bestwu.gdph.show
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
+import groovy.json.JsonSlurper
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
@@ -40,7 +41,7 @@ fun getConnection(spec: String): HttpURLConnection {
     return httpURLConnection
 }
 
-internal fun getResponse(connection: HttpURLConnection, project: Project): InputStream? {
+private fun getResponse(connection: HttpURLConnection, project: Project): InputStream? {
     try {
         if (connection.responseCode != 200) {
             show(project, "response:${connection.errorStream?.bufferedReader()?.readText()
@@ -48,12 +49,35 @@ internal fun getResponse(connection: HttpURLConnection, project: Project): Input
             return null
         }
         return connection.inputStream
-    } catch (e: SocketTimeoutException) {
+    } catch (e: Exception) {
         val url = connection.url.toString()
         show(project, "<a href='$url'>$url</a>", "Request timeout", NotificationType.WARNING, NotificationListener.URL_OPENING_LISTENER)
         return null
     }
 }
+
+internal fun getResponseText(connection: HttpURLConnection, project: Project): String? {
+    try {
+        val stream = getResponse(connection, project) ?: return null
+        return stream.bufferedReader().readText()
+    } catch (e: Exception) {
+        val url = connection.url.toString()
+        show(project, "<a href='$url'>$url</a>", "Request timeout", NotificationType.WARNING, NotificationListener.URL_OPENING_LISTENER)
+        return null
+    }
+}
+
+internal fun getResponseJson(connection: HttpURLConnection, project: Project): Any? {
+    try {
+        val stream = getResponse(connection, project) ?: return null
+        return JsonSlurper().parse(stream)
+    } catch (e: Exception) {
+        val url = connection.url.toString()
+        show(project, "<a href='$url'>$url</a>", "Request timeout", NotificationType.WARNING, NotificationListener.URL_OPENING_LISTENER)
+        return null
+    }
+}
+
 
 internal val versionTails = arrayOf("SNAPSHOTS", "ALPHA", "BETA", "M", "RC", "RELEASE")
 internal val versionTailRegex = "^([A-Za-z]+?)(\\d*)$".toRegex()

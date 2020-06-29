@@ -25,11 +25,9 @@ import com.intellij.openapi.components.Storage
         name = "GDPHSettings",
         storages = [(Storage("gdph.settings.xml"))]
 )
-class Settings(var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useMavenIndex: Boolean = Settings.useMavenIndex, var remoteRepository: String = mavenCentralRemoteRepository, var useMavenCentral: Boolean = Settings.useMavenCentral) : PersistentStateComponent<Settings> {
+class Settings(var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useMavenCentral: Boolean = Settings.useMavenCentral) : PersistentStateComponent<Settings> {
 
     override fun loadState(state: Settings) {
-        this.useMavenIndex = state.useMavenIndex && supportMavenIndex()
-        this.remoteRepository = state.remoteRepository
         this.useNexus = state.useNexus
         this.useMavenCentral = state.useMavenCentral
         this.nexusSearchUrl = state.nexusSearchUrl
@@ -41,10 +39,8 @@ class Settings(var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: St
 
     companion object {
         const val useNexus: Boolean = false
-        const val useMavenIndex: Boolean = false
         const val useMavenCentral: Boolean = false
         const val nexusSearchUrl: String = "https://oss.sonatype.org"
-        const val mavenCentralRemoteRepository = "https://repo1.maven.org/maven2/"
 
         fun getInstance(): Settings {
             return ServiceManager.getService(Settings::class.java)

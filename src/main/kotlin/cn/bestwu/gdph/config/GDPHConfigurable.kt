@@ -16,15 +16,13 @@
 
 package cn.bestwu.gdph.config
 
-import cn.bestwu.gdph.maven.ImportMavenRepositoriesTask
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ConfigurationException
-import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
 
 
-class GDPHConfigurable(private val project: Project) : Configurable {
+class GDPHConfigurable : Configurable {
 
     private var view: ConfigurationView? = null
 
@@ -45,10 +43,8 @@ class GDPHConfigurable(private val project: Project) : Configurable {
         // Reset on click.
         view!!.resetButton.addActionListener {
             view!!.useMavenCentral = Settings.useMavenCentral
-            view!!.useMavenIndex = Settings.useMavenIndex
             view!!.useNexus = Settings.useNexus
             view!!.nexusSearchUrl = Settings.nexusSearchUrl
-            view!!.remoteRepository = Settings.mavenCentralRemoteRepository
         }
 
         reset()
@@ -58,34 +54,22 @@ class GDPHConfigurable(private val project: Project) : Configurable {
 
     override fun isModified(): Boolean {
         val settings = Settings.getInstance()
-        return settings.useNexus != view!!.useNexus || settings.useMavenCentral != view!!.useMavenCentral || settings.useMavenIndex != view!!.useMavenIndex || settings.nexusSearchUrl != view!!.nexusSearchUrl || settings.remoteRepository != view!!.remoteRepository
+        return settings.useNexus != view!!.useNexus || settings.useMavenCentral != view!!.useMavenCentral || settings.nexusSearchUrl != view!!.nexusSearchUrl
     }
 
     @Throws(ConfigurationException::class)
     override fun apply() {
         val settings = Settings.getInstance()
-        val changeMavenIndex = settings.useMavenIndex != view!!.useMavenIndex || settings.remoteRepository != view!!.remoteRepository
         settings.useMavenCentral = view!!.useMavenCentral
-        settings.useMavenIndex = view!!.useMavenIndex
         settings.useNexus = view!!.useNexus
         settings.nexusSearchUrl = view!!.nexusSearchUrl
-        val oldRemoteRepository =
-                if (settings.remoteRepository != view!!.remoteRepository)
-                    settings.remoteRepository
-                else null
-        settings.remoteRepository = view!!.remoteRepository
-        if (changeMavenIndex) {
-            ImportMavenRepositoriesTask.performTask(project, oldRemoteRepository)
-        }
     }
 
     override fun reset() {
         val settings = Settings.getInstance()
         view!!.useMavenCentral = settings.useMavenCentral
-        view!!.useMavenIndex = settings.useMavenIndex
         view!!.useNexus = settings.useNexus
         view!!.nexusSearchUrl = settings.nexusSearchUrl
-        view!!.remoteRepository = settings.remoteRepository
     }
 
     override fun disposeUIResources() {

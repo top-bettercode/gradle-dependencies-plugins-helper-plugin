@@ -37,7 +37,7 @@ plugins {
     id("org.jetbrains.intellij") version "0.4.21"
 }
 group = "cn.bestwu"
-version = "0.1.5"
+version = "0.1.6"
 
 val ideaVersion = property("ideaVersion")
 
@@ -45,7 +45,7 @@ intellij {
     updateSinceUntilBuild = false
 //    downloadSources = false
     version = ideaVersion as String
-    setPlugins("java","Groovy", "gradle", "Kotlin", "maven", "properties", "junit")
+    setPlugins("java","Groovy", "gradle", "Kotlin", "properties", "junit")
 }
 
 tasks.withType(PublishTask::class.java) {

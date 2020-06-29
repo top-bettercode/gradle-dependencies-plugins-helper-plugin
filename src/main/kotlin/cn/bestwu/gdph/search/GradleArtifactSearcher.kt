@@ -17,7 +17,6 @@
 package cn.bestwu.gdph.search
 
 import cn.bestwu.gdph.config.Settings
-import cn.bestwu.gdph.maven.MavenIndexSearcher
 import com.intellij.openapi.project.Project
 import java.util.*
 
@@ -27,7 +26,6 @@ object GradleArtifactSearcher {
         val preResult: LinkedHashSet<ArtifactInfo> = linkedSetOf()
         val settings = Settings.getInstance()
         return when {
-            settings.useMavenIndex -> MavenIndexSearcher.searchByClassName(searchParam, project, preResult)
             settings.useNexus -> NexusSearcher.searchByClassName(searchParam, project, preResult)
             else -> MavenCentralSearcher.searchByClassName(searchParam, project, preResult)
         }
@@ -37,7 +35,6 @@ object GradleArtifactSearcher {
         val preResult: LinkedHashSet<ArtifactInfo> = linkedSetOf()
         val settings = Settings.getInstance()
         val result: Set<ArtifactInfo> = when {
-            settings.useMavenIndex -> MavenIndexSearcher.search(searchParam, project, preResult)
             settings.useNexus -> NexusSearcher.search(searchParam, project, preResult)
             settings.useMavenCentral -> MavenCentralSearcher.search(searchParam, project, preResult)
             else -> JcenterSearcher.search(searchParam, project, preResult)

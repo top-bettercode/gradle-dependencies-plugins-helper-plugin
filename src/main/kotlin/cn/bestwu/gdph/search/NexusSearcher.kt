@@ -41,8 +41,8 @@ object NexusSearcher : ArtifactSearcher() {
         val url = "$nexusSearchUrl/service/local/lucene/search?${searchParam.toNq()}"
         val connection = getConnection(url)
         connection.setRequestProperty("Accept", "application/json")
-        val stream = getResponse(connection, project) ?: return result
-        var jsonResult = (JsonSlurper().parse(stream) as Map<*, *>)["data"] as List<Map<*, *>>
+        var jsonResult = getResponseJson(connection, project) ?: return result
+        jsonResult = (jsonResult as Map<*, *>)["data"] as List<Map<*, *>>
         if (searchParam.fg)
             jsonResult = jsonResult.filter { it["groupId"] == searchParam.groupId }
         jsonResult.forEach {
@@ -72,8 +72,8 @@ object NexusSearcher : ArtifactSearcher() {
         val url = "$nexusSearchUrl/service/local/lucene/search?cn=${searchParam.q}"
         val connection = getConnection(url)
         connection.setRequestProperty("Accept", "application/json")
-        val stream = getResponse(connection, project) ?: return result
-        val jsonResult = (JsonSlurper().parse(stream) as Map<*, *>)["data"] as List<Map<*, *>>
+        var jsonResult = getResponseJson(connection, project) ?: return result
+        jsonResult = (jsonResult as Map<*, *>)["data"] as List<Map<*, *>>
         jsonResult.mapTo(result) {
             val repo = if (it["latestReleaseRepositoryId"] != null) {
                 it["latestReleaseRepositoryId"]

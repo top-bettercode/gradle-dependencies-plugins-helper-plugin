@@ -18,7 +18,6 @@ package cn.bestwu.gdph.search
 
 import cn.bestwu.gdph.split
 import com.intellij.openapi.project.Project
-import groovy.json.JsonSlurper
 import java.util.*
 
 @Suppress("UNCHECKED_CAST")
@@ -38,10 +37,9 @@ object JcenterSearcher : ArtifactSearcher() {
         var cresult = result
         val url = "https://api.bintray.com/search/packages/maven?${searchParam.toQ()}"
         val connection = getConnection(url)
-        val stream = getResponse(connection, project) ?: return cresult
-        var jsonResult = JsonSlurper().parse(stream) as List<Map<*, *>>
+        var jsonResult = getResponseJson(connection, project) ?: return cresult
         val qId = searchParam.toId()
-        val findById = jsonResult.filter { (it["system_ids"] as List<String>).contains(qId) }
+        val findById = (jsonResult as List<Map<*, *>>).filter { (it["system_ids"] as List<String>).contains(qId) }
         if (findById.isNotEmpty() && searchParam.fa) {
             jsonResult = findById
         }
