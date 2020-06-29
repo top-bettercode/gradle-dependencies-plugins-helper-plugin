@@ -19,9 +19,19 @@ package cn.bestwu.gdph
 import com.intellij.openapi.actionSystem.ActionGroup
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.options.ShowSettingsUtil
+import com.intellij.openapi.util.Pair
+import com.intellij.util.containers.ContainerUtil
+import gnu.trove.THashSet
+import org.jetbrains.idea.maven.indices.MavenIndicesManager
 import org.jetbrains.idea.maven.indices.MavenProjectIndicesManager
 import org.jetbrains.idea.maven.indices.MavenRepositoriesConfigurable
+import org.jetbrains.idea.maven.indices.MavenRepositoryProvider
+import org.jetbrains.idea.maven.model.MavenRemoteRepository
+import org.jetbrains.idea.maven.project.MavenProjectsManager
+import java.io.File
+import java.util.*
 
 /**
  *
@@ -40,22 +50,24 @@ class UpdateAllMavenRepositoriesIndexAction : AnAction() {
     }
 }
 
-class UpdateMavenRepositoriesIndexActionGroup: ActionGroup(){
+class UpdateMavenRepositoriesIndexActionGroup : ActionGroup() {
 
     override fun getChildren(e: AnActionEvent?): Array<AnAction> {
         return if (e != null) {
-            val actions= mutableListOf<AnAction>()
-            val mvenProjectIndicesManager = MavenProjectIndicesManager.getInstance(e.project)
-            mvenProjectIndicesManager.indices.forEach {
-                actions.add(object :AnAction("Update ${it.repositoryPathOrUrl}"){
-                    override fun actionPerformed(e: AnActionEvent) {
-                        mvenProjectIndicesManager.scheduleUpdate(listOf(it))
-                    }
-                })
+            val actions = mutableListOf<AnAction>()
+            try {
+                MavenProjectIndicesManager.getInstance(e.project).indices.forEach {
+                    actions.add(object : AnAction("Update ${it.repositoryPathOrUrl}") {
+                        override fun actionPerformed(e: AnActionEvent) {
+                            MavenProjectIndicesManager.getInstance(e.project).scheduleUpdate(listOf(it))
+                        }
+                    })
+                }
+                actions.toTypedArray()
+            } catch (e: Exception) {
+                emptyArray<AnAction>()
             }
-
-            actions.toTypedArray()
-        }else{
+        } else {
             arrayOf()
         }
 

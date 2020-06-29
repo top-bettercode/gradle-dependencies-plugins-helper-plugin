@@ -33,7 +33,7 @@
 import org.jetbrains.intellij.tasks.PublishTask
 
 plugins {
-    kotlin("jvm") version "1.3.61"
+    kotlin("jvm") version "1.3.72"
     id("org.jetbrains.intellij") version "0.4.21"
 }
 group = "cn.bestwu"
@@ -45,7 +45,7 @@ intellij {
     updateSinceUntilBuild = false
 //    downloadSources = false
     version = ideaVersion as String
-    setPlugins("Groovy", "gradle", "Kotlin", "maven", "properties", "junit")
+    setPlugins("java","Groovy", "gradle", "Kotlin", "maven", "properties", "junit")
 }
 
 tasks.withType(PublishTask::class.java) {
@@ -59,9 +59,8 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.3.61")
+//    compileOnly("com.intellij:openapi:7.0.3")
     implementation("org.jsoup:jsoup:1.13.1")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.3.61")
 }
 

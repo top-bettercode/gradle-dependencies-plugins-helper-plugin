@@ -15,13 +15,15 @@
   -->
 
 <idea-plugin version="2">
-  <idea-version since-build="145.258"/>
+  <idea-version since-build="191.8026.42"/>
   <id>cn.bestwu.gdph</id>
   <name>Gradle Dependencies And Plugins Helper</name>
   <version>0.1.5</version>
   <vendor email="piterwu@outlook.com"
     url="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin">Peter Wu
   </vendor>
+  <depends>com.intellij.modules.java</depends>
+  <depends>com.intellij.java</depends>
   <depends>org.jetbrains.plugins.gradle</depends>
   <depends optional="true" config-file="maven.xml">org.jetbrains.idea.maven</depends>
   <depends optional="true" config-file="kotlin.xml">org.jetbrains.kotlin</depends>

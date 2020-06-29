@@ -28,9 +28,9 @@ import com.intellij.psi.PsiFile
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.actions.BaseRefactoringAction
 import com.intellij.refactoring.util.CommonRefactoringUtil
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.plugins.groovy.GroovyFileType
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
+import java.util.*
 
 /**
  *
@@ -76,7 +76,7 @@ class GradleDslToGradleKtsDslAction : BaseRefactoringAction() {
             val event = AnActionEvent.createFromAnAction(mapNotationToStringNotationAction, null, "", dataContext)
             mapNotationToStringNotationAction.actionPerformed(event)
 
-            val files = ContainerUtil.newHashSet<GroovyFile>()
+            val files = HashSet<GroovyFile>()
 
             for (element in elements) {
                 var e = element

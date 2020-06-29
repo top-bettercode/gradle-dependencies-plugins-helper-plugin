@@ -20,9 +20,9 @@ import cn.bestwu.gdph.checkNotIndexedRepositories
 import cn.bestwu.gdph.config.Settings
 import cn.bestwu.gdph.search.*
 import com.intellij.openapi.project.Project
-import org.jetbrains.idea.maven.indices.MavenArtifactSearcher
 import org.jetbrains.idea.maven.indices.MavenClassSearcher
 import org.jetbrains.idea.maven.indices.MavenProjectIndicesManager
+import org.jetbrains.idea.maven.model.MavenId
 import org.jetbrains.plugins.gradle.integrations.maven.MavenRepositoriesHolder
 import java.util.*
 
@@ -43,37 +43,9 @@ object MavenIndexSearcher : ArtifactSearcher() {
 
     override fun doSearch(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
         checkNotIndexedRepositories(MavenRepositoriesHolder.getInstance(project))
-        val m = MavenProjectIndicesManager.getInstance(project)
-        if (searchParam.groupId.isNotEmpty()) {
-            if (searchParam.artifactId.isEmpty() && !searchParam.fg)
-                m.groupIds.forEach {
-                    if (it == searchParam.groupId) {
-                        m.getArtifactIds(searchParam.groupId).mapTo(result) { artifactInfo(searchParam.groupId, it) }
-                    } else {
-                        result.add(artifactInfo(it))
-                    }
-                }
-            else {
-                m.getArtifactIds(searchParam.groupId).forEach {
-                    if (it == searchParam.artifactId) {
-                        m.getVersions(searchParam.groupId, it).sortedWith(kotlin.Comparator<String> { o1, o2 ->
-                            compareVersion(o2, o1)
-                        }).forEach { version ->
-                            result.add(artifactInfo(searchParam.groupId, it, version))
-                        }
-                    } else if (!searchParam.fa) {
-                        result.add(artifactInfo(searchParam.groupId, it))
-                    }
-                }
-            }
-        } else {
-            val searcher = MavenArtifactSearcher()
-            val searchResults = searcher.search(project, searchParam.toId().toMavenIndexParam(), 1000)
-            searchResults.flatMapTo(result) {
-                it.versions.map { artifactInfo(it.groupId, it.artifactId) }
-            }
+        MavenProjectIndicesManager.getInstance(project).offlineSearchService.findGroupCandidates(MavenId(searchParam.toId())).mapTo(result) {
+            artifactInfo(it.groupId ?: "", it.artifactId ?: "")
         }
-
         return result
     }
 
@@ -89,9 +61,11 @@ object MavenIndexSearcher : ArtifactSearcher() {
         checkNotIndexedRepositories(MavenRepositoriesHolder.getInstance(project))
         val searcher = MavenClassSearcher()
         val searchResults = searcher.search(project, searchParam.q.toMavenIndexParam(), 1000)
-        searchResults.filter { it.versions.isNotEmpty() }
+        searchResults.filter { it.searchResults.items.isEmpty() }
                 .flatMap {
-                    it.versions.map { artifactInfo(it.groupId, it.artifactId, it.version) }
+                    it.searchResults.items.map { item ->
+                        artifactInfo(item.groupId ?: "", item.artifactId ?: "", item.version ?: "")
+                    }
                 }.forEach { artifactInfo ->
                     val exist = result.find { it.id == artifactInfo.id }
                     if (exist != null) {
