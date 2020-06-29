@@ -4,7 +4,7 @@
 [![Downloads](http://phpstorm.espend.de/badge/10033/downloads)](https://plugins.jetbrains.com/plugin/10033-gradle-dependencies-and-plugins-helper)
 [![License](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
 
-[中文说明](https://bestwu.github.io/2017/09/01/gradle-dependencies-plugins-helper-plugin/)
+[中文说明](doc/2017/09/01/gradle-dependencies-plugins-helper-plugin/)
 
 This is an IntelliJ IDEA plugin for searching dependencies/plugins from [JCentral](https://bintray.com/search)/[GradlePlugins](https://plugins.gradle.org/) inside Gradle projects.
 
@@ -14,20 +14,20 @@ Inspired by [https://github.com/siosio/GradleDependenciesHelperPlugin](https://g
 
 * Use `Smart Type Completion` in dependencies/plugins script block.
 
-![](https://bestwu.github.io/images/gradle-dependencies-plugins-helper-plugin/plugins.gif)
+![](doc/images/plugins.gif)
 
-![](https://bestwu.github.io/images/gradle-dependencies-plugins-helper-plugin/dependencies.gif)
+![](doc/images/dependencies.gif)
 
 * Support *.gradle,*.gradle.kts.
 
-![](https://bestwu.github.io/images/gradle-dependencies-plugins-helper-plugin/plugins.kts.gif)
+![](doc/images/plugins.kts.gif)
 
-![](https://bestwu.github.io/images/gradle-dependencies-plugins-helper-plugin/dependencies.kts.gif)
+![](doc/images/dependencies.kts.gif)
 
 * Use [jcenter API](https://bintray.com/docs/api/) for Gradle dependencies queries, Use [Gradle Plugins](https://plugins.gradle.org) for Gradle plugins queries.
 * Support wildcard query * .
 
-![](https://bestwu.github.io/images/gradle-dependencies-plugins-helper-plugin/wildcard.gif)
+![](doc/images/wildcard.gif)
 
 * Support search by classname in mavenCentral search.
 
@@ -40,20 +40,20 @@ Inspired by [https://github.com/siosio/GradleDependenciesHelperPlugin](https://g
       compile("c:Junit")
 
 
-![](https://bestwu.github.io/images/gradle-dependencies-plugins-helper-plugin/classname-query.gif)
+![](doc/images/classname-query.gif)
 
 * Support `Use Maven Central Repository Search` and `Use Nexus2 Repository Search` options to speed up the dependencies search.
 * Add specified repository to repositories.Use `Show Intention Actions` action (`Alt + Enter` or ⌥⏎) and choose `Add specified repository to repositories.`
 
-![](https://bestwu.github.io/images/gradle-dependencies-plugins-helper-plugin/add-repo.gif)
+![](doc/images/add-repo.gif)
 
 ## Settings
 
 * Make sure `Smart Type Completion` is on.
 
-![](https://bestwu.github.io/images/gradle-dependencies-plugins-helper-plugin/smart-type-completion.png)
+![](doc/images/smart-type-completion.png)
 
 * `Use Maven Central Repository Search` and `Use Nexus2 Repository Search` is optional.When you can't visit https://api.bintray.com/search/packages/maven or access very slowly,you can use these options to speed up the dependencies search.
 
-![](https://bestwu.github.io/images/gradle-dependencies-plugins-helper-plugin/settings.png)
+![](doc/images/settings.png)
 
