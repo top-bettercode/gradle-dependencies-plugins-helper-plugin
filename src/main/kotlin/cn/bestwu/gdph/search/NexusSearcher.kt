@@ -64,7 +64,11 @@ object NexusSearcher : ArtifactSearcher() {
     }
 
     override fun handleEmptyResult(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
-        return MavenCentralSearcher.search(searchParam, project, result)
+        return if (Settings.getInstance().useMavenCentral) {
+            MavenCentralSearcher.search(searchParam, project, result)
+        } else {
+            JcenterSearcher.search(searchParam, project, result)
+        }
     }
 
     override fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
