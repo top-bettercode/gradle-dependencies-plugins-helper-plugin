@@ -1,27 +1,11 @@
-<!--
-  ~ Copyright (c) 2017 Peter Wu
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
-
 <idea-plugin version="2">
   <idea-version since-build="192.6817.14"/>
   <id>cn.bestwu.gdph</id>
   <name>Gradle Dependencies And Plugins Helper</name>
-  <version>0.1.6</version>
   <vendor email="piterwu@outlook.com"
     url="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin">Peter Wu
   </vendor>
+  <depends>com.intellij.modules.platform</depends>
   <depends>com.intellij.java</depends>
   <depends>org.jetbrains.plugins.gradle</depends>
   <depends optional="true" config-file="kotlin.xml">org.jetbrains.kotlin</depends>
@@ -43,7 +27,7 @@
         &nbsp;&nbsp;compile("fc:org.junit.Test")<br/>
         &nbsp;&nbsp;compile("c:Junit")
       </li>
-      <li>Support `Use Maven Index for search` and `Use Nexus for search`(Nexus2) options to speed
+      <li>Support `Use Maven Central Repository Search` and `Use Nexus2 Repository Search`(Nexus2) options to speed
         up the dependencies search.
       </li>
       <li>Add specified repository to repositories.</li>
