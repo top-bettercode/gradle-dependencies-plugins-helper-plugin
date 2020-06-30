@@ -1,4 +1,4 @@
-<idea-plugin version="2">
+<idea-plugin version="2" require-restart="false">
   <idea-version since-build="192.6817.14"/>
   <id>cn.bestwu.gdph</id>
   <name>Gradle Dependencies And Plugins Helper</name>
