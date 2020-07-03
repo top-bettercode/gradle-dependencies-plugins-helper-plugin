@@ -41,16 +41,13 @@ object GradleArtifactSearcher {
         }
         return if (searchParam.fg && searchParam.fa) {
             result
-        } else
-            if (searchParam.artifactId.isBlank()) {
-                result.distinctBy { it.groupId }
-            } else {
-                val newResult = result.distinctBy { it.id }
-                return if (newResult.size > 1)
-                    newResult
-                else
-                    result
-            }
+        } else {
+            val newResult = result.distinctBy { it.id }
+            return if (newResult.size > 1)
+                newResult
+            else
+                result
+        }
     }
 }
 
