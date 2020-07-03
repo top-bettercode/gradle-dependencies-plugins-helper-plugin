@@ -22,6 +22,9 @@ import com.intellij.openapi.project.Project
 object GradleArtifactSearcher {
 
     fun searchByClassName(searchParam: ClassNameSearchParam, project: Project): Collection<ArtifactInfo> {
+        if (searchParam.src.isBlank()) {
+            return emptyList()
+        }
         val settings = Settings.getInstance()
         return when {
             settings.useNexus -> NexusSearcher.searchByClassName(searchParam, project)
@@ -31,6 +34,9 @@ object GradleArtifactSearcher {
     }
 
     fun search(searchParam: SearchParam, project: Project): Collection<ArtifactInfo> {
+        if (searchParam.src.isBlank()) {
+            return emptyList()
+        }
         val settings = Settings.getInstance()
         val result: Collection<ArtifactInfo> = when {
             settings.useAli -> AliyunSearcher.search(searchParam, project)

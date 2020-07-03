@@ -44,7 +44,7 @@ abstract class AbstractArtifactSearcher {
     }
 
     fun search(searchParam: SearchParam, project: Project): Collection<ArtifactInfo> {
-        val cacheKey = "$key${searchParam.src}"
+        val cacheKey = "$key$searchParam"
         if (cache) {
             val existResult = artifactsCaches[cacheKey]
             if (existResult != null) {

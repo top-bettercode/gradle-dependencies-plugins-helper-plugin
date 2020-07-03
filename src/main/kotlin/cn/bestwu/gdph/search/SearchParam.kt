@@ -54,6 +54,11 @@ class ClassNameSearchParam(override val src: String) : ISearchParam {
         }
     }
 
+    override fun toString(): String {
+        return "ClassNameSearchParam(src='$src', docUrl='$docUrl', k='$k', q='$q')"
+    }
+
+
 }
 
 class SearchParam(val groupId: String, val artifactId: String, val fg: Boolean, val fa: Boolean, src: String = "") : ISearchParam {
@@ -91,14 +96,12 @@ class SearchParam(val groupId: String, val artifactId: String, val fg: Boolean, 
     fun toNq() = if (groupId.isBlank()) "q=$src" else "g=${halfQuery(fg, groupId)}${if (artifactId.isBlank()) "" else "&a=${halfQuery(fa, artifactId)}"}"
 
     override fun toString(): String {
-        return "SearchParam(fg=$fg, fa=$fa, src='$src', docUrl='$docUrl', groupId='$groupId', artifactId='$artifactId')"
+        return "SearchParam(groupId='$groupId', artifactId='$artifactId', fg=$fg, fa=$fa, src='$src', docUrl='$docUrl')"
     }
 
     init {
         docUrl = "<a href='https://bintray.com/search?query=${toId()}'>search in jcenter</a>"
     }
-
-
 }
 
 fun toSearchParam(src: String): SearchParam {
