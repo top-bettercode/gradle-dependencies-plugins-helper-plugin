@@ -21,7 +21,7 @@ package cn.bestwu.gdph.search
  * @author Peter Wu
  * @since
  */
-class ArtifactInfo(groupId: String, artifactId: String, version: String, repoType: String, repo: String, val isSpecifiedRepo: Boolean = false, val className: String = "") : Comparator<ArtifactInfo> {
+class ArtifactInfo(groupId: String, artifactId: String, version: String, repoType: String, repo: String, val isSpecifiedRepo: Boolean = false, val className: String = "") : java.lang.Comparable<ArtifactInfo> {
     val groupId: String = groupId.trim()
     val artifactId: String = artifactId.trim()
     var version: String = version.trim()
@@ -56,12 +56,12 @@ class ArtifactInfo(groupId: String, artifactId: String, version: String, repoTyp
         this.gav = "${this.id}${if (this.version.isBlank()) "" else ":${this.version}"}"
     }
 
-    override fun compare(o1: ArtifactInfo, o2: ArtifactInfo): Int {
-        val g = o1.groupId.compareTo(o2.groupId)
+    override fun compareTo(o: ArtifactInfo): Int {
+        val g = this.groupId.compareTo(o.groupId)
         return if (g == 0) {
-            val a = o1.artifactId.compareTo(o2.artifactId)
+            val a = this.artifactId.compareTo(o.artifactId)
             if (a == 0)
-                compareVersion(o2.version, o1.version)
+                compareVersion(o.version, this.version)
             else
                 a
         } else g

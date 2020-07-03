@@ -18,6 +18,7 @@ package cn.bestwu.gdph.search
 
 import cn.bestwu.gdph.quot
 import com.intellij.openapi.project.Project
+import java.util.*
 
 /**
  *
@@ -37,7 +38,7 @@ object MavenCentralSearcher : AbstractArtifactSearcher() {
         val url = "http://search.maven.org/solrsearch/select?q=${searchParam.toMq()}&rows=50&core=gav&wt=json"
         val connection = getConnection(url)
         val text = getResponseText(connection, project) ?: return emptySet()
-        val result= linkedSetOf<ArtifactInfo>()
+        val result= TreeSet<ArtifactInfo>()
         regex.findAll(text).forEach {
             if (searchParam.fg && it.groupValues[1] != searchParam.groupId)
                 return@forEach
@@ -60,7 +61,7 @@ object MavenCentralSearcher : AbstractArtifactSearcher() {
         val url = "http://search.maven.org/solrsearch/select?q=${searchParam.k}:$quot${searchParam.q}$quot&core=gav&rows=1000&wt=json"
         val connection = getConnection(url)
         val text = getResponseText(connection, project) ?: return emptySet()
-        val result= linkedSetOf<ArtifactInfo>()
+        val result= TreeSet<ArtifactInfo>()
         regex.findAll(text).forEach {
             val artifactInfo = artifactInfo(it.groupValues[1], it.groupValues[2], it.groupValues[3],className = "")
             val exist = result.find { r -> r.id == artifactInfo.id }

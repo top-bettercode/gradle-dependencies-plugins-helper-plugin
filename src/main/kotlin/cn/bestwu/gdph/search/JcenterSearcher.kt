@@ -42,7 +42,8 @@ object JcenterSearcher : AbstractArtifactSearcher() {
         if (findById.isNotEmpty() && searchParam.fa) {
             jsonResult = findById
         }
-        val result: MutableSet<ArtifactInfo> = if (findById.size == 2 && findById.any { "spring" == it["owner"] } && findById.any { "bintray" == it["owner"] }) TreeSet() else linkedSetOf()
+//        val result: MutableSet<ArtifactInfo> = if (findById.size == 2 && findById.any { "spring" == it["owner"] } && findById.any { "bintray" == it["owner"] }) TreeSet() else linkedSetOf()
+        val result = TreeSet<ArtifactInfo>()
 
         for (any in jsonResult) {
             val systemIds = any["system_ids"] as MutableList<String>

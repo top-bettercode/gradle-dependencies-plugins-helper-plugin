@@ -18,6 +18,7 @@ package cn.bestwu.gdph.search
 
 import cn.bestwu.gdph.config.Settings
 import com.intellij.openapi.project.Project
+import java.util.*
 
 @Suppress("UNCHECKED_CAST")
 /**
@@ -46,7 +47,7 @@ object NexusSearcher : AbstractArtifactSearcher() {
         jsonResult = (jsonResult as Map<*, *>)["data"] as List<Map<*, *>>
         if (searchParam.fg)
             jsonResult = jsonResult.filter { it["groupId"] == searchParam.groupId }
-        val result = linkedSetOf<ArtifactInfo>()
+        val result = TreeSet<ArtifactInfo>()
         jsonResult.forEach {
             val repo = if (it["latestReleaseRepositoryId"] != null) {
                 it["latestReleaseRepositoryId"]
@@ -80,7 +81,7 @@ object NexusSearcher : AbstractArtifactSearcher() {
         connection.setRequestProperty("Accept", "application/json")
         var jsonResult = getResponseJson(connection, project) ?: return emptySet()
         jsonResult = (jsonResult as Map<*, *>)["data"] as List<Map<*, *>>
-        val result = linkedSetOf<ArtifactInfo>()
+        val result = TreeSet<ArtifactInfo>()
         jsonResult.mapTo(result) {
             val repo = if (it["latestReleaseRepositoryId"] != null) {
                 it["latestReleaseRepositoryId"]
