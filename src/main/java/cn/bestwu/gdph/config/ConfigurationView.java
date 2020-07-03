@@ -16,8 +16,11 @@
 
 package cn.bestwu.gdph.config;
 
+import cn.bestwu.gdph.search.UtilKt;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -31,26 +34,54 @@ public class ConfigurationView {
   private JCheckBox useMavenCentral;
   private JTextField artifactoryUrl;
   private JCheckBox useArtifactory;
-  private JTextField repos;
+  private JTextField artiRepos;
   private javax.swing.JPasswordField artifactoryPassword;
   private JTextField artifactoryUsername;
+  private JComboBox<String> aliRepo;
+  private JCheckBox useAli;
 
   public ConfigurationView() {
     useNexus.addActionListener(
         actionEvent -> nexusSearchUrl.setEnabled(useNexus.isSelected())
     );
+    useAli.addActionListener(
+        actionEvent -> aliRepo.setEnabled(useAli.isSelected())
+    );
     useArtifactory.addActionListener(
         actionEvent -> {
           artifactoryUrl.setEnabled(useArtifactory.isSelected());
-          repos.setEnabled(useArtifactory.isSelected());
+          artiRepos.setEnabled(useArtifactory.isSelected());
           artifactoryUsername.setEnabled(useArtifactory.isSelected());
           artifactoryPassword.setEnabled(useArtifactory.isSelected());
         }
     );
+    aliRepo.removeAllItems();
+    aliRepo.addItem("all");
+    List<String> aliRepos = UtilKt.getAliRepos();
+    for (String repo : aliRepos) {
+      aliRepo.addItem(repo);
+    }
   }
 
   public JPanel getDpPanel() {
     return dpPanel;
+  }
+
+  public String getAliRepo() {
+    return aliRepo.getSelectedItem().toString();
+  }
+
+  public void setAliRepo(String aliRepo) {
+    this.aliRepo.setSelectedItem(aliRepo);
+  }
+
+  public boolean getUseAli() {
+    return useAli.isSelected();
+  }
+
+  public void setUseAli(boolean useAli) {
+    this.useAli.setSelected(useAli);
+    aliRepo.setEnabled(useAli);
   }
 
   public String getNexusSearchUrl() {
@@ -80,12 +111,12 @@ public class ConfigurationView {
     this.artifactoryUrl.setText(artifactoryUrl);
   }
 
-  public String getRepos() {
-    return repos.getText().trim();
+  public String getArtiRepos() {
+    return artiRepos.getText().trim();
   }
 
-  public void setRepos(String repos) {
-    this.repos.setText(repos);
+  public void setArtiRepos(String artiRepos) {
+    this.artiRepos.setText(artiRepos);
   }
 
   public String getArtifactoryPassword() {
@@ -111,7 +142,7 @@ public class ConfigurationView {
   public void setUseArtifactory(boolean useArtifactory) {
     this.useArtifactory.setSelected(useArtifactory);
     artifactoryUrl.setEnabled(useArtifactory);
-    repos.setEnabled(useArtifactory);
+    artiRepos.setEnabled(useArtifactory);
     artifactoryUsername.setEnabled(useArtifactory);
     artifactoryPassword.setEnabled(useArtifactory);
   }

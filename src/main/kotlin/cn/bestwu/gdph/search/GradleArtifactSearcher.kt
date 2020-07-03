@@ -21,7 +21,7 @@ import com.intellij.openapi.project.Project
 
 object GradleArtifactSearcher {
 
-    fun searchByClassName(searchParam: ClassNameSearchParam, project: Project): Set<ArtifactInfo> {
+    fun searchByClassName(searchParam: ClassNameSearchParam, project: Project): Collection<ArtifactInfo> {
         val settings = Settings.getInstance()
         return when {
             settings.useNexus -> NexusSearcher.searchByClassName(searchParam, project)
@@ -30,9 +30,10 @@ object GradleArtifactSearcher {
         }
     }
 
-    fun search(searchParam: SearchParam, project: Project): Set<ArtifactInfo> {
+    fun search(searchParam: SearchParam, project: Project): Collection<ArtifactInfo> {
         val settings = Settings.getInstance()
-        val result: Set<ArtifactInfo> = when {
+        val result: Collection<ArtifactInfo> = when {
+            settings.useAli -> AliyunSearcher.search(searchParam, project)
             settings.useNexus -> NexusSearcher.search(searchParam, project)
             settings.useArtifactory -> ArtifactorySearcher.search(searchParam, project)
             settings.useMavenCentral -> MavenCentralSearcher.search(searchParam, project)
@@ -40,13 +41,16 @@ object GradleArtifactSearcher {
         }
         return if (searchParam.fg && searchParam.fa) {
             result
-        } else {
-            val newResult = result.distinctBy { it.id }.toSet()
-            return if (newResult.size > 1)
-                newResult
-            else
-                result
-        }
+        } else
+            if (searchParam.artifactId.isBlank()) {
+                result.distinctBy { it.groupId }
+            } else {
+                val newResult = result.distinctBy { it.id }
+                return if (newResult.size > 1)
+                    newResult
+                else
+                    result
+            }
     }
 }
 

@@ -85,6 +85,21 @@ internal fun getResponseJson(connection: HttpURLConnection, project: Project): A
 }
 
 
+internal fun getAliRepos(): List<String> {
+    try {
+        val connection = getConnection("https://maven.aliyun.com/repo/list?_input_charset=utf-8")
+        if (connection.responseCode == 200) {
+            val inputStream = connection.inputStream
+            var jsonResult = JsonSlurper().parse(inputStream)
+            @Suppress("UNCHECKED_CAST")
+            return   ((jsonResult as Map<*, *>)["object"] as List<Map<*, *>>).map { it["repoId"].toString() }
+        }
+    } catch (e: Exception) {
+    }
+    return emptyList()
+}
+
+
 internal val versionTails = arrayOf("SNAPSHOTS", "ALPHA", "BETA", "M", "RC", "RELEASE")
 internal val versionTailRegex = "^([A-Za-z]+?)(\\d*)$".toRegex()
 

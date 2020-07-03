@@ -27,7 +27,7 @@
         &nbsp;&nbsp;compile("fc:org.junit.Test")<br/>
         &nbsp;&nbsp;compile("c:Junit")
       </li>
-      <li>Support `Use Maven Central Repository Search`,`Use Nexus2 Repository Search`(Nexus2),`Use Artifactory Repository Search` options.
+      <li>Support `Use AliRepo Search`,`Use Maven Central Repository Search`,`Use Nexus2 Repository Search`(Nexus2),`Use Artifactory Repository Search` options.
       </li>
       <li>Add specified repository to repositories.</li>
     </ul>
@@ -38,6 +38,7 @@
 
     <ul>
       <li>Support `Use Artifactory Repository Search` options.</li>
+      <li>Support `Use AliRepo Search` options.</li>
     </ul>
     ]]>
   </change-notes>

@@ -33,7 +33,7 @@ object JcenterSearcher : AbstractArtifactSearcher() {
     override val key: String
         get() = jcenterKey
 
-    override fun doSearch(searchParam: SearchParam, project: Project): Set<ArtifactInfo> {
+    override fun doSearch(searchParam: SearchParam, project: Project): Collection<ArtifactInfo> {
         val url = "https://api.bintray.com/search/packages/maven?${searchParam.toQ()}"
         val connection = getConnection(url)
         var jsonResult = getResponseJson(connection, project) ?: return emptySet()
@@ -77,7 +77,7 @@ object JcenterSearcher : AbstractArtifactSearcher() {
         return result
     }
 
-    override fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project): Set<ArtifactInfo> {
+    override fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project): Collection<ArtifactInfo> {
         return emptySet()
     }
 

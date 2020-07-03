@@ -16,7 +16,9 @@
 
 package cn.bestwu.gdph
 
+import cn.bestwu.gdph.search.ArtifactInfo
 import cn.bestwu.gdph.search.GradlePluginsSearcher
+import cn.bestwu.gdph.search.compareVersion
 import com.intellij.codeInsight.completion.CompletionInitializationContext
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.completion.InsertHandler
@@ -27,6 +29,7 @@ import com.intellij.openapi.util.IconLoader
 import org.jetbrains.plugins.gradle.integrations.maven.MavenRepositoriesHolder
 import org.jetbrains.plugins.groovy.lang.psi.util.GrStringUtil.removeQuotes
 import java.net.URLEncoder
+import java.util.*
 
 internal fun split(dependency: String) = Regex(":").split(dependency)
 internal fun trim(dependency: String) = removeQuotes(dependency).trim('(', ')')
@@ -44,6 +47,16 @@ internal fun show(project: Project, content: String, title: String = "", type: N
     Notifications.Bus.notify(notification, project)
 }
 
+internal fun MutableSet<ArtifactInfo>.addArtifactInfo(artifactInfo: ArtifactInfo) {
+    val exist = find { r -> r.id == artifactInfo.id }
+    if (exist != null&&artifactInfo.version.isNotBlank()&&exist.version.isNotBlank()) {
+        if (compareVersion(exist.version, artifactInfo.version) < 0) {
+            exist.version = artifactInfo.version
+        }
+    } else {
+        add(artifactInfo)
+    }
+}
 
 internal class VersionComparator(private val index: Int) : Comparable<VersionComparator> {
     override fun compareTo(other: VersionComparator): Int = this.index - other.index

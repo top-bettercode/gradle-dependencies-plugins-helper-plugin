@@ -76,6 +76,11 @@ class SearchParam(val groupId: String, val artifactId: String, val fg: Boolean, 
     fun toAQ() = if (groupId.isBlank()) "/api/search/artifact?name=$src" else "/api/search/gavc?g=${fullQuery(fg, groupId)}${if (artifactId.isBlank()) "" else "&a=${fullQuery(fa, artifactId)}"}"
 
     /**
+     * ali params
+     */
+    fun toAliQ() = if (groupId.isBlank()) "/artifact/aliyunMaven/searchArtifactByWords?queryTerm=$src" else "/artifact/aliyunMaven/searchArtifactByGav?groupId=${fullQuery(fg, groupId)}${if (artifactId.isBlank()) "&artifactId=" else "&artifactId=${fullQuery(fa, artifactId)}"}&version="
+
+    /**
      * maven center params
      */
     fun toMq() = if (groupId.isBlank()) "a:$quot$src$quot" else "g:$quot$groupId$quot${if (artifactId.isBlank()) "" else "+AND+a:$quot$artifactId$quot"}"

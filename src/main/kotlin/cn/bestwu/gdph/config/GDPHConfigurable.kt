@@ -42,13 +42,15 @@ class GDPHConfigurable : Configurable {
 
         // Reset on click.
         view!!.resetButton.addActionListener {
+            view!!.useAli = Settings.useAli
+            view!!.aliRepo = Settings.aliRepo
             view!!.useNexus = Settings.useNexus
             view!!.nexusSearchUrl = Settings.nexusSearchUrl
             view!!.useArtifactory = Settings.useArtifactory
             view!!.artifactoryUrl = Settings.artifactoryUrl
             view!!.artifactoryUsername = Settings.artifactoryUsername
             view!!.artifactoryPassword = Settings.artifactoryPassword
-            view!!.repos = Settings.repos
+            view!!.artiRepos = Settings.artiRepos
             view!!.useMavenCentral = Settings.useMavenCentral
         }
 
@@ -59,8 +61,9 @@ class GDPHConfigurable : Configurable {
 
     override fun isModified(): Boolean {
         val settings = Settings.getInstance()
-        return settings.useNexus != view!!.useNexus || settings.nexusSearchUrl != view!!.nexusSearchUrl
-                || settings.useArtifactory != view!!.useArtifactory || settings.artifactoryUrl != view!!.artifactoryUrl || settings.repos != view!!.repos
+        return settings.useAli != view!!.useAli || settings.aliRepo != view!!.aliRepo
+                ||settings.useNexus != view!!.useNexus || settings.nexusSearchUrl != view!!.nexusSearchUrl
+                || settings.useArtifactory != view!!.useArtifactory || settings.artifactoryUrl != view!!.artifactoryUrl || settings.artiRepos != view!!.artiRepos
                 || settings.artifactoryUsername != view!!.artifactoryUsername || settings.artifactoryPassword != view!!.artifactoryPassword
                 || settings.useMavenCentral != view!!.useMavenCentral
     }
@@ -68,11 +71,13 @@ class GDPHConfigurable : Configurable {
     @Throws(ConfigurationException::class)
     override fun apply() {
         val settings = Settings.getInstance()
+        settings.useAli = view!!.useAli
+        settings.aliRepo = view!!.aliRepo
         settings.useNexus = view!!.useNexus
         settings.nexusSearchUrl = view!!.nexusSearchUrl
         settings.useArtifactory = view!!.useArtifactory
         settings.artifactoryUrl = view!!.artifactoryUrl
-        settings.repos = view!!.repos
+        settings.artiRepos = view!!.artiRepos
         settings.artifactoryUsername = view!!.artifactoryUsername
         settings.artifactoryPassword = view!!.artifactoryPassword
         settings.useMavenCentral = view!!.useMavenCentral
@@ -80,13 +85,15 @@ class GDPHConfigurable : Configurable {
 
     override fun reset() {
         val settings = Settings.getInstance()
+        view!!.useAli = settings.useAli
+        view!!.aliRepo = settings.aliRepo
         view!!.useNexus = settings.useNexus
         view!!.nexusSearchUrl = settings.nexusSearchUrl
         view!!.useArtifactory = settings.useArtifactory
         view!!.artifactoryUrl = settings.artifactoryUrl
         view!!.artifactoryUsername = settings.artifactoryUsername
         view!!.artifactoryPassword = settings.artifactoryPassword
-        view!!.repos = settings.repos
+        view!!.artiRepos = settings.artiRepos
         view!!.useMavenCentral = settings.useMavenCentral
     }
 

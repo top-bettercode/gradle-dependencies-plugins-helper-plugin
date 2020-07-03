@@ -26,24 +26,24 @@ import java.util.*
  */
 abstract class AbstractArtifactSearcher {
     companion object {
-        internal val artifactsCaches = HashMap<String, Set<ArtifactInfo>>()
+        internal val artifactsCaches = HashMap<String, Collection<ArtifactInfo>>()
         internal const val jcenterKey = "jcenter:"
     }
 
     abstract val cache: Boolean
     abstract val key: String
-    protected abstract fun doSearch(searchParam: SearchParam, project: Project): Set<ArtifactInfo>
-    protected abstract fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project): Set<ArtifactInfo>
+    protected abstract fun doSearch(searchParam: SearchParam, project: Project): Collection<ArtifactInfo>
+    protected abstract fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project): Collection<ArtifactInfo>
 
-    protected open fun handleEmptyResult(searchParam: SearchParam, project: Project): Set<ArtifactInfo> {
+    protected open fun handleEmptyResult(searchParam: SearchParam, project: Project): Collection<ArtifactInfo> {
         return emptySet()
     }
 
-    protected open fun handleEmptyResultByClassName(searchParam: ClassNameSearchParam, project: Project): Set<ArtifactInfo> {
+    protected open fun handleEmptyResultByClassName(searchParam: ClassNameSearchParam, project: Project): Collection<ArtifactInfo> {
         return emptySet()
     }
 
-    fun search(searchParam: SearchParam, project: Project): Set<ArtifactInfo> {
+    fun search(searchParam: SearchParam, project: Project): Collection<ArtifactInfo> {
         val cacheKey = "$key${searchParam.src}"
         if (cache) {
             val existResult = artifactsCaches[cacheKey]
@@ -53,7 +53,7 @@ abstract class AbstractArtifactSearcher {
         }
         var result = doSearch(searchParam, project)
         if (key != jcenterKey)
-            result = result.filter { !it.groupId.contains(searchParam.groupId.filter { g -> g != '*' }) || !it.artifactId.contains(searchParam.artifactId.filter { a -> a != '*' }) }.toSet()
+            result = result.filter { !it.groupId.contains(searchParam.groupId.filter { g -> g != '*' }) || !it.artifactId.contains(searchParam.artifactId.filter { a -> a != '*' }) }
         return if (result.isEmpty()) {
             handleEmptyResult(searchParam, project)
         } else {
@@ -63,7 +63,7 @@ abstract class AbstractArtifactSearcher {
         }
     }
 
-    fun searchByClassName(searchParam: ClassNameSearchParam, project: Project): Set<ArtifactInfo> {
+    fun searchByClassName(searchParam: ClassNameSearchParam, project: Project): Collection<ArtifactInfo> {
         val cacheKey = "$key$searchParam"
         val existResult = artifactsCaches[cacheKey]
         if (existResult != null) {

@@ -38,7 +38,7 @@ object NexusSearcher : AbstractArtifactSearcher() {
         return ArtifactInfo(groupId, artifactId, version, "$repo${if (owner.isNotBlank() && !(repo == "jcenter" && owner == "bintray")) " by $owner" else ""}", "${Settings.getInstance().nexusSearchUrl}/$repo", true, className)
     }
 
-    override fun doSearch(searchParam: SearchParam, project: Project): Set<ArtifactInfo> {
+    override fun doSearch(searchParam: SearchParam, project: Project): Collection<ArtifactInfo> {
         val nexusSearchUrl = Settings.getInstance().nexusSearchUrl
         val url = "$nexusSearchUrl/service/local/lucene/search?${searchParam.toNq()}"
         val connection = getConnection(url)
@@ -66,7 +66,7 @@ object NexusSearcher : AbstractArtifactSearcher() {
         return result
     }
 
-    override fun handleEmptyResult(searchParam: SearchParam, project: Project): Set<ArtifactInfo> {
+    override fun handleEmptyResult(searchParam: SearchParam, project: Project): Collection<ArtifactInfo> {
         return if (Settings.getInstance().useMavenCentral) {
             MavenCentralSearcher.search(searchParam, project)
         } else {
@@ -74,7 +74,7 @@ object NexusSearcher : AbstractArtifactSearcher() {
         }
     }
 
-    override fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project): Set<ArtifactInfo> {
+    override fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project): Collection<ArtifactInfo> {
         val nexusSearchUrl = Settings.getInstance().nexusSearchUrl
         val url = "$nexusSearchUrl/service/local/lucene/search?cn=${searchParam.q}"
         val connection = getConnection(url)
@@ -93,7 +93,7 @@ object NexusSearcher : AbstractArtifactSearcher() {
         return result
     }
 
-    override fun handleEmptyResultByClassName(searchParam: ClassNameSearchParam, project: Project): Set<ArtifactInfo> {
+    override fun handleEmptyResultByClassName(searchParam: ClassNameSearchParam, project: Project): Collection<ArtifactInfo> {
         return MavenCentralSearcher.searchByClassName(searchParam, project)
     }
 

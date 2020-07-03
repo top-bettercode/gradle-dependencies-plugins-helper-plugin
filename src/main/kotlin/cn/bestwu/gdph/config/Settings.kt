@@ -24,13 +24,15 @@ import com.intellij.openapi.components.Storage
         name = "GDPHSettings",
         storages = [(Storage("gdph.settings.xml"))]
 )
-class Settings(var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useArtifactory: Boolean = Settings.useArtifactory, var artifactoryUrl: String = Settings.artifactoryUrl, var repos: String = Settings.repos, var artifactoryUsername: String = Settings.artifactoryUsername, var artifactoryPassword: String = Settings.artifactoryPassword,var useMavenCentral: Boolean = Settings.useMavenCentral) : PersistentStateComponent<Settings> {
+class Settings(var useAli: Boolean = Settings.useAli, var aliRepo: String = Settings.aliRepo, var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useArtifactory: Boolean = Settings.useArtifactory, var artifactoryUrl: String = Settings.artifactoryUrl, var artiRepos: String = Settings.artiRepos, var artifactoryUsername: String = Settings.artifactoryUsername, var artifactoryPassword: String = Settings.artifactoryPassword, var useMavenCentral: Boolean = Settings.useMavenCentral) : PersistentStateComponent<Settings> {
 
     override fun loadState(state: Settings) {
+        this.useAli = state.useAli
+        this.aliRepo = state.aliRepo
         this.useNexus = state.useNexus
         this.nexusSearchUrl = state.nexusSearchUrl
         this.useArtifactory = state.useArtifactory
-        this.repos = state.repos
+        this.artiRepos = state.artiRepos
         this.artifactoryUsername = state.artifactoryUsername
         this.artifactoryPassword = state.artifactoryPassword
         this.artifactoryUrl = state.artifactoryUrl
@@ -42,11 +44,13 @@ class Settings(var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: St
     }
 
     companion object {
+        const val useAli: Boolean = false
+        const val aliRepo: String = "jcenter"
         const val useNexus: Boolean = false
         const val nexusSearchUrl: String = "https://oss.sonatype.org"
         const val useArtifactory: Boolean = false
         const val artifactoryUrl: String = "https://oss.jfrog.org"
-        const val repos: String = ""
+        const val artiRepos: String = ""
         const val artifactoryUsername: String = ""
         const val artifactoryPassword: String = ""
         const val useMavenCentral: Boolean = false
