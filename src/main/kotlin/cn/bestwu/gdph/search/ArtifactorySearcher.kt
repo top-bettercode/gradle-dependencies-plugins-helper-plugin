@@ -79,8 +79,8 @@ object ArtifactorySearcher : AbstractArtifactSearcher() {
         val result = TreeSet<ArtifactInfo>()
         jsonResult.forEach {
             val className = it["entry"] as String
-            (it["archiveUris"] as List<String>).forEach {
-                val artifactInfo = it.toArtifactInfo(className)
+            (it["archiveUris"] as List<String>).forEach { uri ->
+                val artifactInfo = uri.toArtifactInfo(className)
                 val exist = result.find { r -> r.id == artifactInfo.id }
                 if (exist != null) {
                     if (compareVersion(exist.version, artifactInfo.version) < 0) {

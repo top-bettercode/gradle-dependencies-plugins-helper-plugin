@@ -37,22 +37,6 @@ internal val group = NotificationGroup(
         true
 )
 
-internal fun supportMavenIndex(): Boolean {
-    return try {
-        Class.forName("org.jetbrains.idea.maven.indices.MavenIndex")
-        true
-    } catch (e: ClassNotFoundException) {
-        false
-    }
-}
-
-internal fun checkNotIndexedRepositories(repositoriesHolder: MavenRepositoriesHolder) {
-    try {
-        repositoriesHolder::class.java.getMethod("checkNotIndexedRepositories").invoke(repositoriesHolder)
-    } catch (e: NoSuchMethodException) {
-    }
-}
-
 internal var repoIcon = IconLoader.getIcon("/icons/repo.png")
 
 internal fun show(project: Project, content: String, title: String = "", type: NotificationType = NotificationType.INFORMATION, listener: NotificationListener? = null) {
