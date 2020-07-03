@@ -57,8 +57,8 @@ object ArtifactorySearcher : AbstractArtifactSearcher() {
         var jsonResult = getResponseJson(connection, project) ?: return result
         jsonResult = (jsonResult as Map<*, *>)["results"] as List<Map<*, *>>
         jsonResult.forEach {
-            val artifactInfo = (it["uri"] as String).toArtifactInfo { groupId->
-                searchParam.artifactId.isBlank() && !searchParam.fg && searchParam.groupId.isNotBlank() && searchParam.groupId != groupId
+            val artifactInfo = (it["uri"] as String).toArtifactInfo { _ ->
+                searchParam.artifactId.isBlank() && !searchParam.fg && searchParam.groupId.isNotBlank()
             }
             if (searchParam.fa && searchParam.fg)
                 result.add(artifactInfo)

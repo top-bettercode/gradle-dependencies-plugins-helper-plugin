@@ -70,7 +70,7 @@ object JcenterSearcher : AbstractArtifactSearcher() {
                 if (id == qId) {
                     ((any["versions"] as List<String>).mapTo(result) { ArtifactInfo(groupId, artifactId, it, repoType, repo, isSpecifiedRepo) })
                 } else if (!searchParam.fa) {
-                    result.add(ArtifactInfo(groupId, if (searchParam.artifactId.isBlank() && !searchParam.fg && searchParam.groupId.isNotBlank() && searchParam.groupId != groupId) "" else artifactId, "", repoType, repo, isSpecifiedRepo))
+                    result.add(ArtifactInfo(groupId, if (searchParam.artifactId.isBlank() && !searchParam.fg && searchParam.groupId.isNotBlank()) "" else artifactId, "", repoType, repo, isSpecifiedRepo))
                 }
             }
         }

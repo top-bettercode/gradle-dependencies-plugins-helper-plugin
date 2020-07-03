@@ -42,7 +42,7 @@ object AliyunSearcher : AbstractArtifactSearcher() {
         jsonResult = ((jsonResult as Map<*, *>)["object"] as? List<Map<*, *>>) ?: return emptySet()
         jsonResult.forEach {
             val groupId = it["groupId"] as String
-            val onlyGroup = searchParam.artifactId.isBlank() && !searchParam.fg && searchParam.groupId.isNotBlank() && searchParam.groupId != groupId
+            val onlyGroup = searchParam.artifactId.isBlank() && !searchParam.fg && searchParam.groupId.isNotBlank()
             val artifactId = if (onlyGroup) "" else it["artifactId"] as String
             val version = if (onlyGroup) "" else it["version"] as String
             val repositoryId = it["repositoryId"] as String
