@@ -42,9 +42,14 @@ class GDPHConfigurable : Configurable {
 
         // Reset on click.
         view!!.resetButton.addActionListener {
-            view!!.useMavenCentral = Settings.useMavenCentral
             view!!.useNexus = Settings.useNexus
             view!!.nexusSearchUrl = Settings.nexusSearchUrl
+            view!!.useArtifactory = Settings.useArtifactory
+            view!!.artifactoryUrl = Settings.artifactoryUrl
+            view!!.artifactoryUsername = Settings.artifactoryUsername
+            view!!.artifactoryPassword = Settings.artifactoryPassword
+            view!!.repos = Settings.repos
+            view!!.useMavenCentral = Settings.useMavenCentral
         }
 
         reset()
@@ -54,22 +59,35 @@ class GDPHConfigurable : Configurable {
 
     override fun isModified(): Boolean {
         val settings = Settings.getInstance()
-        return settings.useNexus != view!!.useNexus || settings.useMavenCentral != view!!.useMavenCentral || settings.nexusSearchUrl != view!!.nexusSearchUrl
+        return settings.useNexus != view!!.useNexus || settings.nexusSearchUrl != view!!.nexusSearchUrl
+                || settings.useArtifactory != view!!.useArtifactory || settings.artifactoryUrl != view!!.artifactoryUrl || settings.repos != view!!.repos
+                || settings.artifactoryUsername != view!!.artifactoryUsername || settings.artifactoryPassword != view!!.artifactoryPassword
+                || settings.useMavenCentral != view!!.useMavenCentral
     }
 
     @Throws(ConfigurationException::class)
     override fun apply() {
         val settings = Settings.getInstance()
-        settings.useMavenCentral = view!!.useMavenCentral
         settings.useNexus = view!!.useNexus
         settings.nexusSearchUrl = view!!.nexusSearchUrl
+        settings.useArtifactory = view!!.useArtifactory
+        settings.artifactoryUrl = view!!.artifactoryUrl
+        settings.repos = view!!.repos
+        settings.artifactoryUsername = view!!.artifactoryUsername
+        settings.artifactoryPassword = view!!.artifactoryPassword
+        settings.useMavenCentral = view!!.useMavenCentral
     }
 
     override fun reset() {
         val settings = Settings.getInstance()
-        view!!.useMavenCentral = settings.useMavenCentral
         view!!.useNexus = settings.useNexus
         view!!.nexusSearchUrl = settings.nexusSearchUrl
+        view!!.useArtifactory = settings.useArtifactory
+        view!!.artifactoryUrl = settings.artifactoryUrl
+        view!!.artifactoryUsername = settings.artifactoryUsername
+        view!!.artifactoryPassword = settings.artifactoryPassword
+        view!!.repos = settings.repos
+        view!!.useMavenCentral = settings.useMavenCentral
     }
 
     override fun disposeUIResources() {

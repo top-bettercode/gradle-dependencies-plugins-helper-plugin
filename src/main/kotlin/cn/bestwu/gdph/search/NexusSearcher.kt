@@ -18,8 +18,6 @@ package cn.bestwu.gdph.search
 
 import cn.bestwu.gdph.config.Settings
 import com.intellij.openapi.project.Project
-import groovy.json.JsonSlurper
-import java.util.*
 
 @Suppress("UNCHECKED_CAST")
 /**
@@ -27,32 +25,36 @@ import java.util.*
  * @author Peter Wu
  * @since
  */
-object NexusSearcher : ArtifactSearcher() {
+object NexusSearcher : AbstractArtifactSearcher() {
 
     override val cache: Boolean
         get() = false
     override val key: String
         get() = "nexus:"
 
-    private fun artifactInfo(groupId: String, artifactId: String, version: String = "", repo: String): ArtifactInfo = ArtifactInfo(groupId, artifactId, version, repo, Settings.getInstance().nexusSearchUrl.replace("^.*?\\.(.*?)\\..*$".toRegex(), "$1 nexus"))
+    private fun artifactInfo(groupId: String, artifactId: String, version: String = "", repo: String, className: String = ""): ArtifactInfo {
+        val owner = Settings.getInstance().nexusSearchUrl.replace("^.*?\\.(.*?)\\..*$".toRegex(), "$1 nexus").trim()
+        return ArtifactInfo(groupId, artifactId, version, "$repo${if (owner.isNotBlank() && !(repo == "jcenter" && owner == "bintray")) " by $owner" else ""}", "${Settings.getInstance().nexusSearchUrl}/$repo", true, className)
+    }
 
-    override fun doSearch(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
+    override fun doSearch(searchParam: SearchParam, project: Project): Set<ArtifactInfo> {
         val nexusSearchUrl = Settings.getInstance().nexusSearchUrl
         val url = "$nexusSearchUrl/service/local/lucene/search?${searchParam.toNq()}"
         val connection = getConnection(url)
         connection.setRequestProperty("Accept", "application/json")
-        var jsonResult = getResponseJson(connection, project) ?: return result
+        var jsonResult = getResponseJson(connection, project) ?: return emptySet()
         jsonResult = (jsonResult as Map<*, *>)["data"] as List<Map<*, *>>
         if (searchParam.fg)
             jsonResult = jsonResult.filter { it["groupId"] == searchParam.groupId }
+        val result = linkedSetOf<ArtifactInfo>()
         jsonResult.forEach {
             val repo = if (it["latestReleaseRepositoryId"] != null) {
                 it["latestReleaseRepositoryId"]
             } else {
                 it["latestSnapshotRepositoryId"]
             }
-            val artifactInfo = artifactInfo(it["groupId"] as String, if (searchParam.artifactId.isEmpty() && !searchParam.fg && searchParam.groupId.isNotEmpty() && searchParam.groupId != it["groupId"]) "" else it["artifactId"] as String, "", repo as String)
-            if (artifactInfo.id == searchParam.toId() && artifactInfo.artifactId.isNotEmpty()) {
+            val artifactInfo = artifactInfo(it["groupId"] as String, if (searchParam.artifactId.isBlank() && !searchParam.fg && searchParam.groupId.isNotBlank() && searchParam.groupId != it["groupId"]) "" else it["artifactId"] as String, "", repo as String)
+            if (artifactInfo.id == searchParam.toId() && artifactInfo.artifactId.isNotBlank()) {
                 artifactInfo.version = it["version"] as String
                 result.add(artifactInfo)
             } else if (!searchParam.fa) {
@@ -63,21 +65,22 @@ object NexusSearcher : ArtifactSearcher() {
         return result
     }
 
-    override fun handleEmptyResult(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
+    override fun handleEmptyResult(searchParam: SearchParam, project: Project): Set<ArtifactInfo> {
         return if (Settings.getInstance().useMavenCentral) {
-            MavenCentralSearcher.search(searchParam, project, result)
+            MavenCentralSearcher.search(searchParam, project)
         } else {
-            JcenterSearcher.search(searchParam, project, result)
+            JcenterSearcher.search(searchParam, project)
         }
     }
 
-    override fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
+    override fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project): Set<ArtifactInfo> {
         val nexusSearchUrl = Settings.getInstance().nexusSearchUrl
         val url = "$nexusSearchUrl/service/local/lucene/search?cn=${searchParam.q}"
         val connection = getConnection(url)
         connection.setRequestProperty("Accept", "application/json")
-        var jsonResult = getResponseJson(connection, project) ?: return result
+        var jsonResult = getResponseJson(connection, project) ?: return emptySet()
         jsonResult = (jsonResult as Map<*, *>)["data"] as List<Map<*, *>>
+        val result = linkedSetOf<ArtifactInfo>()
         jsonResult.mapTo(result) {
             val repo = if (it["latestReleaseRepositoryId"] != null) {
                 it["latestReleaseRepositoryId"]
@@ -89,8 +92,8 @@ object NexusSearcher : ArtifactSearcher() {
         return result
     }
 
-    override fun handleEmptyResultByClassName(searchParam: ClassNameSearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
-        return MavenCentralSearcher.searchByClassName(searchParam, project, result)
+    override fun handleEmptyResultByClassName(searchParam: ClassNameSearchParam, project: Project): Set<ArtifactInfo> {
+        return MavenCentralSearcher.searchByClassName(searchParam, project)
     }
 
 }

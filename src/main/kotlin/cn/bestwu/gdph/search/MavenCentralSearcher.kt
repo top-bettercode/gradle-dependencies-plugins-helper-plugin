@@ -18,31 +18,31 @@ package cn.bestwu.gdph.search
 
 import cn.bestwu.gdph.quot
 import com.intellij.openapi.project.Project
-import java.util.*
 
 /**
  *
  * @author Peter Wu
  * @since
  */
-object MavenCentralSearcher : ArtifactSearcher() {
+object MavenCentralSearcher : AbstractArtifactSearcher() {
 
     override val cache: Boolean
         get() = true
     override val key: String
         get() = "maven:"
 
-    fun artifactInfo(groupId: String, artifactId: String, version: String = ""): ArtifactInfo = ArtifactInfo(groupId, artifactId, version, "mavenCentral")
+    fun artifactInfo(groupId: String, artifactId: String, version: String = "", className: String = ""): ArtifactInfo = ArtifactInfo(groupId, artifactId, version, "mavenCentral", "mavenCentral()", false, className)
 
-    override fun doSearch(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
+    override fun doSearch(searchParam: SearchParam, project: Project): Set<ArtifactInfo> {
         val url = "http://search.maven.org/solrsearch/select?q=${searchParam.toMq()}&rows=50&core=gav&wt=json"
         val connection = getConnection(url)
-        val text = getResponseText(connection, project) ?: return result
+        val text = getResponseText(connection, project) ?: return emptySet()
+        val result= linkedSetOf<ArtifactInfo>()
         regex.findAll(text).forEach {
             if (searchParam.fg && it.groupValues[1] != searchParam.groupId)
                 return@forEach
-            val artifactInfo = artifactInfo(it.groupValues[1], if (searchParam.artifactId.isEmpty() && !searchParam.fg && searchParam.groupId.isNotEmpty() && searchParam.groupId != it.groupValues[1]) "" else it.groupValues[2])
-            if (artifactInfo.id == searchParam.toId() && artifactInfo.artifactId.isNotEmpty()) {
+            val artifactInfo = artifactInfo(it.groupValues[1], if (searchParam.artifactId.isBlank() && !searchParam.fg && searchParam.groupId.isNotBlank() && searchParam.groupId != it.groupValues[1]) "" else it.groupValues[2])
+            if (artifactInfo.id == searchParam.toId() && artifactInfo.artifactId.isNotBlank()) {
                 artifactInfo.version = it.groupValues[3]
                 result.add(artifactInfo)
             } else if (!searchParam.fa) {
@@ -52,16 +52,17 @@ object MavenCentralSearcher : ArtifactSearcher() {
         return result
     }
 
-    override fun handleEmptyResult(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
-        return JcenterSearcher.search(searchParam, project, result)
+    override fun handleEmptyResult(searchParam: SearchParam, project: Project): Set<ArtifactInfo> {
+        return JcenterSearcher.search(searchParam, project)
     }
 
-    override fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
+    override fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project): Set<ArtifactInfo> {
         val url = "http://search.maven.org/solrsearch/select?q=${searchParam.k}:$quot${searchParam.q}$quot&core=gav&rows=1000&wt=json"
         val connection = getConnection(url)
-        val text = getResponseText(connection, project) ?: return result
+        val text = getResponseText(connection, project) ?: return emptySet()
+        val result= linkedSetOf<ArtifactInfo>()
         regex.findAll(text).forEach {
-            val artifactInfo = artifactInfo(it.groupValues[1], it.groupValues[2], it.groupValues[3])
+            val artifactInfo = artifactInfo(it.groupValues[1], it.groupValues[2], it.groupValues[3],className = "")
             val exist = result.find { r -> r.id == artifactInfo.id }
             if (exist != null) {
                 if (compareVersion(exist.version, artifactInfo.version) < 0) {

@@ -21,23 +21,18 @@ package cn.bestwu.gdph.search
  * @author Peter Wu
  * @since
  */
-class ArtifactInfo(groupId: String, artifactId: String, version: String, repo: String, owner: String = "") {
+class ArtifactInfo(groupId: String, artifactId: String, version: String, repoType: String, repo: String, val isSpecifiedRepo: Boolean = false, val className: String = "") : Comparator<ArtifactInfo> {
     val groupId: String = groupId.trim()
     val artifactId: String = artifactId.trim()
     var version: String = version.trim()
         set(value) {
             field = value
-            this.gav = "${this.id}${if (this.version.isEmpty()) "" else ":${this.version}"}"
+            this.gav = "${this.id}${if (this.version.isBlank()) "" else ":${this.version}"}"
         }
-    private val repo: String = repo.trim()
-    private val owner: String = owner.trim()
+    val repo: String = repo.trim()
+    val repoType = repoType.trim()
     val id: String
     var gav: String
-
-
-    fun type() = "$repo${if (owner.isNotEmpty() && !(repo == "jcenter" && owner == "bintray")) " by $owner" else ""}"
-    fun repo() = "https://dl.bintray.com/$owner/$repo"
-    fun isSpecifiedRepo() = repo.isNotEmpty() && owner.isNotEmpty() && !(repo == "jcenter" && owner == "bintray")
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -53,13 +48,23 @@ class ArtifactInfo(groupId: String, artifactId: String, version: String, repo: S
     }
 
     override fun toString(): String {
-        return "ArtifactInfo(groupId='$groupId', artifactId='$artifactId', version='$version', repo='$repo', owner='$owner', id='$id', gav='$gav')"
+        return "ArtifactInfo(groupId='$groupId', artifactId='$artifactId', version='$version', repo='$repo', repoType='$repoType', id='$id', gav='$gav')"
     }
 
     init {
-        this.id = "${this.groupId}${if (this.artifactId.isEmpty()) "" else ":${this.artifactId}"}"
-        this.gav = "${this.id}${if (this.version.isEmpty()) "" else ":${this.version}"}"
+        this.id = "${this.groupId}${if (this.artifactId.isBlank()) "" else ":${this.artifactId}"}"
+        this.gav = "${this.id}${if (this.version.isBlank()) "" else ":${this.version}"}"
     }
 
+    override fun compare(o1: ArtifactInfo, o2: ArtifactInfo): Int {
+        val g = o1.groupId.compareTo(o2.groupId)
+        return if (g == 0) {
+            val a = o1.artifactId.compareTo(o2.artifactId)
+            if (a == 0)
+                compareVersion(o2.version, o1.version)
+            else
+                a
+        } else g
+    }
 
 }

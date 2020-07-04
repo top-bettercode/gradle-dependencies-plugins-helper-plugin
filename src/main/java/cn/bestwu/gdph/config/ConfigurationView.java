@@ -26,13 +26,26 @@ public class ConfigurationView {
 
   private JButton resetButton;
   private JCheckBox useNexus;
-  private JTextField nexusSearchUrlField;
+  private JTextField nexusSearchUrl;
   private JPanel dpPanel;
   private JCheckBox useMavenCentral;
+  private JTextField artifactoryUrl;
+  private JCheckBox useArtifactory;
+  private JTextField repos;
+  private javax.swing.JPasswordField artifactoryPassword;
+  private JTextField artifactoryUsername;
 
   public ConfigurationView() {
     useNexus.addActionListener(
-        actionEvent -> nexusSearchUrlField.setEnabled(useNexus.isSelected())
+        actionEvent -> nexusSearchUrl.setEnabled(useNexus.isSelected())
+    );
+    useArtifactory.addActionListener(
+        actionEvent -> {
+          artifactoryUrl.setEnabled(useArtifactory.isSelected());
+          repos.setEnabled(useArtifactory.isSelected());
+          artifactoryUsername.setEnabled(useArtifactory.isSelected());
+          artifactoryPassword.setEnabled(useArtifactory.isSelected());
+        }
     );
   }
 
@@ -41,12 +54,13 @@ public class ConfigurationView {
   }
 
   public String getNexusSearchUrl() {
-    return nexusSearchUrlField.getText();
+    return nexusSearchUrl.getText().trim();
   }
 
   public void setNexusSearchUrl(String nexusSearchUrl) {
-    this.nexusSearchUrlField.setText(nexusSearchUrl);
+    this.nexusSearchUrl.setText(nexusSearchUrl);
   }
+
 
   public boolean getUseNexus() {
     return useNexus.isSelected();
@@ -54,8 +68,54 @@ public class ConfigurationView {
 
   public void setUseNexus(boolean selected) {
     useNexus.setSelected(selected);
-    nexusSearchUrlField.setEnabled(selected);
+    nexusSearchUrl.setEnabled(selected);
   }
+
+
+  public String getArtifactoryUrl() {
+    return artifactoryUrl.getText().trim();
+  }
+
+  public void setArtifactoryUrl(String artifactoryUrl) {
+    this.artifactoryUrl.setText(artifactoryUrl);
+  }
+
+  public String getRepos() {
+    return repos.getText().trim();
+  }
+
+  public void setRepos(String repos) {
+    this.repos.setText(repos);
+  }
+
+  public String getArtifactoryPassword() {
+    return new String(artifactoryPassword.getPassword());
+  }
+
+  public void setArtifactoryPassword(String artifactoryPassword) {
+    this.artifactoryPassword.setText(artifactoryPassword);
+  }
+
+  public String getArtifactoryUsername() {
+    return artifactoryUsername.getText();
+  }
+
+  public void setArtifactoryUsername(String artifactoryUsername) {
+    this.artifactoryUsername.setText(artifactoryUsername);
+  }
+
+  public boolean getUseArtifactory() {
+    return useArtifactory.isSelected();
+  }
+
+  public void setUseArtifactory(boolean useArtifactory) {
+    this.useArtifactory.setSelected(useArtifactory);
+    artifactoryUrl.setEnabled(useArtifactory);
+    repos.setEnabled(useArtifactory);
+    artifactoryUsername.setEnabled(useArtifactory);
+    artifactoryPassword.setEnabled(useArtifactory);
+  }
+
 
   public boolean getUseMavenCentral() {
     return useMavenCentral.isSelected();

@@ -56,30 +56,40 @@ class ClassNameSearchParam(override val src: String) : ISearchParam {
 
 }
 
-class SearchParam(groupIdParam: String, artifactIdParam: String, val fg: Boolean, val fa: Boolean, src: String = "") : ISearchParam {
-    override val src: String
+class SearchParam(val groupId: String, val artifactId: String, val fg: Boolean, val fa: Boolean, src: String = "") : ISearchParam {
+    override val src: String = if (src.isBlank()) "$groupId${if (fg) ":" else ""}${if (artifactId.isBlank()) "" else artifactId}${if (fa) ":" else ""}" else src.trim()
     override val docUrl: String
-    val groupId: String = groupIdParam.trim()
-    val artifactId: String = artifactIdParam.trim()
-
 
     private fun fullQuery(fullname: Boolean, name: String) = if (fullname) name else "*$name*"
     private fun halfQuery(fullname: Boolean, name: String) = if (fullname) name else "$name*"
 
-    fun toId() = if (groupId.isEmpty()) src else "$groupId${if (artifactId.isEmpty()) "" else ":$artifactId"}"
+    fun toId() = if (groupId.isBlank()) src else "$groupId${if (artifactId.isBlank()) "" else ":$artifactId"}"
 
-    fun toQ() = if (groupId.isEmpty()) "q=*$src*" else "g=${fullQuery(fg, groupId)}${if (artifactId.isEmpty()) "" else "&a=${fullQuery(fa, artifactId)}"}"
+    /**
+     * jcenter params
+     */
+    fun toQ() = if (groupId.isBlank()) "q=*$src*" else "g=${fullQuery(fg, groupId)}${if (artifactId.isBlank()) "" else "&a=${fullQuery(fa, artifactId)}"}"
 
-    fun toMq() = if (groupId.isEmpty()) "a:$quot$src$quot" else "g:$quot$groupId$quot${if (artifactId.isEmpty()) "" else "+AND+a:$quot$artifactId$quot"}"
+    /**
+     * artifactory params
+     */
+    fun toAQ() = if (groupId.isBlank()) "/api/search/artifact?name=$src" else "/api/search/gavc?g=${fullQuery(fg, groupId)}${if (artifactId.isBlank()) "" else "&a=${fullQuery(fa, artifactId)}"}"
 
-    fun toNq() = if (groupId.isEmpty()) "q=$src" else "g=${halfQuery(fg, groupId)}${if (artifactId.isEmpty()) "" else "&a=${halfQuery(fa, artifactId)}"}"
+    /**
+     * maven center params
+     */
+    fun toMq() = if (groupId.isBlank()) "a:$quot$src$quot" else "g:$quot$groupId$quot${if (artifactId.isBlank()) "" else "+AND+a:$quot$artifactId$quot"}"
+
+    /**
+     * nexus params
+     */
+    fun toNq() = if (groupId.isBlank()) "q=$src" else "g=${halfQuery(fg, groupId)}${if (artifactId.isBlank()) "" else "&a=${halfQuery(fa, artifactId)}"}"
 
     override fun toString(): String {
         return "SearchParam(fg=$fg, fa=$fa, src='$src', docUrl='$docUrl', groupId='$groupId', artifactId='$artifactId')"
     }
 
     init {
-        this.src = if (src.isEmpty()) "$groupId${if (fg) ":" else ""}${if (artifactId.isEmpty()) "" else artifactId}${if (fa) ":" else ""}" else src.trim()
         docUrl = "<a href='https://bintray.com/search?query=${toId()}'>search in jcenter</a>"
     }
 
@@ -90,12 +100,12 @@ fun toSearchParam(src: String): SearchParam {
     val list = split(src)
     return when {
         list.size in (2..3) -> {
-            val groupId = list[0]
-            val artifactId = list[1]
-            val fa = src.count { it == ':' } > 1 && artifactId.isNotEmpty()
-            SearchParam(groupId, artifactId, true, fa)
+            val groupId = list[0].trim()
+            val artifactId = list[1].trim()
+            val fa = src.count { it == ':' } > 1 && artifactId.isNotBlank()
+            SearchParam(groupId, artifactId, groupId.isNotBlank(), fa)
         }
-        src.contains(":") -> SearchParam(src, "", fg = true, fa = false)
-        else -> SearchParam("", "", fg = false, fa = false, src = src)
+        src.contains(":") -> SearchParam(src.trim(), "", fg = true, fa = false)
+        else -> SearchParam("", "", fg = false, fa = false, src = src.trim())
     }
 }

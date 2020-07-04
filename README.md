@@ -4,7 +4,7 @@
 [![Downloads](http://phpstorm.espend.de/badge/10033/downloads)](https://plugins.jetbrains.com/plugin/10033-gradle-dependencies-and-plugins-helper)
 [![License](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
 
-[中文说明](doc/2017/09/01/gradle-dependencies-plugins-helper-plugin/)
+[中文说明](README_CN.md)
 
 This is an IntelliJ IDEA plugin for searching dependencies/plugins from [JCentral](https://bintray.com/search)/[GradlePlugins](https://plugins.gradle.org/) inside Gradle projects.
 
@@ -42,7 +42,6 @@ Inspired by [https://github.com/siosio/GradleDependenciesHelperPlugin](https://g
 
 ![](doc/images/classname-query.gif)
 
-* Support `Use Maven Central Repository Search` and `Use Nexus2 Repository Search` options to speed up the dependencies search.
 * Add specified repository to repositories.Use `Show Intention Actions` action (`Alt + Enter` or ⌥⏎) and choose `Add specified repository to repositories.`
 
 ![](doc/images/add-repo.gif)
@@ -53,7 +52,7 @@ Inspired by [https://github.com/siosio/GradleDependenciesHelperPlugin](https://g
 
 ![](doc/images/smart-type-completion.png)
 
-* `Use Maven Central Repository Search` and `Use Nexus2 Repository Search` is optional.When you can't visit https://api.bintray.com/search/packages/maven or access very slowly,you can use these options to speed up the dependencies search.
+* Support `Use Maven Central Repository Search`,`Use Nexus2 Repository Search`(Nexus2),`Use Artifactory Repository Search` options.
 
 ![](doc/images/settings.png)
 

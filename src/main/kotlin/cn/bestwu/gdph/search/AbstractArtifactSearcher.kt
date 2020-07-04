@@ -24,26 +24,26 @@ import java.util.*
  * @author Peter Wu
  * @since
  */
-abstract class ArtifactSearcher {
+abstract class AbstractArtifactSearcher {
     companion object {
-        internal val artifactsCaches = HashMap<String, LinkedHashSet<ArtifactInfo>>()
+        internal val artifactsCaches = HashMap<String, Set<ArtifactInfo>>()
         internal const val jcenterKey = "jcenter:"
     }
 
     abstract val cache: Boolean
     abstract val key: String
-    protected abstract fun doSearch(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo>
-    protected abstract fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo>
+    protected abstract fun doSearch(searchParam: SearchParam, project: Project): Set<ArtifactInfo>
+    protected abstract fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project): Set<ArtifactInfo>
 
-    protected open fun handleEmptyResult(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
-        return result
+    protected open fun handleEmptyResult(searchParam: SearchParam, project: Project): Set<ArtifactInfo> {
+        return emptySet()
     }
 
-    protected open fun handleEmptyResultByClassName(searchParam: ClassNameSearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
-        return result
+    protected open fun handleEmptyResultByClassName(searchParam: ClassNameSearchParam, project: Project): Set<ArtifactInfo> {
+        return emptySet()
     }
 
-    fun search(searchParam: SearchParam, project: Project, preResult: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
+    fun search(searchParam: SearchParam, project: Project): Set<ArtifactInfo> {
         val cacheKey = "$key${searchParam.src}"
         if (cache) {
             val existResult = artifactsCaches[cacheKey]
@@ -51,11 +51,11 @@ abstract class ArtifactSearcher {
                 return existResult
             }
         }
-        val result = doSearch(searchParam, project, preResult)
+        var result = doSearch(searchParam, project)
         if (key != jcenterKey)
-            result.removeAll { !it.groupId.contains(searchParam.groupId.filter { g -> g != '*' }) || !it.artifactId.contains(searchParam.artifactId.filter { a -> a != '*' }) }
+            result = result.filter { !it.groupId.contains(searchParam.groupId.filter { g -> g != '*' }) || !it.artifactId.contains(searchParam.artifactId.filter { a -> a != '*' }) }.toSet()
         return if (result.isEmpty()) {
-            handleEmptyResult(searchParam, project, result)
+            handleEmptyResult(searchParam, project)
         } else {
             if (cache)
                 artifactsCaches[cacheKey] = result
@@ -63,15 +63,15 @@ abstract class ArtifactSearcher {
         }
     }
 
-    fun searchByClassName(searchParam: ClassNameSearchParam, project: Project, preResult: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
+    fun searchByClassName(searchParam: ClassNameSearchParam, project: Project): Set<ArtifactInfo> {
         val cacheKey = "$key$searchParam"
         val existResult = artifactsCaches[cacheKey]
         if (existResult != null) {
             return existResult
         }
-        val result = doSearchByClassName(searchParam, project, preResult)
+        val result = doSearchByClassName(searchParam, project)
         return if (result.isEmpty()) {
-            handleEmptyResultByClassName(searchParam, project, result)
+            handleEmptyResultByClassName(searchParam, project)
         } else {
             artifactsCaches[cacheKey] = result
             result

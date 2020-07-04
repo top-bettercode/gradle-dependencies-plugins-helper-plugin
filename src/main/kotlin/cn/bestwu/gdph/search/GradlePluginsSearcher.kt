@@ -33,7 +33,7 @@ object GradlePluginsSearcher {
         val elements = connect.get().select("#search-results tbody tr")
         result = elements.mapNotNull {
             val pluginId = it.select(".plugin-id a").text()
-            if (pluginId.isEmpty()) {
+            if (pluginId.isBlank()) {
                 return@mapNotNull null
             }
             pluginId + splitRule + it.select(".latest-version").text()

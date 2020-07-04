@@ -56,10 +56,13 @@ class MavenCentralSearcherTest {
     @Test
     fun doSearchByClassName() {
         val result: LinkedHashSet<ArtifactInfo> = LinkedHashSet()
-        val url = "http://search.maven.org/solrsearch/select?q=fc:${quot}com.sun.jna.examples.win32.W32API.HWND$quot&core=gav&rows=1000&wt=json"
+        val url = "http://search.maven.org/solrsearch/select?q=fc:${quot}org.springframework.data.domain.Page$quot&core=gav&rows=1000&wt=json"
+        System.err.println(url)
         val connection = getConnection(url)
         val stream = connection.inputStream
-        regex.findAll(stream.bufferedReader().readText()).forEach {
+        val text = stream.bufferedReader().readText()
+        System.err.println(text)
+        regex.findAll(text).forEach {
             val artifactInfo = MavenCentralSearcher.artifactInfo(it.groupValues[1], it.groupValues[2], it.groupValues[3])
             val exist = result.find { r -> r.id == artifactInfo.id }
             if (exist != null) {

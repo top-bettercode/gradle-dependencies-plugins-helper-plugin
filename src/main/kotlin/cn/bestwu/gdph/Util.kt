@@ -115,7 +115,7 @@ internal fun contributorDuringCompletion(context: CompletionInitializationContex
         val offset = context.caret.offset
         val text = context.editor.document.charsSequence
         var idEnd = offset
-        if (text.isEmpty()) {
+        if (text.isBlank()) {
             return
         }
         while (idEnd < text.length && !stopChars.contains(text[idEnd])) {

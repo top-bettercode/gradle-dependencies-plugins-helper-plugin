@@ -26,23 +26,24 @@ import java.util.*
  * @author Peter Wu
  * @since
  */
-object JcenterSearcher : ArtifactSearcher() {
+object JcenterSearcher : AbstractArtifactSearcher() {
 
     override val cache: Boolean
         get() = true
     override val key: String
         get() = jcenterKey
 
-    override fun doSearch(searchParam: SearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
-        var cresult = result
+    override fun doSearch(searchParam: SearchParam, project: Project): Set<ArtifactInfo> {
         val url = "https://api.bintray.com/search/packages/maven?${searchParam.toQ()}"
         val connection = getConnection(url)
-        var jsonResult = getResponseJson(connection, project) ?: return cresult
+        var jsonResult = getResponseJson(connection, project) ?: return emptySet()
         val qId = searchParam.toId()
         val findById = (jsonResult as List<Map<*, *>>).filter { (it["system_ids"] as List<String>).contains(qId) }
         if (findById.isNotEmpty() && searchParam.fa) {
             jsonResult = findById
         }
+        val result: MutableSet<ArtifactInfo> = if (findById.size == 2 && findById.any { "spring" == it["owner"] } && findById.any { "bintray" == it["owner"] }) TreeSet() else linkedSetOf()
+
         for (any in jsonResult) {
             val systemIds = any["system_ids"] as MutableList<String>
             if (systemIds.contains(qId)) {
@@ -60,23 +61,23 @@ object JcenterSearcher : ArtifactSearcher() {
                     groupId = id
                     artifactId = ""
                 }
+                val owner = any["owner"] as String
+                var repo = any["repo"] as String
+                val isSpecifiedRepo = repo.isNotBlank() && owner.isNotBlank() && !(repo == "jcenter" && owner == "bintray")
+                val repoType = "$repo${if (owner.isNotBlank() && !(repo == "jcenter" && owner == "bintray")) " by $owner" else ""}"
+                repo = if (isSpecifiedRepo) "https://dl.bintray.com/$owner/$repo" else "jcenter()"
                 if (id == qId) {
-                    ((any["versions"] as List<String>).mapTo(cresult) { ArtifactInfo(groupId, artifactId, it, any["repo"] as String, any["owner"] as String) })
+                    ((any["versions"] as List<String>).mapTo(result) { ArtifactInfo(groupId, artifactId, it, repoType, repo, isSpecifiedRepo) })
                 } else if (!searchParam.fa) {
-                    cresult.add(ArtifactInfo(groupId, if (searchParam.artifactId.isEmpty() && !searchParam.fg && searchParam.groupId.isNotEmpty() && searchParam.groupId != groupId) "" else artifactId, "", any["repo"] as String, any["owner"] as String))
+                    result.add(ArtifactInfo(groupId, if (searchParam.artifactId.isBlank() && !searchParam.fg && searchParam.groupId.isNotBlank() && searchParam.groupId != groupId) "" else artifactId, "", repoType, repo, isSpecifiedRepo))
                 }
             }
         }
-        if (findById.size == 2 && findById.any { "spring" == it["owner"] } && findById.any { "bintray" == it["owner"] }) {
-            cresult = cresult.sortedWith(kotlin.Comparator { o1, o2 ->
-                compareVersion(o2.version, o1.version)
-            }).toCollection(linkedSetOf())
-        }
-        return cresult
+        return result
     }
 
-    override fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project, result: LinkedHashSet<ArtifactInfo>): LinkedHashSet<ArtifactInfo> {
-        return result
+    override fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project): Set<ArtifactInfo> {
+        return emptySet()
     }
 
 }

@@ -16,8 +16,7 @@
 
 package cn.bestwu.gdph
 
-import cn.bestwu.gdph.search.ArtifactInfo
-import cn.bestwu.gdph.search.JcenterSearcher
+import cn.bestwu.gdph.search.GradleArtifactSearcher
 import cn.bestwu.gdph.search.SearchParam
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
@@ -27,7 +26,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.plugins.groovy.intentions.base.Intention
 import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElementFactory
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
-import java.util.*
 
 abstract class AbstractAddRepositoriesIntention : Intention() {
 
@@ -37,22 +35,28 @@ abstract class AbstractAddRepositoriesIntention : Intention() {
     }
 
     protected fun processIntention(searchParam: SearchParam, project: Project, element: PsiElement) {
-        val result: LinkedHashSet<ArtifactInfo> = JcenterSearcher.search(searchParam, project, linkedSetOf())
+        val result = GradleArtifactSearcher.search(searchParam, project)
         if (result.isNotEmpty()) {
             val psiFile = element.containingFile
             val repositoriesClosure = findClosure(psiFile, "repositories")?.closureArguments?.first()
             val factory = GroovyPsiElementFactory.getInstance(project)
-            val repo = if (result.first().isSpecifiedRepo()) "\t\tmaven { url '${result.first().repo()}' }" else "\t\tjcenter()"
-            if (repositoriesClosure == null) {
-                val dependenciesElement = findClosure(psiFile, "dependencies")
-                psiFile.addBefore(factory.createStatementFromText("repositories {\n$repo\n}"), dependenciesElement)
-                psiFile.addBefore(factory.createLineTerminator(2), dependenciesElement)
-            } else {
-                if (repositoriesClosure.text.contains(if (result.first().isSpecifiedRepo()) result.first().repo() else "jcenter")) {
-                    show(project, "repository:\n$repo\n already in repositories", type = NotificationType.WARNING)
+            val artifactInfo = result.find { it.repo.isNotBlank() }
+            if (artifactInfo != null) {
+                val resultRepo = artifactInfo.repo
+                val repo = if (artifactInfo.isSpecifiedRepo) "\t\tmaven { url '$resultRepo' }" else "\t\t$resultRepo"
+                if (repositoriesClosure == null) {
+                    val dependenciesElement = findClosure(psiFile, "dependencies")
+                    psiFile.addBefore(factory.createStatementFromText("repositories {\n$repo\n}"), dependenciesElement)
+                    psiFile.addBefore(factory.createLineTerminator(2), dependenciesElement)
                 } else {
-                    repositoriesClosure.addStatementBefore(factory.createStatementFromText(repo), null)
+                    if (repositoriesClosure.text.contains(resultRepo)) {
+                        show(project, "repository:\n$repo\n already in repositories", type = NotificationType.WARNING)
+                    } else {
+                        repositoriesClosure.addStatementBefore(factory.createStatementFromText(repo), null)
+                    }
                 }
+            } else {
+                show(project, "no repository need to add", type = NotificationType.INFORMATION)
             }
         }
     }

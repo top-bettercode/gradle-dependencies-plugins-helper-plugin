@@ -69,7 +69,7 @@ abstract class CodeInsightTestBase : LightJavaCodeInsightFixtureTestCase() {
 //    protected fun completionCheckResultByFile(before: String, after: String, selectItem: String) {
 //        myFixture.configureByFiles(before)
 //        myFixture.complete(CompletionType.SMART, 1)
-//        if (selectItem.isNotEmpty()) {
+//        if (selectItem.isNotBlank()) {
 //            selectLookupItem(selectItem)
 //        }
 //        myFixture.checkResultByFile(after)

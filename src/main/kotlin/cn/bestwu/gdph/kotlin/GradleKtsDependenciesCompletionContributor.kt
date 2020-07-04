@@ -47,7 +47,7 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                                         result: CompletionResultSet) {
                 result.stopHere()
                 val text = trim(params.originalPosition?.text ?: "")
-                val prefix = params.position.text.substringBefore("IntellijIdeaRulezzz")
+                val prefix = params.position.text.substringBefore("IntellijIdeaRulezzz").trim()
                 val iSearchParam: ISearchParam
                 var isKotlin = false
                 var isVersion = false
@@ -67,7 +67,7 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                             isKotlin = true
                             if ("(" != parent.prevSibling.text) {
                                 isVersion = true
-                                SearchParam(kotlinGroup, pText.replace(GradleKtsPluginsCompletionContributor.kotlinRegex, "$kotlinArtifactPrefix$1"), fg = true, fa = true)
+                                SearchParam(kotlinGroup, pText.replace(GradleKtsPluginsCompletionContributor.kotlinRegex, "$kotlinArtifactPrefix$1").trim(), fg = true, fa = true)
                             } else {
                                 SearchParam(kotlinGroup, "$kotlinArtifactPrefix$prefix", fg = true, fa = false)
                             }
@@ -107,11 +107,11 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                     val lookupElementBuilder =
                             if (isKotlin) {
                                 if (isVersion)
-                                    LookupElementBuilder.create(it.version).withPresentableText(it.version).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(insertHandler)
+                                    LookupElementBuilder.create(it.version).withPresentableText(it.version).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.repoType, repoIcon, true).withInsertHandler(insertHandler)
                                 else
-                                    LookupElementBuilder.create(it.gav.substringAfter(kotlinPrefix)).withPresentableText(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(insertHandler)
+                                    LookupElementBuilder.create(it.gav.substringAfter(kotlinPrefix)).withPresentableText(it.gav).withTailText(it.className).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.repoType, repoIcon, true).withInsertHandler(insertHandler)
                             } else
-                                LookupElementBuilder.create("${it.gav}${if (it.artifactId.isEmpty()) ":" else ""}").withPresentableText(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(insertHandler)
+                                LookupElementBuilder.create("${it.gav}${if (it.artifactId.isBlank()) ":" else ""}").withPresentableText(it.gav).withTailText(it.className).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.repoType, repoIcon, true).withInsertHandler(insertHandler)
                     completionResultSet.addElement(lookupElementBuilder)
                 }
             }

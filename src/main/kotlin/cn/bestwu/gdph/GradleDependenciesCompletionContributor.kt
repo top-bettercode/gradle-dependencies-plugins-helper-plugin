@@ -58,19 +58,22 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                     return
                 }
                 result.stopHere()
-                val searchText = CompletionUtil.findReferenceOrAlphanumericPrefix(params)
+                val searchText = CompletionUtil.findReferenceOrAlphanumericPrefix(params).trim()
                 val searchParam: SearchParam
                 searchParam = when (parent.labelName) {
                     GROUP_LABEL -> SearchParam(searchText, "", fg = false, fa = false)
                     NAME_LABEL -> {
-                        val groupId = findNamedArgumentValue(parent.parent as GrNamedArgumentsOwner, GROUP_LABEL) ?: return
-                        SearchParam(groupId, searchText, fg = true, fa = false)
+                        val groupId = findNamedArgumentValue(parent.parent as GrNamedArgumentsOwner, GROUP_LABEL)
+                                ?: return
+                        SearchParam(groupId, searchText, fg = groupId.isNotBlank(), fa = false)
                     }
                     VERSION_LABEL -> {
                         val namedArgumentsOwner = parent.parent as GrNamedArgumentsOwner
-                        val groupId = findNamedArgumentValue(namedArgumentsOwner, GROUP_LABEL) ?: return
-                        val artifactId = findNamedArgumentValue(namedArgumentsOwner, NAME_LABEL) ?: return
-                        SearchParam(groupId, artifactId, fg = true, fa = true)
+                        val groupId = findNamedArgumentValue(namedArgumentsOwner, GROUP_LABEL)
+                                ?: return
+                        val artifactId = findNamedArgumentValue(namedArgumentsOwner, NAME_LABEL)
+                                ?: return
+                        SearchParam(groupId, artifactId, fg = groupId.isNotBlank(), fa = artifactId.isNotBlank())
                     }
                     else -> return
                 }
@@ -85,12 +88,12 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                 when (parent.labelName) {
                     GROUP_LABEL -> {
                         searchResult.forEach {
-                            completionResultSet.addElement(LookupElementBuilder.create(it.groupId).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(insertHandler))
+                            completionResultSet.addElement(LookupElementBuilder.create(it.groupId).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.repoType, repoIcon, true).withInsertHandler(insertHandler))
                         }
                     }
                     NAME_LABEL -> {
                         searchResult.forEach {
-                            completionResultSet.addElement(LookupElementBuilder.create(it.artifactId).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(insertHandler))
+                            completionResultSet.addElement(LookupElementBuilder.create(it.artifactId).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.repoType, repoIcon, true).withInsertHandler(insertHandler))
                         }
                     }
                     VERSION_LABEL -> {
@@ -102,7 +105,7 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                                 })
                         )
                         searchResult.forEach {
-                            completionResultSet.addElement(LookupElementBuilder.create(it.version).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(insertHandler))
+                            completionResultSet.addElement(LookupElementBuilder.create(it.version).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.repoType, repoIcon, true).withInsertHandler(insertHandler))
                         }
                     }
                     else -> return
@@ -125,9 +128,9 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                 result.stopHere()
                 val prefix: String
                 prefix = if (parent is GrStringContent) {
-                    params.position.text.substringBefore("IntellijIdeaRulezzz ")
+                    params.position.text.substringBefore("IntellijIdeaRulezzz ").trim()
                 } else
-                    CompletionUtil.findReferenceOrAlphanumericPrefix(params)
+                    CompletionUtil.findReferenceOrAlphanumericPrefix(params).trim()
                 val text = trim(params.originalPosition?.text ?: "")
                 val iSearchParam: ISearchParam
                 val searchResult = if (text.startsWith("c:", true) || text.startsWith("fc:", true)) {
@@ -162,7 +165,7 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                     completionResultSet = completionResultSet.withPrefixMatcher(PrefixMatcher.ALWAYS_TRUE)
                 }
                 searchResult.forEach {
-                    completionResultSet.addElement(LookupElementBuilder.create("${it.gav}${if (it.artifactId.isEmpty()) ":" else ""}").withPresentableText(it.gav).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.type(), repoIcon, true).withInsertHandler(insertHandler))
+                    completionResultSet.addElement(LookupElementBuilder.create("${it.gav}${if (it.artifactId.isBlank()) ":" else ""}").withPresentableText(it.gav).withTailText(it.className).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.repoType, repoIcon, true).withInsertHandler(insertHandler))
                 }
             }
         })
@@ -180,7 +183,7 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
 
         private fun findNamedArgumentValue(namedArgumentsOwner: GrNamedArgumentsOwner?, label: String): String? {
             val namedArgument = namedArgumentsOwner?.findNamedArgument(label) ?: return null
-            return (namedArgument.expression as? GrLiteralImpl)?.value?.toString()
+            return (namedArgument.expression as? GrLiteralImpl)?.value?.toString()?.trim()
         }
 
         private val DEPENDENCIES_CALL_PATTERN = psiElement()

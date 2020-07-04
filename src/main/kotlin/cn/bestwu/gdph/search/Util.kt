@@ -32,19 +32,26 @@ import java.net.URL
  */
 val regex = Regex("\\{\"id\":\"(.*?):(.*?):(.*?)\",")
 
-fun getConnection(spec: String): HttpURLConnection {
+fun getConnection(spec: String, requestProperties: Map<String, List<String>> = mapOf()): HttpURLConnection {
     val url = URL(spec)
     val httpURLConnection = url.openConnection() as HttpURLConnection
-    httpURLConnection.connectTimeout = 2000
-    httpURLConnection.readTimeout = 2000
+    httpURLConnection.connectTimeout = 4000
+    httpURLConnection.readTimeout = 4000
+    requestProperties.forEach { (t, u) ->
+        u.forEach {
+            httpURLConnection.addRequestProperty(t, it)
+        }
+    }
     return httpURLConnection
 }
 
 private fun getResponse(connection: HttpURLConnection, project: Project): InputStream? {
     try {
         if (connection.responseCode != 200) {
-            show(project, "response:${connection.errorStream?.bufferedReader()?.readText()
-                    ?: connection.inputStream.bufferedReader().readText()}.", "No dependencies found", NotificationType.WARNING)
+            val responseText = (connection.errorStream?.bufferedReader()?.readText()
+                    ?: connection.inputStream.bufferedReader().readText())
+            if (connection.responseCode != 404 && (connection.responseCode != 400 || !responseText.contains("This REST API is available only in Artifactory Pro")))
+                show(project, "response:$responseText.", "No dependencies found", NotificationType.WARNING)
             return null
         }
         return connection.inputStream

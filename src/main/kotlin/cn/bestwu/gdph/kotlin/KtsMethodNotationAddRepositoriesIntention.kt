@@ -16,8 +16,7 @@
 
 package cn.bestwu.gdph.kotlin
 
-import cn.bestwu.gdph.search.ArtifactInfo
-import cn.bestwu.gdph.search.JcenterSearcher
+import cn.bestwu.gdph.search.GradleArtifactSearcher
 import cn.bestwu.gdph.search.SearchParam
 import cn.bestwu.gdph.search.toSearchParam
 import cn.bestwu.gdph.show
@@ -36,7 +35,6 @@ import org.jetbrains.kotlin.psi.KtScriptInitializer
 import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElementFactory
 import org.jetbrains.plugins.groovy.lang.psi.impl.PsiImplUtil
 import org.jetbrains.plugins.groovy.lang.psi.util.GrStringUtil
-import java.util.*
 
 open class KtsMethodNotationAddRepositoriesIntention : IntentionAction {
     override fun startInWriteAction(): Boolean {
@@ -92,29 +90,36 @@ open class KtsMethodNotationAddRepositoriesIntention : IntentionAction {
     }
 
     private fun findClosure(psiFile: PsiFile, expressionName: String): PsiElement? {
-        val methodCalls = PsiTreeUtil.getChildrenOfTypeAsList(PsiTreeUtil.getChildOfType(psiFile, KtScript::class.java)?.firstChild ?: return null, KtScriptInitializer::class.java)
+        val methodCalls = PsiTreeUtil.getChildrenOfTypeAsList(PsiTreeUtil.getChildOfType(psiFile, KtScript::class.java)?.firstChild
+                ?: return null, KtScriptInitializer::class.java)
         return methodCalls.find {
             it.firstChild.firstChild.text == expressionName
         }
     }
 
     private fun processIntention(searchParam: SearchParam, project: Project, element: PsiElement) {
-        val result: LinkedHashSet<ArtifactInfo> = JcenterSearcher.search(searchParam, project, linkedSetOf())
+        val result = GradleArtifactSearcher.search(searchParam, project)
         if (result.isNotEmpty()) {
             val psiFile = element.containingFile
             val repositoriesClosure = findClosure(psiFile, "repositories")?.firstChild?.lastChild?.firstChild?.firstChild as? KtFunctionLiteral
             val factory = KtsPsiElementFactory(project)
-            val repo = if (result.first().isSpecifiedRepo()) "\t\tmaven { url = uri(\"${result.first().repo()}\") }" else "\t\tjcenter()"
-            if (repositoriesClosure == null) {
-                val dependenciesElement = findClosure(psiFile, "dependencies")!!
-                dependenciesElement.parent.addBefore(factory.createStatementFromText("repositories {\n$repo\n}"), dependenciesElement)
-                dependenciesElement.parent.addBefore(GroovyPsiElementFactory.getInstance(project).createLineTerminator(2), dependenciesElement)
-            } else {
-                if (repositoriesClosure.text.contains(if (result.first().isSpecifiedRepo()) result.first().repo() else "jcenter")) {
-                    show(project, "repository:\n$repo\n already in repositories", type = NotificationType.WARNING)
-                }else{
-                    repositoriesClosure.addBefore(factory.createStatementFromText(repo), repositoriesClosure.rBrace)
+            val artifactInfo = result.find { it.repo.isNotBlank() }
+            if (artifactInfo != null) {
+                val resultRepo = artifactInfo.repo
+                val repo = if (artifactInfo.isSpecifiedRepo) "\t\tmaven { url = uri(\"$resultRepo\") }" else "\t\t$resultRepo"
+                if (repositoriesClosure == null) {
+                    val dependenciesElement = findClosure(psiFile, "dependencies")!!
+                    dependenciesElement.parent.addBefore(factory.createStatementFromText("repositories {\n$repo\n}"), dependenciesElement)
+                    dependenciesElement.parent.addBefore(GroovyPsiElementFactory.getInstance(project).createLineTerminator(2), dependenciesElement)
+                } else {
+                    if (repositoriesClosure.text.contains(resultRepo)) {
+                        show(project, "repository:\n$repo\n already in repositories", type = NotificationType.WARNING)
+                    } else {
+                        repositoriesClosure.addBefore(factory.createStatementFromText(repo), repositoriesClosure.rBrace)
+                    }
                 }
+            } else {
+                show(project, "no repository need to add", type = NotificationType.INFORMATION)
             }
         }
     }

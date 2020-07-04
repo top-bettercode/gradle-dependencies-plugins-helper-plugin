@@ -16,7 +16,6 @@
 
 package cn.bestwu.gdph.config
 
-import cn.bestwu.gdph.supportMavenIndex
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.Storage
@@ -25,12 +24,17 @@ import com.intellij.openapi.components.Storage
         name = "GDPHSettings",
         storages = [(Storage("gdph.settings.xml"))]
 )
-class Settings(var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useMavenCentral: Boolean = Settings.useMavenCentral) : PersistentStateComponent<Settings> {
+class Settings(var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useArtifactory: Boolean = Settings.useArtifactory, var artifactoryUrl: String = Settings.artifactoryUrl, var repos: String = Settings.repos, var artifactoryUsername: String = Settings.artifactoryUsername, var artifactoryPassword: String = Settings.artifactoryPassword,var useMavenCentral: Boolean = Settings.useMavenCentral) : PersistentStateComponent<Settings> {
 
     override fun loadState(state: Settings) {
         this.useNexus = state.useNexus
-        this.useMavenCentral = state.useMavenCentral
         this.nexusSearchUrl = state.nexusSearchUrl
+        this.useArtifactory = state.useArtifactory
+        this.repos = state.repos
+        this.artifactoryUsername = state.artifactoryUsername
+        this.artifactoryPassword = state.artifactoryPassword
+        this.artifactoryUrl = state.artifactoryUrl
+        this.useMavenCentral = state.useMavenCentral
     }
 
     override fun getState(): Settings? {
@@ -39,8 +43,13 @@ class Settings(var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: St
 
     companion object {
         const val useNexus: Boolean = false
-        const val useMavenCentral: Boolean = false
         const val nexusSearchUrl: String = "https://oss.sonatype.org"
+        const val useArtifactory: Boolean = false
+        const val artifactoryUrl: String = "https://oss.jfrog.org"
+        const val repos: String = ""
+        const val artifactoryUsername: String = ""
+        const val artifactoryPassword: String = ""
+        const val useMavenCentral: Boolean = false
 
         fun getInstance(): Settings {
             return ServiceManager.getService(Settings::class.java)

@@ -27,19 +27,17 @@
         &nbsp;&nbsp;compile("fc:org.junit.Test")<br/>
         &nbsp;&nbsp;compile("c:Junit")
       </li>
-      <li>Support `Use Maven Central Repository Search` and `Use Nexus2 Repository Search`(Nexus2) options to speed
-        up the dependencies search.
+      <li>Support `Use Maven Central Repository Search`,`Use Nexus2 Repository Search`(Nexus2),`Use Artifactory Repository Search` options.
       </li>
       <li>Add specified repository to repositories.</li>
     </ul>
     ]]></description>
 
   <change-notes><![CDATA[
-    <b>0.1.6</b><br/><br/>
+    <b>0.1.7</b><br/><br/>
 
     <ul>
-      <li>remove usages of deprecated API</li>
-      <li>remove maven indexes search</li>
+      <li>Support `Use Artifactory Repository Search` options.</li>
     </ul>
     ]]>
   </change-notes>
