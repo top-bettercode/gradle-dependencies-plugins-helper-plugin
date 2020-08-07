@@ -32,7 +32,7 @@ object AliyunSearcher : AbstractArtifactSearcher() {
     override val cache: Boolean
         get() = true
     override val key: String
-        get() = jcenterKey
+        get() = "aliyun.${Settings.getInstance().aliRepo}:"
 
     override fun doSearch(searchParam: SearchParam, project: Project): Collection<ArtifactInfo> {
         val url = "https://maven.aliyun.com${searchParam.toAliQ()}&repoId=${Settings.getInstance().aliRepo}"

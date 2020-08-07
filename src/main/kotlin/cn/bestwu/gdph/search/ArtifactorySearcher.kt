@@ -33,7 +33,7 @@ object ArtifactorySearcher : AbstractArtifactSearcher() {
     override val cache: Boolean
         get() = true
     override val key: String
-        get() = "artifactory:"
+        get() = "artifactory.${Settings.getInstance().artiRepos}:"
 
     override fun doSearch(searchParam: SearchParam, project: Project): Collection<ArtifactInfo> {
         val settings = Settings.getInstance()
