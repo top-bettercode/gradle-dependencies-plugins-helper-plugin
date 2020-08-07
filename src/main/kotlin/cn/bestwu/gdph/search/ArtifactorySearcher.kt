@@ -70,10 +70,10 @@ object ArtifactorySearcher : AbstractArtifactSearcher() {
     }
 
     override fun handleEmptyResult(searchParam: SearchParam, project: Project): Collection<ArtifactInfo> {
-        return if (Settings.getInstance().useMavenCentral) {
-            MavenCentralSearcher.search(searchParam, project)
-        } else {
-            JcenterSearcher.search(searchParam, project)
+        val settings = Settings.getInstance()
+        return when {
+            settings.useMavenCentral -> MavenCentralSearcher.search(searchParam, project)
+            else -> JcenterSearcher.search(searchParam, project)
         }
     }
 

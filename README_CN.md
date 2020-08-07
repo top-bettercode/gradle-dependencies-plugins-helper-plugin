@@ -46,7 +46,7 @@ Gradle plugins/dependencies 坐标自动补全IntelliJ IDEA插件 [插件地址]
 
 ![](doc/images/smart-type-completion.png)
 
-* 可选使用 `Use AliRepo Search`,`Use Maven Central Repository Search`,`Use Nexus2 Repository Search`(Nexus2),`Use Artifactory Repository Search` 搜索
+* 可选使用 `Use Maven Central Repository Search`,`Use Nexus2 Repository Search`(Nexus2),`Use Artifactory Repository Search` 搜索
 
 ![](doc/images/settings.png)
 

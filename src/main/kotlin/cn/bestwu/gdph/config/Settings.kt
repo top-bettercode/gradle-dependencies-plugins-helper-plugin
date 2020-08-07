@@ -45,7 +45,7 @@ class Settings(var useAli: Boolean = Settings.useAli, var aliRepo: String = Sett
 
     companion object {
         const val useAli: Boolean = false
-        const val aliRepo: String = "jcenter"
+        const val aliRepo: String = "central"
         const val useNexus: Boolean = false
         const val nexusSearchUrl: String = "https://oss.sonatype.org"
         const val useArtifactory: Boolean = false

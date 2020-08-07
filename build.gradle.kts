@@ -5,7 +5,7 @@ plugins {
     id("org.jetbrains.intellij") version "0.4.21"
 }
 group = "cn.bestwu"
-version = "0.1.7"
+version = "0.1.8"
 
 val ideaVersion = property("ideaVersion")
 
@@ -15,6 +15,16 @@ intellij {
     version = ideaVersion as String
     setPlugins("java", "Groovy", "gradle", "Kotlin", "junit")
 }
+
+tasks.withType(org.jetbrains.intellij.tasks.PatchPluginXmlTask::class.java) {
+    changeNotes("""
+    <b>${project.version}</b><br/><br/>
+    <ul>
+      <li>Search Optimization.</li>
+    </ul>
+""")
+}
+
 
 tasks.withType(PublishTask::class.java) {
     username(project.findProperty("intellij.publish.username"))

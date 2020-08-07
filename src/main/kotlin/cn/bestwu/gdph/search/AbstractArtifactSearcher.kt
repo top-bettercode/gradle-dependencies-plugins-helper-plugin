@@ -51,9 +51,7 @@ abstract class AbstractArtifactSearcher {
                 return existResult
             }
         }
-        var result = doSearch(searchParam, project)
-        if (key != jcenterKey)
-            result = result.filter { !it.groupId.contains(searchParam.groupId.filter { g -> g != '*' }) || !it.artifactId.contains(searchParam.artifactId.filter { a -> a != '*' }) }
+        val result = doSearch(searchParam, project)
         return if (result.isEmpty()) {
             handleEmptyResult(searchParam, project)
         } else {

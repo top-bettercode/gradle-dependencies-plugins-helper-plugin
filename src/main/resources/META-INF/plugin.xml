@@ -27,21 +27,12 @@
         &nbsp;&nbsp;compile("fc:org.junit.Test")<br/>
         &nbsp;&nbsp;compile("c:Junit")
       </li>
-      <li>Support `Use AliRepo Search`,`Use Maven Central Repository Search`,`Use Nexus2 Repository Search`(Nexus2),`Use Artifactory Repository Search` options.
+      <li>`Use Maven Central Repository Search`,`Use Nexus2 Repository Search`(Nexus2),`Use
+        Artifactory Repository Search` options.
       </li>
       <li>Add specified repository to repositories.</li>
     </ul>
     ]]></description>
-
-  <change-notes><![CDATA[
-    <b>0.1.7</b><br/><br/>
-
-    <ul>
-      <li>Support `Use Artifactory Repository Search` options.</li>
-      <li>Support `Use AliRepo Search` options.</li>
-    </ul>
-    ]]>
-  </change-notes>
 
   <extensions defaultExtensionNs="com.intellij">
     <completion.contributor language="Groovy"

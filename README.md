@@ -52,7 +52,7 @@ Inspired by [https://github.com/siosio/GradleDependenciesHelperPlugin](https://g
 
 ![](doc/images/smart-type-completion.png)
 
-* Support `Use AliRepo Search`,`Use Maven Central Repository Search`,`Use Nexus2 Repository Search`(Nexus2),`Use Artifactory Repository Search` options.
+* Support `Use Maven Central Repository Search`,`Use Nexus2 Repository Search`(Nexus2),`Use Artifactory Repository Search` options.
 
 ![](doc/images/settings.png)
 

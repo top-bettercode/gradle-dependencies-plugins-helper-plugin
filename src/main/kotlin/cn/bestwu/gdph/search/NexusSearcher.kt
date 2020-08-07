@@ -67,10 +67,11 @@ object NexusSearcher : AbstractArtifactSearcher() {
     }
 
     override fun handleEmptyResult(searchParam: SearchParam, project: Project): Collection<ArtifactInfo> {
-        return if (Settings.getInstance().useMavenCentral) {
-            MavenCentralSearcher.search(searchParam, project)
-        } else {
-            JcenterSearcher.search(searchParam, project)
+        val settings = Settings.getInstance()
+        return when {
+            settings.useArtifactory -> ArtifactorySearcher.search(searchParam, project)
+            settings.useMavenCentral -> MavenCentralSearcher.search(searchParam, project)
+            else -> JcenterSearcher.search(searchParam, project)
         }
     }
 
@@ -94,7 +95,11 @@ object NexusSearcher : AbstractArtifactSearcher() {
     }
 
     override fun handleEmptyResultByClassName(searchParam: ClassNameSearchParam, project: Project): Collection<ArtifactInfo> {
-        return MavenCentralSearcher.searchByClassName(searchParam, project)
+        val settings = Settings.getInstance()
+        return when {
+            settings.useArtifactory -> ArtifactorySearcher.searchByClassName(searchParam, project)
+            else -> MavenCentralSearcher.searchByClassName(searchParam, project)
+        }
     }
 
 }

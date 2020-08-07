@@ -58,6 +58,16 @@ object AliyunSearcher : AbstractArtifactSearcher() {
         return result
     }
 
+    override fun handleEmptyResult(searchParam: SearchParam, project: Project): Collection<ArtifactInfo> {
+        val settings = Settings.getInstance()
+        return when {
+            settings.useNexus -> NexusSearcher.search(searchParam, project)
+            settings.useArtifactory -> ArtifactorySearcher.search(searchParam, project)
+            settings.useMavenCentral -> MavenCentralSearcher.search(searchParam, project)
+            else -> JcenterSearcher.search(searchParam, project)
+        }
+    }
+
     override fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project): Collection<ArtifactInfo> {
         return emptySet()
     }

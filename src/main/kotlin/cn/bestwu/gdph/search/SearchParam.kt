@@ -83,7 +83,7 @@ class SearchParam(val groupId: String, val artifactId: String, val fg: Boolean, 
     /**
      * ali params
      */
-    fun toAliQ() = if (groupId.isBlank()) "/artifact/aliyunMaven/searchArtifactByWords?queryTerm=$src" else "/artifact/aliyunMaven/searchArtifactByGav?groupId=${fullQuery(fg, groupId)}${if (artifactId.isBlank()) "&artifactId=" else "&artifactId=${fullQuery(fa, artifactId)}"}&version="
+    fun toAliQ() = if (groupId.isBlank()) "/artifact/aliyunMaven/searchArtifactByWords?queryTerm=$src&_input_charset=utf-8" else "/artifact/aliyunMaven/searchArtifactByGav?groupId=${fullQuery(fg, groupId)}${if (artifactId.isBlank()) "&artifactId=" else "&artifactId=${fullQuery(fa, artifactId)}"}&version=&_input_charset=utf-8"
 
     /**
      * maven center params
