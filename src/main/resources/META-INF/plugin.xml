@@ -55,7 +55,7 @@
     <documentationProvider implementation="cn.bestwu.gdph.OpenJcenterOrMavenCentralProvider"
       order="first"/>
 
-    <applicationConfigurable id="bestwu.book"
+    <applicationConfigurable id="bestwu.gdph"
       instance="cn.bestwu.gdph.config.GDPHConfigurable"/>
     <applicationService
       serviceInterface="cn.bestwu.gdph.config.Settings"
