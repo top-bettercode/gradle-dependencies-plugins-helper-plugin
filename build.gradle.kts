@@ -33,9 +33,15 @@ tasks.withType(PublishTask::class.java) {
 }
 
 repositories {
+    mavenLocal()
+    maven("https://maven.aliyun.com/repository/public")
+    maven("https://maven.aliyun.com/repository/gradle-plugin")
     jcenter()
 }
 
 dependencies {
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>() {
+    kotlinOptions.jvmTarget = "1.8"
+}

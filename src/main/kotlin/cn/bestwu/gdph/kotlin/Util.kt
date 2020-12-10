@@ -22,6 +22,7 @@ import com.intellij.openapi.util.IconLoader
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiFileFactory
 import com.intellij.util.IncorrectOperationException
+import com.intellij.util.ReflectionUtil
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
@@ -38,7 +39,9 @@ object KotlinScriptFileType : LanguageFileType(KotlinLanguage.INSTANCE) {
 
     private val myIcon = object : NotNullLazyValue<Icon>() {
         override fun compute(): Icon {
-            return IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_file.png")
+            return IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_file.png",
+                ReflectionUtil.getGrandCallerClass()!!
+            )
         }
     }
 

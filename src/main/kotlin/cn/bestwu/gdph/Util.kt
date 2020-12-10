@@ -26,30 +26,42 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.notification.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
-import org.jetbrains.plugins.gradle.integrations.maven.MavenRepositoriesHolder
+import com.intellij.util.ReflectionUtil
 import org.jetbrains.plugins.groovy.lang.psi.util.GrStringUtil.removeQuotes
 import java.net.URLEncoder
 import java.util.*
+import javax.swing.Icon
 
 internal fun split(dependency: String) = Regex(":").split(dependency)
 internal fun trim(dependency: String) = removeQuotes(dependency).trim('(', ')')
-val quot= URLEncoder.encode("\"","UTF-8")!!
+val quot = URLEncoder.encode("\"", "UTF-8")!!
 internal val group = NotificationGroup(
-        "GradleDependencies",
-        NotificationDisplayType.NONE,
-        true
+    "GradleDependencies",
+    NotificationDisplayType.NONE,
+    true
+)
+//internal val group =
+//    NotificationGroupManager.getInstance().getNotificationGroup("GradleDependencies")
+
+
+internal var repoIcon = IconLoader.getIcon("/icons/repo.png",
+    ReflectionUtil.getGrandCallerClass()!!
 )
 
-internal var repoIcon = IconLoader.getIcon("/icons/repo.png")
-
-internal fun show(project: Project, content: String, title: String = "", type: NotificationType = NotificationType.INFORMATION, listener: NotificationListener? = null) {
+internal fun show(
+    project: Project,
+    content: String,
+    title: String = "",
+    type: NotificationType = NotificationType.INFORMATION,
+    listener: NotificationListener? = null
+) {
     val notification = group.createNotification(title, content, type, listener)
     Notifications.Bus.notify(notification, project)
 }
 
 internal fun MutableSet<ArtifactInfo>.addArtifactInfo(artifactInfo: ArtifactInfo) {
     val exist = find { r -> r.id == artifactInfo.id }
-    if (exist != null&&artifactInfo.version.isNotBlank()&&exist.version.isNotBlank()) {
+    if (exist != null && artifactInfo.version.isNotBlank() && exist.version.isNotBlank()) {
         if (compareVersion(exist.version, artifactInfo.version) < 0) {
             exist.version = artifactInfo.version
         }
