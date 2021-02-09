@@ -1,5 +1,4 @@
 # GradleDependenciesAndPluginsHelper
-[![Build Status](https://travis-ci.org/bestwu/gradle-dependencies-plugins-helper-plugin.svg?branch=master)](https://travis-ci.org/bestwu/gradle-dependencies-plugins-helper-plugin)
 [![Version](http://phpstorm.espend.de/badge/10033/version)](https://plugins.jetbrains.com/plugin/10033-gradle-dependencies-and-plugins-helper)
 [![Downloads](http://phpstorm.espend.de/badge/10033/downloads)](https://plugins.jetbrains.com/plugin/10033-gradle-dependencies-and-plugins-helper)
 [![License](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
@@ -56,3 +55,12 @@ Inspired by [https://github.com/siosio/GradleDependenciesHelperPlugin](https://g
 
 ![](doc/images/settings.png)
 
+## License
+
+Apache License Version 2.0
+
+## IDE Support
+
+Thanks to JetBrains for offering IDE support to develop this Open Source project.
+
+[![JetBrains](doc/images/jetbrains.png)](https://jb.gg/OpenSource)

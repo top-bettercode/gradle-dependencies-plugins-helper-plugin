@@ -50,4 +50,12 @@ Gradle plugins/dependencies 坐标自动补全IntelliJ IDEA插件 [插件地址]
 
 ![](doc/images/settings.png)
 
+## License
 
+Apache License Version 2.0
+
+## IDE Support
+
+Thanks to JetBrains for offering IDE support to develop this Open Source project.
+
+[![JetBrains](doc/images/jetbrains.png)](https://jb.gg/OpenSource)
