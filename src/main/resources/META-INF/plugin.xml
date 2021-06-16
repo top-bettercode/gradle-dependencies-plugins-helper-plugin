@@ -3,7 +3,7 @@
   <id>cn.bestwu.gdph</id>
   <name>Gradle Dependencies And Plugins Helper</name>
   <vendor email="piterwu@outlook.com"
-    url="https://github.com/bestwu/gradle-dependencies-plugins-helper-plugin">Peter Wu
+    url="https://github.com/top-bettercode/gradle-dependencies-plugins-helper-plugin">Peter Wu
   </vendor>
   <depends>com.intellij.modules.platform</depends>
   <depends>com.intellij.java</depends>
