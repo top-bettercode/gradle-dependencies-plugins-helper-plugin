@@ -63,8 +63,7 @@ object AliyunSearcher : AbstractArtifactSearcher() {
         return when {
             settings.useNexus -> NexusSearcher.search(searchParam, project)
             settings.useArtifactory -> ArtifactorySearcher.search(searchParam, project)
-            settings.useMavenCentral -> MavenCentralSearcher.search(searchParam, project)
-            else -> JcenterSearcher.search(searchParam, project)
+            else ->  MavenCentralSearcher.search(searchParam, project)
         }
     }
 

@@ -32,7 +32,7 @@ class ArtifactInfo(groupId: String, artifactId: String, version: String, repoTyp
         }
     val repo: String = repo.trim()
     val repoType = repoType.trim()
-    val id: String
+    val id: String = "${this.groupId}${if (this.artifactId.isBlank()) "" else ":${this.artifactId}"}"
     var gav: String
 
     override fun equals(other: Any?): Boolean {
@@ -53,7 +53,6 @@ class ArtifactInfo(groupId: String, artifactId: String, version: String, repoTyp
     }
 
     init {
-        this.id = "${this.groupId}${if (this.artifactId.isBlank()) "" else ":${this.artifactId}"}"
         this.gav = "${this.id}${if (this.version.isBlank()) "" else ":${this.version}"}"
     }
 

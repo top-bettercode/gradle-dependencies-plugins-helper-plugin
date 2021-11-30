@@ -29,7 +29,11 @@ abstract class AbstractGDPHProvider : DocumentationProvider {
         return null
     }
 
-    override fun getDocumentationElementForLookupItem(psiManager: PsiManager?, `object`: Any?, element: PsiElement?): PsiElement? {
+    override fun getDocumentationElementForLookupItem(
+        psiManager: PsiManager?,
+        `object`: Any?,
+        element: PsiElement?
+    ): PsiElement? {
         return null
     }
 
@@ -37,7 +41,11 @@ abstract class AbstractGDPHProvider : DocumentationProvider {
         return null
     }
 
-    override fun getDocumentationElementForLink(psiManager: PsiManager?, link: String?, context: PsiElement?): PsiElement? {
+    override fun getDocumentationElementForLink(
+        psiManager: PsiManager?,
+        link: String?,
+        context: PsiElement?
+    ): PsiElement? {
         return null
     }
 
@@ -51,16 +59,15 @@ abstract class AbstractGDPHProvider : DocumentationProvider {
         val mavenUrl = split(dependency).let {
             if (it.size >= 2) {
                 when {
-                    "c" == it[0] -> return "<a href='http://search.maven.org/#search|gav|1|c:$quot${it[1]}$quot'>search in mavenCentral</a><br/>"
-                    "fc" == it[0] -> return "<a href='http://search.maven.org/#search|gav|1|fc:$quot${it[1]}$quot'>search in mavenCentral</a><br/>"
-                    else -> "http://search.maven.org/#search|gav|1|g:$quot${it[0]}$quot AND a:$quot${it[1]}$quot"
+                    "c" == it[0] -> return "<a href='https://search.maven.org/#search|gav|1|c:$quot${it[1]}$quot'>search in mavenCentral</a><br/>"
+                    "fc" == it[0] -> return "<a href='https://search.maven.org/#search|gav|1|fc:$quot${it[1]}$quot'>search in mavenCentral</a><br/>"
+                    else -> "https://search.maven.org/#search|gav|1|g:$quot${it[0]}$quot AND a:$quot${it[1]}$quot"
                 }
             } else {
-                "http://search.maven.org/#search|gav|1|g:$quot${it[0]}$quot"
+                "https://search.maven.org/#search|gav|1|g:$quot${it[0]}$quot"
             }
         }
-        return "<a href='https://bintray.com/search?query=$dependency'>search in jcenter</a><br/>" +
-                "<a href='$mavenUrl'>search in mavenCentral</a><br/>"
+        return "<a href='$mavenUrl'>search in mavenCentral</a><br/>"
     }
 
 

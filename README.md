@@ -5,7 +5,7 @@
 
 [中文说明](README_CN.md)
 
-This is an IntelliJ IDEA plugin for searching dependencies/plugins from [JCentral](https://bintray.com/search)/[GradlePlugins](https://plugins.gradle.org/) inside Gradle projects.
+This is an IntelliJ IDEA plugin for searching dependencies/plugins from [mavenCentral](https://search.maven.org)/[GradlePlugins](https://plugins.gradle.org/) inside Gradle projects.
 
 Inspired by [https://github.com/siosio/GradleDependenciesHelperPlugin](https://github.com/siosio/GradleDependenciesHelperPlugin).
 
@@ -23,7 +23,7 @@ Inspired by [https://github.com/siosio/GradleDependenciesHelperPlugin](https://g
 
 ![](doc/images/dependencies.kts.gif)
 
-* Use [jcenter API](https://bintray.com/docs/api/) for Gradle dependencies queries, Use [Gradle Plugins](https://plugins.gradle.org) for Gradle plugins queries.
+* Use [mavenCentral](https://search.maven.org) for Gradle dependencies queries, Use [Gradle Plugins](https://plugins.gradle.org) for Gradle plugins queries.
 * Support wildcard query * .
 
 ![](doc/images/wildcard.gif)
@@ -51,7 +51,7 @@ Inspired by [https://github.com/siosio/GradleDependenciesHelperPlugin](https://g
 
 ![](doc/images/smart-type-completion.png)
 
-* Support `Use Maven Central Repository Search`,`Use Nexus2 Repository Search`(Nexus2),`Use Artifactory Repository Search` options.
+* Support `Use Nexus2 Repository Search`(Nexus2),`Use Artifactory Repository Search` options.
 
 ![](doc/images/settings.png)
 

@@ -70,8 +70,7 @@ object NexusSearcher : AbstractArtifactSearcher() {
         val settings = Settings.getInstance()
         return when {
             settings.useArtifactory -> ArtifactorySearcher.search(searchParam, project)
-            settings.useMavenCentral -> MavenCentralSearcher.search(searchParam, project)
-            else -> JcenterSearcher.search(searchParam, project)
+            else -> MavenCentralSearcher.search(searchParam, project)
         }
     }
 

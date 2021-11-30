@@ -29,22 +29,16 @@ import com.intellij.openapi.util.IconLoader
 import com.intellij.util.ReflectionUtil
 import org.jetbrains.plugins.groovy.lang.psi.util.GrStringUtil.removeQuotes
 import java.net.URLEncoder
-import java.util.*
-import javax.swing.Icon
 
 internal fun split(dependency: String) = Regex(":").split(dependency)
 internal fun trim(dependency: String) = removeQuotes(dependency).trim('(', ')')
 val quot = URLEncoder.encode("\"", "UTF-8")!!
-internal val group = NotificationGroup(
-    "GradleDependencies",
-    NotificationDisplayType.NONE,
-    true
-)
-//internal val group =
-//    NotificationGroupManager.getInstance().getNotificationGroup("GradleDependencies")
+internal val group =
+    NotificationGroupManager.getInstance().getNotificationGroup("GradleDependencies")
 
 
-internal var repoIcon = IconLoader.getIcon("/icons/repo.png",
+internal var repoIcon = IconLoader.getIcon(
+    "/icons/repo.png",
     ReflectionUtil.getGrandCallerClass()!!
 )
 
@@ -55,7 +49,10 @@ internal fun show(
     type: NotificationType = NotificationType.INFORMATION,
     listener: NotificationListener? = null
 ) {
-    val notification = group.createNotification(title, content, type, listener)
+    val notification = group.createNotification(title, content, type)
+    if (listener != null) {
+        notification.setListener(listener)
+    }
     Notifications.Bus.notify(notification, project)
 }
 

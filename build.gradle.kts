@@ -1,16 +1,15 @@
 plugins {
-    kotlin("jvm") version "1.3.72"
+    kotlin("jvm") version "1.5.32"
     id("org.jetbrains.intellij") version "1.3.0"
 }
+
 group = "cn.bestwu"
 version = "0.1.8"
 
-val ideaVersion = property("ideaVersion")
+val intellijVersion = "2021.2.3"
 
 intellij {
-    updateSinceUntilBuild.set(false)
-//    downloadSources.set(false)
-    version.set(ideaVersion as String)
+    version.set(intellijVersion)
     plugins.set(listOf("java", "Groovy", "gradle", "Kotlin", "junit"))
 }
 

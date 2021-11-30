@@ -39,26 +39,32 @@ class KtsOpenJcenterOrMavenCentralProvider : AbstractGDPHProvider() {
         do {
             e = e.parent ?: return null
         } while ("plugins" != e.firstChild.text)
-        var parent = element.parent
+        var parent: PsiElement? = element.parent
         var searchText = trim(element.text)
 
         if (parent is KtParenthesizedExpression) {
             parent = parent.parent
         }
-        val parentText = parent.text
         if (parent != null) {
+            val parentText = parent.text
             when {
-                parentText.contains("version") -> searchText = if (parentText.startsWith("kotlin")) {
-                    parentText.replace(GradleKtsPluginsCompletionContributor.kotlinRegex, "${GradleKtsPluginsCompletionContributor.kotlinPrefix}$1").trim()
-                } else {
-                    parentText.replace(AbstractGradlePluginsCompletionContributor.regex, "$1").trim()
-                }
+                parentText.contains("version") -> searchText =
+                    if (parentText.startsWith("kotlin")) {
+                        parentText.replace(
+                            GradleKtsPluginsCompletionContributor.kotlinRegex,
+                            "${GradleKtsPluginsCompletionContributor.kotlinPrefix}$1"
+                        ).trim()
+                    } else {
+                        parentText.replace(AbstractGradlePluginsCompletionContributor.regex, "$1")
+                            .trim()
+                    }
                 parentText.startsWith("kotlin") -> {
                     searchText = searchText.replace("^(.*?)\".*$".toRegex(), "$1")
                     searchText = "${GradleKtsPluginsCompletionContributor.kotlinPrefix}$searchText"
                 }
                 parent.parent.parent.text.startsWith("kotlin") -> {
-                    searchText = trim(element.parent.parent.text).replace("^(.*?)\".*$".toRegex(), "$1")
+                    searchText =
+                        trim(element.parent.parent.text).replace("^(.*?)\".*$".toRegex(), "$1")
                     searchText = "${GradleKtsPluginsCompletionContributor.kotlinPrefix}$searchText"
                 }
             }
@@ -72,7 +78,10 @@ class KtsOpenJcenterOrMavenCentralProvider : AbstractGDPHProvider() {
             e = e.parent ?: return null
         } while ("dependencies" != e.firstChild.text && "imports" != e.firstChild.text)
         var dependency = trim(element.text)
-        if (element.parent.text.startsWith("kotlin") || element.parent.parent.parent.text.startsWith("kotlin")) {
+        if (element.parent.text.startsWith("kotlin") || element.parent.parent.parent.text.startsWith(
+                "kotlin"
+            )
+        ) {
             dependency = "${GradleKtsDependenciesCompletionContributor.kotlinPrefix}$dependency"
         }
 

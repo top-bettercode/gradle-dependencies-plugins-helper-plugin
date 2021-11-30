@@ -37,14 +37,6 @@ import javax.swing.Icon
 object KotlinScriptFileType : LanguageFileType(KotlinLanguage.INSTANCE) {
     const val extension = "gradle.kts"
 
-    private val myIcon = object : NotNullLazyValue<Icon>() {
-        override fun compute(): Icon {
-            return IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_file.png",
-                ReflectionUtil.getGrandCallerClass()!!
-            )
-        }
-    }
-
     override fun getName(): String {
         return "Kotlin"
     }
@@ -57,8 +49,10 @@ object KotlinScriptFileType : LanguageFileType(KotlinLanguage.INSTANCE) {
         return extension
     }
 
-    override fun getIcon(): Icon? {
-        return this.myIcon.value
+    override fun getIcon(): Icon {
+        return IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_file.png",
+            ReflectionUtil.getGrandCallerClass()!!
+        )
     }
 }
 

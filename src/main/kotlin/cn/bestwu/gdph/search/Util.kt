@@ -24,6 +24,7 @@ import groovy.json.JsonSlurper
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.*
 
 /**
  *
@@ -90,7 +91,7 @@ internal fun getAliRepos(): List<String> {
         val connection = getConnection("https://maven.aliyun.com/repo/list?_input_charset=utf-8")
         if (connection.responseCode == 200) {
             val inputStream = connection.inputStream
-            var jsonResult = JsonSlurper().parse(inputStream)
+            val jsonResult = JsonSlurper().parse(inputStream)
             @Suppress("UNCHECKED_CAST")
             return   ((jsonResult as Map<*, *>)["object"] as List<Map<*, *>>).map { it["repoId"].toString() }
         }
@@ -135,9 +136,13 @@ fun compareVersion(version1: String, version2: String): Int {
         else if (toIntOrNull1 != null && toIntOrNull2 == null)
             return 1
         var v2 = toIntOrNull2
-                ?: versionTails.indexOf(version2s[i].replace(versionTailRegex, "$1").toUpperCase())
+                ?: versionTails.indexOf(
+                    version2s[i].replace(versionTailRegex, "$1").uppercase(Locale.getDefault())
+                )
         var v1 = toIntOrNull1
-                ?: versionTails.indexOf(version1s[i].replace(versionTailRegex, "$1").toUpperCase())
+                ?: versionTails.indexOf(
+                    version1s[i].replace(versionTailRegex, "$1").uppercase(Locale.getDefault())
+                )
         if (v1 != -1 && v1 == v2 && toIntOrNull1 == null && toIntOrNull2 == null) {
             v2 = version2s[i].replace(versionTailRegex, "$2").toIntOrNull() ?: 0
             v1 = version1s[i].replace(versionTailRegex, "$2").toIntOrNull() ?: 0

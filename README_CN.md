@@ -18,7 +18,7 @@ Gradle plugins/dependencies 坐标自动补全IntelliJ IDEA插件 [插件地址]
 ![](doc/images/dependencies.kts.gif)
 
 
-* 默认使用[jcenter API](https://bintray.comdocs/api/)搜索dependencies，使用[Gradle Plugins](https://plugins.gradle.org)搜索plugins
+* 默认使用[mavenCentral](https://search.maven.org)搜索dependencies，使用[Gradle Plugins](https://plugins.gradle.org)搜索plugins
 
 * 支持通配符*
 
@@ -46,7 +46,7 @@ Gradle plugins/dependencies 坐标自动补全IntelliJ IDEA插件 [插件地址]
 
 ![](doc/images/smart-type-completion.png)
 
-* 可选使用 `Use Maven Central Repository Search`,`Use Nexus2 Repository Search`(Nexus2),`Use Artifactory Repository Search` 搜索
+* 可选使用 `Use Nexus2 Repository Search`(Nexus2),`Use Artifactory Repository Search` 搜索
 
 ![](doc/images/settings.png)
 

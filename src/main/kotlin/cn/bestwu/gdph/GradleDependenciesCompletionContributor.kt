@@ -59,8 +59,7 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                 }
                 result.stopHere()
                 val searchText = CompletionUtil.findReferenceOrAlphanumericPrefix(params).trim()
-                val searchParam: SearchParam
-                searchParam = when (parent.labelName) {
+                val searchParam: SearchParam = when (parent.labelName) {
                     GROUP_LABEL -> SearchParam(searchText, "", fg = false, fa = false)
                     NAME_LABEL -> {
                         val groupId = findNamedArgumentValue(parent.parent as GrNamedArgumentsOwner, GROUP_LABEL)
@@ -126,8 +125,7 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                 val parent = params.position.parent
                 if (parent !is GrLiteral && parent !is GrStringContent) return
                 result.stopHere()
-                val prefix: String
-                prefix = if (parent is GrStringContent) {
+                val prefix: String = if (parent is GrStringContent) {
                     params.position.text.substringBefore("IntellijIdeaRulezzz ").trim()
                 } else
                     CompletionUtil.findReferenceOrAlphanumericPrefix(params).trim()

@@ -36,7 +36,7 @@ object MavenCentralSearcher : AbstractArtifactSearcher() {
     fun artifactInfo(groupId: String, artifactId: String, version: String = "", className: String = ""): ArtifactInfo = ArtifactInfo(groupId, artifactId, version, "mavenCentral", "mavenCentral()", false, className)
 
     override fun doSearch(searchParam: SearchParam, project: Project): Collection<ArtifactInfo> {
-        val url = "http://search.maven.org/solrsearch/select?q=${searchParam.toMq()}&rows=50&core=gav&wt=json"
+        val url = "https://search.maven.org/solrsearch/select?q=${searchParam.toMq()}&rows=50&core=gav&wt=json"
         val connection = getConnection(url)
         val text = getResponseText(connection, project) ?: return emptySet()
         val result= TreeSet<ArtifactInfo>()
@@ -54,12 +54,8 @@ object MavenCentralSearcher : AbstractArtifactSearcher() {
         return result
     }
 
-    override fun handleEmptyResult(searchParam: SearchParam, project: Project): Collection<ArtifactInfo> {
-        return JcenterSearcher.search(searchParam, project)
-    }
-
     override fun doSearchByClassName(searchParam: ClassNameSearchParam, project: Project): Collection<ArtifactInfo> {
-        val url = "http://search.maven.org/solrsearch/select?q=${searchParam.k}:$quot${searchParam.q}$quot&core=gav&rows=1000&wt=json"
+        val url = "https://search.maven.org/solrsearch/select?q=${searchParam.k}:$quot${searchParam.q}$quot&core=gav&rows=1000&wt=json"
         val connection = getConnection(url)
         val text = getResponseText(connection, project) ?: return emptySet()
         val result= TreeSet<ArtifactInfo>()

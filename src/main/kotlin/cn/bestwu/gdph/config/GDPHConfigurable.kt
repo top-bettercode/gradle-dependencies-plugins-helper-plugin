@@ -31,7 +31,7 @@ class GDPHConfigurable : Configurable {
         return "Gradle Dependencies And Plugins Helper"
     }
 
-    override fun getHelpTopic(): String? {
+    override fun getHelpTopic(): String {
         return "Configure the default settings for the Gradle Dependencies And Plugins Helper"
     }
 
@@ -51,7 +51,6 @@ class GDPHConfigurable : Configurable {
             view!!.artifactoryUsername = Settings.artifactoryUsername
             view!!.artifactoryPassword = Settings.artifactoryPassword
             view!!.artiRepos = Settings.artiRepos
-            view!!.useMavenCentral = Settings.useMavenCentral
         }
 
         reset()
@@ -65,7 +64,6 @@ class GDPHConfigurable : Configurable {
                 ||settings.useNexus != view!!.useNexus || settings.nexusSearchUrl != view!!.nexusSearchUrl
                 || settings.useArtifactory != view!!.useArtifactory || settings.artifactoryUrl != view!!.artifactoryUrl || settings.artiRepos != view!!.artiRepos
                 || settings.artifactoryUsername != view!!.artifactoryUsername || settings.artifactoryPassword != view!!.artifactoryPassword
-                || settings.useMavenCentral != view!!.useMavenCentral
     }
 
     @Throws(ConfigurationException::class)
@@ -80,7 +78,6 @@ class GDPHConfigurable : Configurable {
         settings.artiRepos = view!!.artiRepos
         settings.artifactoryUsername = view!!.artifactoryUsername
         settings.artifactoryPassword = view!!.artifactoryPassword
-        settings.useMavenCentral = view!!.useMavenCentral
     }
 
     override fun reset() {
@@ -94,7 +91,6 @@ class GDPHConfigurable : Configurable {
         view!!.artifactoryUsername = settings.artifactoryUsername
         view!!.artifactoryPassword = settings.artifactoryPassword
         view!!.artiRepos = settings.artiRepos
-        view!!.useMavenCentral = settings.useMavenCentral
     }
 
     override fun disposeUIResources() {

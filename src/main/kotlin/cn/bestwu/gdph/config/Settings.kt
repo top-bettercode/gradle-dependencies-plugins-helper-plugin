@@ -16,15 +16,15 @@
 
 package cn.bestwu.gdph.config
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.Storage
 
 @com.intellij.openapi.components.State(
         name = "GDPHSettings",
         storages = [(Storage("gdph.settings.xml"))]
 )
-class Settings(var useAli: Boolean = Settings.useAli, var aliRepo: String = Settings.aliRepo, var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useArtifactory: Boolean = Settings.useArtifactory, var artifactoryUrl: String = Settings.artifactoryUrl, var artiRepos: String = Settings.artiRepos, var artifactoryUsername: String = Settings.artifactoryUsername, var artifactoryPassword: String = Settings.artifactoryPassword, var useMavenCentral: Boolean = Settings.useMavenCentral) : PersistentStateComponent<Settings> {
+class Settings(var useAli: Boolean = Settings.useAli, var aliRepo: String = Settings.aliRepo, var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useArtifactory: Boolean = Settings.useArtifactory, var artifactoryUrl: String = Settings.artifactoryUrl, var artiRepos: String = Settings.artiRepos, var artifactoryUsername: String = Settings.artifactoryUsername, var artifactoryPassword: String = Settings.artifactoryPassword) : PersistentStateComponent<Settings> {
 
     override fun loadState(state: Settings) {
         this.useAli = state.useAli
@@ -36,10 +36,9 @@ class Settings(var useAli: Boolean = Settings.useAli, var aliRepo: String = Sett
         this.artifactoryUsername = state.artifactoryUsername
         this.artifactoryPassword = state.artifactoryPassword
         this.artifactoryUrl = state.artifactoryUrl
-        this.useMavenCentral = state.useMavenCentral
     }
 
-    override fun getState(): Settings? {
+    override fun getState(): Settings {
         return this
     }
 
@@ -53,10 +52,9 @@ class Settings(var useAli: Boolean = Settings.useAli, var aliRepo: String = Sett
         const val artiRepos: String = ""
         const val artifactoryUsername: String = ""
         const val artifactoryPassword: String = ""
-        const val useMavenCentral: Boolean = false
 
         fun getInstance(): Settings {
-            return ServiceManager.getService(Settings::class.java)
+            return ApplicationManager.getApplication().getService(Settings::class.java)
         }
     }
 

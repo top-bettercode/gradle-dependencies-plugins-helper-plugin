@@ -57,7 +57,7 @@ object ArtifactorySearcher : AbstractArtifactSearcher() {
         var jsonResult = getResponseJson(connection, project) ?: return result
         jsonResult = (jsonResult as Map<*, *>)["results"] as List<Map<*, *>>
         jsonResult.forEach {
-            val artifactInfo = (it["uri"] as String).toArtifactInfo { _ ->
+            val artifactInfo = (it["uri"] as String).toArtifactInfo {
                 searchParam.artifactId.isBlank() && !searchParam.fg && searchParam.groupId.isNotBlank()
             }
             if (searchParam.fa && searchParam.fg)
@@ -70,10 +70,8 @@ object ArtifactorySearcher : AbstractArtifactSearcher() {
     }
 
     override fun handleEmptyResult(searchParam: SearchParam, project: Project): Collection<ArtifactInfo> {
-        val settings = Settings.getInstance()
         return when {
-            settings.useMavenCentral -> MavenCentralSearcher.search(searchParam, project)
-            else -> JcenterSearcher.search(searchParam, project)
+            else -> MavenCentralSearcher.search(searchParam, project)
         }
     }
 

@@ -11,7 +11,7 @@
   <depends optional="true" config-file="kotlin.xml">org.jetbrains.kotlin</depends>
 
   <description><![CDATA[
-    This is an IntelliJ IDEA plugin for searching dependencies/plugins from JCentral/GradlePlugins inside Gradle projects.
+    This is an IntelliJ IDEA plugin for searching dependencies/plugins from mavenCentral/GradlePlugins inside Gradle projects.
     <br/><br/>
     <b>Features</b>
     <ul>
@@ -52,13 +52,5 @@
       serviceInterface="cn.bestwu.gdph.config.Settings"
       serviceImplementation="cn.bestwu.gdph.config.Settings"/>
 
-    <intentionAction>
-      <category>Gradle</category>
-      <className>cn.bestwu.gdph.MapNotationAddRepositoriesIntention</className>
-    </intentionAction>
-    <intentionAction>
-      <category>Gradle</category>
-      <className>cn.bestwu.gdph.MethodNotationAddRepositoriesIntention</className>
-    </intentionAction>
   </extensions>
 </idea-plugin>

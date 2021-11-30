@@ -39,12 +39,12 @@ class ClassNameSearchParam(override val src: String) : ISearchParam {
             src.startsWith("c:", true) -> {
                 k = "c"
                 q = src.substringAfter("c:").trim()
-                docUrl = "<a href='http://search.maven.org/#search|gav|1|c:$quot$q$quot'>search in mavenCentral</a>"
+                docUrl = "<a href='https://search.maven.org/#search|gav|1|c:$quot$q$quot'>search in mavenCentral</a>"
             }
             src.startsWith("fc:", true) -> {
                 k = "fc"
                 q = src.substringAfter("fc:").trim()
-                docUrl = "<a href='http://search.maven.org/#search|gav|1|fc:$quot$q$quot'>search in mavenCentral</a>"
+                docUrl = "<a href='https://search.maven.org/#search|gav|1|fc:$quot$q$quot'>search in mavenCentral</a>"
             }
             else -> {
                 k = ""
@@ -62,7 +62,7 @@ class ClassNameSearchParam(override val src: String) : ISearchParam {
 }
 
 class SearchParam(val groupId: String, val artifactId: String, val fg: Boolean, val fa: Boolean, src: String = "") : ISearchParam {
-    override val src: String = if (src.isBlank()) "$groupId${if (fg) ":" else ""}${if (artifactId.isBlank()) "" else artifactId}${if (fa) ":" else ""}" else src.trim()
+    override val src: String = if (src.isBlank()) "$groupId${if (fg) ":" else ""}${artifactId.ifBlank { "" }}${if (fa) ":" else ""}" else src.trim()
     override val docUrl: String
 
     private fun fullQuery(fullname: Boolean, name: String) = if (fullname) name else "*$name*"
@@ -100,7 +100,7 @@ class SearchParam(val groupId: String, val artifactId: String, val fg: Boolean, 
     }
 
     init {
-        docUrl = "<a href='https://bintray.com/search?query=${toId()}'>search in jcenter</a>"
+        docUrl =  "<a href='https://search.maven.org/solrsearch/select?q=${toMq()}'>search in mavenCentral</a>"
     }
 }
 

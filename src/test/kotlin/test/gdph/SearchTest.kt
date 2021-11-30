@@ -56,7 +56,7 @@ class MavenCentralSearcherTest {
     @Test
     fun doSearchByClassName() {
         val result: LinkedHashSet<ArtifactInfo> = LinkedHashSet()
-        val url = "http://search.maven.org/solrsearch/select?q=fc:${quot}org.springframework.data.domain.Page$quot&core=gav&rows=1000&wt=json"
+        val url = "https://search.maven.org/solrsearch/select?q=fc:${quot}org.springframework.data.domain.Page$quot&core=gav&rows=1000&wt=json"
         System.err.println(url)
         val connection = getConnection(url)
         val stream = connection.inputStream

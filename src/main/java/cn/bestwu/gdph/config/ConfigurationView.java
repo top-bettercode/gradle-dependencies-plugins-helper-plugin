@@ -31,7 +31,6 @@ public class ConfigurationView {
   private JCheckBox useNexus;
   private JTextField nexusSearchUrl;
   private JPanel dpPanel;
-  private JCheckBox useMavenCentral;
   private JTextField artifactoryUrl;
   private JCheckBox useArtifactory;
   private JTextField artiRepos;
@@ -145,15 +144,6 @@ public class ConfigurationView {
     artiRepos.setEnabled(useArtifactory);
     artifactoryUsername.setEnabled(useArtifactory);
     artifactoryPassword.setEnabled(useArtifactory);
-  }
-
-
-  public boolean getUseMavenCentral() {
-    return useMavenCentral.isSelected();
-  }
-
-  public void setUseMavenCentral(boolean useMavenCentral) {
-    this.useMavenCentral.setSelected(useMavenCentral);
   }
 
   public JButton getResetButton() {
