@@ -1,8 +1,6 @@
-import org.jetbrains.intellij.tasks.PublishTask
-
 plugins {
     kotlin("jvm") version "1.3.72"
-    id("org.jetbrains.intellij") version "0.4.21"
+    id("org.jetbrains.intellij") version "1.3.0"
 }
 group = "cn.bestwu"
 version = "0.1.8"
@@ -10,38 +8,36 @@ version = "0.1.8"
 val ideaVersion = property("ideaVersion")
 
 intellij {
-    updateSinceUntilBuild = false
-//    downloadSources = false
-    version = ideaVersion as String
-    setPlugins("java", "Groovy", "gradle", "Kotlin", "junit")
+    updateSinceUntilBuild.set(false)
+//    downloadSources.set(false)
+    version.set(ideaVersion as String)
+    plugins.set(listOf("java", "Groovy", "gradle", "Kotlin", "junit"))
 }
 
+
 tasks.withType(org.jetbrains.intellij.tasks.PatchPluginXmlTask::class.java) {
-    changeNotes("""
+    changeNotes.set(
+        """
     <b>${project.version}</b><br/><br/>
     <ul>
       <li>Search Optimization.</li>
     </ul>
-""")
+"""
+    )
 }
 
 
-tasks.withType(PublishTask::class.java) {
-    username(project.findProperty("intellij.publish.username"))
-    password(project.findProperty("intellij.publish.password"))
-    channels("stable")
+tasks.withType(org.jetbrains.intellij.tasks.PublishPluginTask::class.java) {
+    token.set(project.findProperty("intellij.publish.token") as String)
+    channels.set(listOf("stable"))
 }
 
 repositories {
     mavenLocal()
-    maven("https://maven.aliyun.com/repository/public")
-    maven("https://maven.aliyun.com/repository/gradle-plugin")
-    jcenter()
+    maven("https://maven.aliyun.com/repository/public/")
+    mavenCentral()
 }
 
 dependencies {
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>() {
-    kotlinOptions.jvmTarget = "1.8"
-}
