@@ -73,25 +73,28 @@ class GradleKtsPluginsCompletionContributor : AbstractGradlePluginsCompletionCon
                     parent = parent.parent
                 }
                 val isVersion = parent != null && parent.text.contains("version")
-                val text = parent!!.text
+                val text = parent!!.text.trim('"')
+                var allText = ""
                 var searchText = if (isVersion) {
                     if (text.startsWith("kotlin")) {
                         text.replace(kotlinRegex, "$kotlinPrefix$1")
                     } else
                         text.replace(versionRegex, "$1")
                 } else {
-                    text.replace(idRegex, "$1").substringBefore("IntellijIdeaRulezzz$").trim()
-                        .substringBeforeLast(".")
+                    allText =
+                        text.replace(idRegex, "$1").substringBefore("IntellijIdeaRulezzz$").trim()
+                    allText.substringBeforeLast(".")
                 }
                 val isKotlin: Boolean
                 if (!isVersion && parent.parent?.parent is KtCallExpression && parent.parent.parent.firstChild.text == "kotlin") {
                     isKotlin = true
                     searchText = kotlinPrefix
+                    allText = kotlinPrefix + allText
                 } else {
                     isKotlin = false
                 }
 
-                var searchResult: List<String>
+                val searchResult: List<String>
                 var completionResultSet = result
                 if (isVersion) {
                     searchResult = GradlePluginsSearcher.searchPluginVersions(searchText)
@@ -100,10 +103,8 @@ class GradleKtsPluginsCompletionContributor : AbstractGradlePluginsCompletionCon
                     if (searchText.length < 2) {
                         return
                     }
-                    searchResult = GradlePluginsSearcher.searchPlugins(searchText)
-                }
-                if (isKotlin && !isVersion) {
-                    searchResult = searchResult.filter { it.startsWith(kotlinPrefix) }
+                    searchResult =
+                        searchResultFix(GradlePluginsSearcher.searchPlugins(searchText), allText)
                 }
 
                 searchResult.forEach {

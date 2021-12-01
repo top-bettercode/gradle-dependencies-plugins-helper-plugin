@@ -16,6 +16,7 @@
 
 package cn.bestwu.gdph
 
+import cn.bestwu.gdph.search.GradlePluginsSearcher
 import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionInitializationContext
 import com.intellij.codeInsight.completion.CompletionSorter
@@ -24,18 +25,52 @@ import com.intellij.codeInsight.lookup.LookupElementWeigher
 
 abstract class AbstractGradlePluginsCompletionContributor : CompletionContributor() {
     companion object {
-        const val pluginsExtension="plugins"
+        const val pluginsExtension = "plugins"
         val versionRegex = "^id *\\(? *[\"'](.*)[\"'] *\\)? *version.*$".toRegex()
         val idRegex = "^id *\\(? *[\"'](.*)[\"'] *\\)?.*$".toRegex()
 
         fun completionSorter(searchResult: List<String>): CompletionSorter {
-            return CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("gradleDependencyWeigher") {
-                override fun weigh(element: LookupElement): Comparable<*> {
-                    return VersionComparator(searchResult.indexOf(element.lookupString))
+            return CompletionSorter.emptySorter()
+                .weigh(object : LookupElementWeigher("gradleDependencyWeigher") {
+                    override fun weigh(element: LookupElement): Comparable<*> {
+                        return VersionComparator(searchResult.indexOf(element.lookupString))
+                    }
+                })
+        }
+
+        fun searchResultFix(
+            searchResult: List<String>,
+            allText: String,
+            page: Int = 0
+        ): List<String> {
+            if (searchResult.isNotEmpty()) {
+                return searchResultFix1(searchResult, allText, page).ifEmpty { searchResult }
+            }
+            return searchResult
+        }
+
+        private fun searchResultFix1(
+            searchResult: List<String>,
+            allText: String,
+            page: Int = 0
+        ): List<String> {
+            if (searchResult.isNotEmpty()) {
+                val result = searchResult.filter { it.startsWith(allText) }
+                return result.ifEmpty {
+                    searchResultFix1(
+                        GradlePluginsSearcher.searchPlugins(
+                            allText.substringBeforeLast(
+                                "."
+                            ), page + 1
+                        ), allText, page + 1
+                    )
                 }
-            })
+            }
+            return searchResult
         }
     }
 
-    override fun duringCompletion(context: CompletionInitializationContext) = contributorDuringCompletion(context)
+
+    override fun duringCompletion(context: CompletionInitializationContext) =
+        contributorDuringCompletion(context)
 }

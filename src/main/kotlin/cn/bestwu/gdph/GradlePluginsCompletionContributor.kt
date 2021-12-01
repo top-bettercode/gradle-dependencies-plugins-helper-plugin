@@ -17,7 +17,10 @@
 package cn.bestwu.gdph
 
 import cn.bestwu.gdph.search.GradlePluginsSearcher
-import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionProvider
+import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.icons.AllIcons
 import com.intellij.notification.NotificationListener
@@ -63,11 +66,15 @@ class GradlePluginsCompletionContributor : AbstractGradlePluginsCompletionContri
                 val parent = params.position.parent?.parent?.parent
                 result.stopHere()
                 val isVersion = parent != null && parent.text.contains("version")
+                var allText = ""
                 val text = parent!!.text
                 val searchText = if (isVersion) {
                     text.replace(versionRegex, "$1")
-                } else
-                    text.replace(idRegex, "$1").substringBefore("IntellijIdeaRulezzz ").trim().substringBeforeLast(".")
+                } else {
+                    allText =
+                        text.replace(idRegex, "$1").substringBefore("IntellijIdeaRulezzz ").trim()
+                    allText.substringBeforeLast(".")
+                }
                 val searchResult: List<String>
                 var completionResultSet = result
                 if (isVersion) {
@@ -77,8 +84,11 @@ class GradlePluginsCompletionContributor : AbstractGradlePluginsCompletionContri
                     if (searchText.length < 2) {
                         return
                     }
-                    searchResult = GradlePluginsSearcher.searchPlugins(searchText)
+                    searchResult =
+                        searchResultFix(GradlePluginsSearcher.searchPlugins(searchText), allText)
                 }
+
+
                 searchResult.forEach {
                     val lookupElementBuilder = if (isVersion) LookupElementBuilder.create(it)
                         .withIcon(AllIcons.Nodes.PpLib)

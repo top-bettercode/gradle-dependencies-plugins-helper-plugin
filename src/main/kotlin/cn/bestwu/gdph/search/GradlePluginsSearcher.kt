@@ -23,12 +23,13 @@ object GradlePluginsSearcher {
     private val pluginVersionsCaches = HashMap<String, List<String>>()
     const val splitRule = "#"
 
-    fun searchPlugins(text: String): List<String> {
+    fun searchPlugins(text: String, page: Int = 0): List<String> {
         var result = pluginsCaches[text]
         if (result != null) {
             return result
         }
-        val connect = Jsoup.connect("https://plugins.gradle.org/search?term=${text.trim()}")
+        val connect =
+            Jsoup.connect("https://plugins.gradle.org/search?term=${text.trim()}${if (page > 0) "&page=$page" else ""}")
         connect.timeout(5000)
         val elements = connect.get().select("#search-results tbody tr")
         result = elements.mapNotNull {
@@ -54,7 +55,10 @@ object GradlePluginsSearcher {
         val connect = Jsoup.connect("https://plugins.gradle.org/plugin/${text.trim()}")
         connect.timeout(5000)
         val plugin = connect.get()
-        result.add(plugin.select(".version-info h3").text().replace("^Version (.*) \\(latest\\)$".toRegex(), "$1"))
+        result.add(
+            plugin.select(".version-info h3").text()
+                .replace("^Version (.*) \\(latest\\)$".toRegex(), "$1")
+        )
         val elements = plugin.select(".other-versions li")
         elements.mapTo(result) { it.select("a").text() }
         if (result.isNotEmpty()) {
