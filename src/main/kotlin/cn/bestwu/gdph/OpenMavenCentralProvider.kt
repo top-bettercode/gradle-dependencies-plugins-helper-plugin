@@ -21,7 +21,7 @@ import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.GrComma
 import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.literals.GrLiteralImpl
 import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.literals.GrStringContentImpl
 
-class OpenJcenterOrMavenCentralProvider : AbstractGDPHProvider() {
+class OpenMavenCentralProvider : AbstractGDPHProvider() {
 
     override fun generateDoc(element: PsiElement, originalElement: PsiElement?): String? {
         if (element is GrLiteralImpl || element is GrStringContentImpl) {
@@ -44,7 +44,7 @@ class OpenJcenterOrMavenCentralProvider : AbstractGDPHProvider() {
         val parentText = parent.text
         if (parent != null) {
             if (parentText.contains("version")) {
-                searchText = parentText.replace(AbstractGradlePluginsCompletionContributor.regex, "$1").trim()
+                searchText = parentText.replace(AbstractGradlePluginsCompletionContributor.versionRegex, "$1").trim()
             }
         }
         return pluginsDoc(searchText)

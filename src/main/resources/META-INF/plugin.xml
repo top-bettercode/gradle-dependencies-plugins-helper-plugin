@@ -43,7 +43,7 @@
       order="first"/>
 
 
-    <documentationProvider implementation="cn.bestwu.gdph.OpenJcenterOrMavenCentralProvider"
+    <documentationProvider implementation="cn.bestwu.gdph.OpenMavenCentralProvider"
       order="first"/>
 
     <applicationConfigurable id="bestwu.gdph"

@@ -35,31 +35,39 @@ import java.net.SocketTimeoutException
 class GradlePluginsCompletionContributor : AbstractGradlePluginsCompletionContributor() {
 
     init {
-        extend(CompletionType.SMART,
-                psiElement(PsiElement::class.java)
-                        .and(psiElement().inFile(PlatformPatterns.psiFile().withName(string().endsWith(".gradle"))))
-                        .withParent(GrLiteral::class.java)
-                        .withAncestor(10, psiElement(GrMethodCallExpressionImpl::class.java)
-                                .withText(string().startsWith(pluginsExtension)))
-                , CompletionPluginsCompletionProvider())
+        extend(
+            CompletionType.SMART,
+            psiElement(PsiElement::class.java)
+                .and(
+                    psiElement().inFile(
+                        PlatformPatterns.psiFile().withName(string().endsWith(".gradle"))
+                    )
+                )
+                .withParent(GrLiteral::class.java)
+                .withAncestor(
+                    10, psiElement(GrMethodCallExpressionImpl::class.java)
+                        .withText(string().startsWith(pluginsExtension))
+                ), CompletionPluginsCompletionProvider()
+        )
 
     }
 
 
     private class CompletionPluginsCompletionProvider : CompletionProvider<CompletionParameters>() {
         override fun addCompletions(
-                params: CompletionParameters,
-                context: ProcessingContext,
-                result: CompletionResultSet) {
+            params: CompletionParameters,
+            context: ProcessingContext,
+            result: CompletionResultSet
+        ) {
             try {
                 val parent = params.position.parent?.parent?.parent
                 result.stopHere()
                 val isVersion = parent != null && parent.text.contains("version")
+                val text = parent!!.text
                 val searchText = if (isVersion) {
-                    val text = parent!!.text
-                    text.replace(regex, "$1")
+                    text.replace(versionRegex, "$1")
                 } else
-                    CompletionUtil.findReferenceOrAlphanumericPrefix(params)
+                    text.replace(idRegex, "$1").substringBefore("IntellijIdeaRulezzz ").trim().substringBeforeLast(".")
                 val searchResult: List<String>
                 var completionResultSet = result
                 if (isVersion) {
@@ -72,12 +80,22 @@ class GradlePluginsCompletionContributor : AbstractGradlePluginsCompletionContri
                     searchResult = GradlePluginsSearcher.searchPlugins(searchText)
                 }
                 searchResult.forEach {
-                    val lookupElementBuilder = if (isVersion) LookupElementBuilder.create(it).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(insertHandler) else LookupElementBuilder.create(it).withPresentableText(it.replace(GradlePluginsSearcher.splitRule, ":")).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(insertHandler)
+                    val lookupElementBuilder = if (isVersion) LookupElementBuilder.create(it)
+                        .withIcon(AllIcons.Nodes.PpLib)
+                        .withInsertHandler(insertHandler) else LookupElementBuilder.create(it)
+                        .withPresentableText(it.replace(GradlePluginsSearcher.splitRule, ":"))
+                        .withIcon(AllIcons.Nodes.PpLib).withInsertHandler(insertHandler)
                     completionResultSet.addElement(lookupElementBuilder)
                 }
             } catch (e: SocketTimeoutException) {
                 val url = "https://plugins.gradle.org/search"
-                show(params.position.project, "<a href='$url'>$url</a>", "Request timeout", NotificationType.WARNING, NotificationListener.URL_OPENING_LISTENER)
+                show(
+                    params.position.project,
+                    "<a href='$url'>$url</a>",
+                    "Request timeout",
+                    NotificationType.WARNING,
+                    NotificationListener.URL_OPENING_LISTENER
+                )
             }
         }
     }

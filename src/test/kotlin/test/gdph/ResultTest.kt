@@ -19,7 +19,7 @@ class ParseResultTest {
 
     @Test
     fun regexVersion() {
-        val regex = AbstractGradlePluginsCompletionContributor.regex
+        val regex = AbstractGradlePluginsCompletionContributor.versionRegex
         Assert.assertEquals("org.springframework.boot", "id(\"org.springframework.boot\") version( \"1.5.6.RELEASE\")".replace(regex, "$1"))
         Assert.assertEquals("org.springframework.boot", "id \"org.springframework.boot\" version( \"1.5.6.RELEASE\")".replace(regex, "$1"))
         Assert.assertEquals("org.springframework.boot", "id \"org.springframework.boot\" version \"1.5.6.RELEASE\"".replace(regex, "$1"))

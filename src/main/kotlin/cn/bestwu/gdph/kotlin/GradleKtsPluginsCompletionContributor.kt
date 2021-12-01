@@ -30,9 +30,7 @@ import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
-import org.jetbrains.kotlin.psi.KtParenthesizedExpression
+import org.jetbrains.kotlin.psi.*
 import java.net.SocketTimeoutException
 
 class GradleKtsPluginsCompletionContributor : AbstractGradlePluginsCompletionContributor() {
@@ -42,46 +40,53 @@ class GradleKtsPluginsCompletionContributor : AbstractGradlePluginsCompletionCon
     }
 
     init {
-        extend(CompletionType.SMART,
-                PlatformPatterns.psiElement(PsiElement::class.java)
-                        .and(PlatformPatterns.psiElement().inFile(PlatformPatterns.psiFile().withName(StandardPatterns.string().endsWith(".gradle.kts"))))
-                        .withParent(KtLiteralStringTemplateEntry::class.java)
-                        .withAncestor(15, PlatformPatterns.psiElement(KtCallExpression::class.java)
-                                .withText(StandardPatterns.string().startsWith(pluginsExtension)))
-                , CompletionPluginsCompletionProvider())
+        extend(
+            CompletionType.SMART,
+            PlatformPatterns.psiElement(PsiElement::class.java)
+                .and(
+                    PlatformPatterns.psiElement().inFile(
+                        PlatformPatterns.psiFile()
+                            .withName(StandardPatterns.string().endsWith(".gradle.kts"))
+                    )
+                )
+                .withParent(KtLiteralStringTemplateEntry::class.java)
+                .withAncestor(
+                    15, PlatformPatterns.psiElement(KtCallExpression::class.java)
+                        .withText(StandardPatterns.string().startsWith(pluginsExtension))
+                ), CompletionPluginsCompletionProvider()
+        )
     }
 
-    override fun duringCompletion(context: CompletionInitializationContext) = contributorDuringCompletion(context)
+    override fun duringCompletion(context: CompletionInitializationContext) =
+        contributorDuringCompletion(context)
 
     private class CompletionPluginsCompletionProvider : CompletionProvider<CompletionParameters>() {
         override fun addCompletions(
-                params: CompletionParameters,
-                context: ProcessingContext,
-                result: CompletionResultSet) {
+            params: CompletionParameters,
+            context: ProcessingContext,
+            result: CompletionResultSet
+        ) {
             try {
                 var parent = params.position.parent?.parent?.parent
                 result.stopHere()
                 if (parent is KtParenthesizedExpression) {
                     parent = parent.parent
                 }
-                var isVersion = parent != null && parent.text.contains("version")
+                val isVersion = parent != null && parent.text.contains("version")
+                val text = parent!!.text
                 var searchText = if (isVersion) {
-                    val text = parent!!.text
                     if (text.startsWith("kotlin")) {
                         text.replace(kotlinRegex, "$kotlinPrefix$1")
                     } else
-                        text.replace(regex, "$1")
-                } else
-                    CompletionUtil.findReferenceOrAlphanumericPrefix(params)
+                        text.replace(versionRegex, "$1")
+                } else {
+                    text.replace(idRegex, "$1").substringBefore("IntellijIdeaRulezzz$").trim()
+                        .substringBeforeLast(".")
+                }
                 val isKotlin: Boolean
-                if (parent?.parent?.parent is KtCallExpression && parent.parent.parent.firstChild.text == "kotlin") {
+                if (!isVersion && parent.parent?.parent is KtCallExpression && parent.parent.parent.firstChild.text == "kotlin") {
                     isKotlin = true
-                    isVersion = isVersion || "(" != parent.prevSibling.text
-                    searchText = if (isVersion) {
-                        parent.parent.parent.text.replace(kotlinRegex, "$kotlinPrefix$1")
-                    } else {
-                        "$kotlinPrefix$searchText"
-                    }
+                    searchText = kotlinPrefix
                 } else {
                     isKotlin = false
                 }
@@ -103,16 +108,33 @@ class GradleKtsPluginsCompletionContributor : AbstractGradlePluginsCompletionCon
 
                 searchResult.forEach {
                     val lookupElementBuilder =
-                            if (isKotlin && !isVersion) {
-                                LookupElementBuilder.create(it.substringAfter(kotlinPrefix)).withPresentableText(it.replace(GradlePluginsSearcher.splitRule, ":")).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(insertHandler)
-                            } else {
-                                if (isVersion) LookupElementBuilder.create(it).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(insertHandler) else LookupElementBuilder.create(it).withPresentableText(it.replace(GradlePluginsSearcher.splitRule, ":")).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(insertHandler)
-                            }
+                        if (isKotlin && !isVersion) {
+                            LookupElementBuilder.create(it.substringAfter(kotlinPrefix))
+                                .withPresentableText(
+                                    it.replace(
+                                        GradlePluginsSearcher.splitRule,
+                                        ":"
+                                    )
+                                ).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(insertHandler)
+                        } else {
+                            if (isVersion) LookupElementBuilder.create(it)
+                                .withIcon(AllIcons.Nodes.PpLib)
+                                .withInsertHandler(insertHandler) else LookupElementBuilder.create(
+                                it
+                            ).withPresentableText(it.replace(GradlePluginsSearcher.splitRule, ":"))
+                                .withIcon(AllIcons.Nodes.PpLib).withInsertHandler(insertHandler)
+                        }
                     completionResultSet.addElement(lookupElementBuilder)
                 }
             } catch (e: SocketTimeoutException) {
                 val url = "https://plugins.gradle.org/search"
-                show(params.position.project, "<a href='$url'>$url</a>", "Request timeout", NotificationType.WARNING, NotificationListener.URL_OPENING_LISTENER)
+                show(
+                    params.position.project,
+                    "<a href='$url'>$url</a>",
+                    "Request timeout",
+                    NotificationType.WARNING,
+                    NotificationListener.URL_OPENING_LISTENER
+                )
             }
         }
 

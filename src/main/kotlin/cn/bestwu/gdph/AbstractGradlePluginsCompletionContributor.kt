@@ -25,7 +25,8 @@ import com.intellij.codeInsight.lookup.LookupElementWeigher
 abstract class AbstractGradlePluginsCompletionContributor : CompletionContributor() {
     companion object {
         const val pluginsExtension="plugins"
-        val regex = "^id *\\(? *[\"'](.*)[\"'] *\\)? *version.*$".toRegex()
+        val versionRegex = "^id *\\(? *[\"'](.*)[\"'] *\\)? *version.*$".toRegex()
+        val idRegex = "^id *\\(? *[\"'](.*)[\"'] *\\)?.*$".toRegex()
 
         fun completionSorter(searchResult: List<String>): CompletionSorter {
             return CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("gradleDependencyWeigher") {

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtParenthesizedExpression
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.KtValueArgumentList
 
-class KtsOpenJcenterOrMavenCentralProvider : AbstractGDPHProvider() {
+class KtsOpenMavenCentralProvider : AbstractGDPHProvider() {
 
 
     override fun generateDoc(element: PsiElement, originalElement: PsiElement?): String? {
@@ -55,7 +55,7 @@ class KtsOpenJcenterOrMavenCentralProvider : AbstractGDPHProvider() {
                             "${GradleKtsPluginsCompletionContributor.kotlinPrefix}$1"
                         ).trim()
                     } else {
-                        parentText.replace(AbstractGradlePluginsCompletionContributor.regex, "$1")
+                        parentText.replace(AbstractGradlePluginsCompletionContributor.versionRegex, "$1")
                             .trim()
                     }
                 parentText.startsWith("kotlin") -> {

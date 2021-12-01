@@ -33,9 +33,6 @@ import java.net.URLEncoder
 internal fun split(dependency: String) = Regex(":").split(dependency)
 internal fun trim(dependency: String) = removeQuotes(dependency).trim('(', ')')
 val quot = URLEncoder.encode("\"", "UTF-8")!!
-internal val group =
-    NotificationGroupManager.getInstance().getNotificationGroup("GradleDependencies")
-
 
 internal var repoIcon = IconLoader.getIcon(
     "/icons/repo.png",
@@ -49,7 +46,7 @@ internal fun show(
     type: NotificationType = NotificationType.INFORMATION,
     listener: NotificationListener? = null
 ) {
-    val notification = group.createNotification(title, content, type)
+    val notification =  Notification("GradleDependencies", title, content, type)
     if (listener != null) {
         notification.setListener(listener)
     }
