@@ -1,12 +1,12 @@
-<idea-plugin version="2" require-restart="false">
-  <idea-version since-build="192.6817.14"/>
+<idea-plugin require-restart="false">
   <id>cn.bestwu.gdph</id>
   <name>Gradle Dependencies And Plugins Helper</name>
   <vendor email="piterwu@outlook.com"
     url="https://github.com/top-bettercode/gradle-dependencies-plugins-helper-plugin">Peter Wu
   </vendor>
   <depends>com.intellij.modules.platform</depends>
-  <depends>com.intellij.java</depends>
+  <depends>com.intellij.modules.lang</depends>
+  <depends>com.intellij.modules.java</depends>
   <depends>org.jetbrains.plugins.gradle</depends>
   <depends optional="true" config-file="kotlin.xml">org.jetbrains.kotlin</depends>
 
@@ -49,8 +49,7 @@
     <applicationConfigurable id="bestwu.gdph"
       instance="cn.bestwu.gdph.config.GDPHConfigurable"/>
     <applicationService
-      serviceInterface="cn.bestwu.gdph.config.Settings"
-      serviceImplementation="cn.bestwu.gdph.config.Settings"/>
+            serviceImplementation="cn.bestwu.gdph.config.Settings"/>
 
   </extensions>
 </idea-plugin>

@@ -6,9 +6,9 @@ import cn.bestwu.gdph.search.ArtifactInfo
 import cn.bestwu.gdph.search.compareVersion
 import cn.bestwu.gdph.search.regex
 import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.File
-import kotlin.test.assertEquals
 
 /**
  *
