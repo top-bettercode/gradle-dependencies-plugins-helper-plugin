@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("java")
-    id("org.jetbrains.intellij") version "1.10.0"
+    id("org.jetbrains.intellij") version "1.12.0"
     kotlin("jvm") version "1.7.22"
 }
 
@@ -27,6 +27,14 @@ tasks {
     patchPluginXml {
         version.set("${project.version}")
         sinceBuild.set("222")
+        changeNotes.set(
+            """
+    <b>${project.version}</b><br/><br/>
+    <ul>
+      <li>Search Optimization.</li>
+    </ul>
+"""
+        )
     }
 
     compileKotlin {
@@ -55,9 +63,9 @@ dependencies {
 
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
-    jvmTarget = "1.8"
+    jvmTarget = "17"
 }
 val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
-    jvmTarget = "1.8"
+    jvmTarget = "17"
 }
