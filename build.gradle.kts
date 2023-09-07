@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "cn.bestwu"
-version = "0.1.9"
+version = "0.1.10"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
