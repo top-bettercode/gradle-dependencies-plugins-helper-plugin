@@ -7,7 +7,7 @@
   <depends>com.intellij.modules.platform</depends>
   <depends>com.intellij.modules.lang</depends>
   <depends>com.intellij.modules.java</depends>
-  <depends>org.jetbrains.plugins.gradle</depends>
+  <depends>com.intellij.gradle</depends>
   <depends optional="true" config-file="kotlin.xml">org.jetbrains.kotlin</depends>
 
   <description><![CDATA[
@@ -35,6 +35,11 @@
     ]]></description>
 
   <extensions defaultExtensionNs="com.intellij">
+    <notificationGroup
+      id="GradleDependencies"
+      displayType="BALLOON"
+      toolWindowId="SomeToolWindowId"
+    />
     <completion.contributor language="Groovy"
       implementationClass="cn.bestwu.gdph.GradleDependenciesCompletionContributor"
       order="first"/>
@@ -47,9 +52,10 @@
       order="first"/>
 
     <applicationConfigurable id="bestwu.gdph"
-      instance="cn.bestwu.gdph.config.GDPHConfigurable" displayName="Gradle Dependencies And Plugins Helper"/>
+      instance="cn.bestwu.gdph.config.GDPHConfigurable"
+      displayName="Gradle Dependencies And Plugins Helper"/>
     <applicationService
-            serviceImplementation="cn.bestwu.gdph.config.Settings"/>
+      serviceImplementation="cn.bestwu.gdph.config.Settings"/>
 
   </extensions>
 </idea-plugin>

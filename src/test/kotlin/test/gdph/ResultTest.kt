@@ -20,19 +20,19 @@ class ParseResultTest {
     @Test
     fun regexVersion() {
         val regex = AbstractGradlePluginsCompletionContributor.versionRegex
-        Assert.assertEquals("org.springframework.boot", "id(\"org.springframework.boot\") version( \"1.5.6.RELEASE\")".replace(regex, "$1"))
-        Assert.assertEquals("org.springframework.boot", "id \"org.springframework.boot\" version( \"1.5.6.RELEASE\")".replace(regex, "$1"))
-        Assert.assertEquals("org.springframework.boot", "id \"org.springframework.boot\" version \"1.5.6.RELEASE\"".replace(regex, "$1"))
-        Assert.assertEquals("org.springframework.boot", "id('org.springframework.boot') version( '1.5.6.RELEASE')".replace(regex, "$1"))
-        Assert.assertEquals("org.springframework.boot", "id 'org.springframework.boot' version( '1.5.6.RELEASE')".replace(regex, "$1"))
-        Assert.assertEquals("org.springframework.boot", "id 'org.springframework.boot' version '1.5.6.RELEASE'".replace(regex, "$1"))
-        Assert.assertEquals("org.springframework.boot", "id(\"org.springframework.boot\") version (\"1.5.6.RELEASE\")".replace(regex, "$1"))
-        Assert.assertEquals("org.springframework.boot", "id(\"org.springframework.boot\") version \"1.5.6.RELEASE\"".replace(regex, "$1"))
+        assertEquals("org.springframework.boot", "id(\"org.springframework.boot\") version( \"1.5.6.RELEASE\")".replace(regex, "$1"))
+        assertEquals("org.springframework.boot", "id \"org.springframework.boot\" version( \"1.5.6.RELEASE\")".replace(regex, "$1"))
+        assertEquals("org.springframework.boot", "id \"org.springframework.boot\" version \"1.5.6.RELEASE\"".replace(regex, "$1"))
+        assertEquals("org.springframework.boot", "id('org.springframework.boot') version( '1.5.6.RELEASE')".replace(regex, "$1"))
+        assertEquals("org.springframework.boot", "id 'org.springframework.boot' version( '1.5.6.RELEASE')".replace(regex, "$1"))
+        assertEquals("org.springframework.boot", "id 'org.springframework.boot' version '1.5.6.RELEASE'".replace(regex, "$1"))
+        assertEquals("org.springframework.boot", "id(\"org.springframework.boot\") version (\"1.5.6.RELEASE\")".replace(regex, "$1"))
+        assertEquals("org.springframework.boot", "id(\"org.springframework.boot\") version \"1.5.6.RELEASE\"".replace(regex, "$1"))
     }
 
     @Test
     fun grRegex() {
-        Assert.assertEquals("org.springframework.boot:spr", "org.springframework.boot:sprIntellijIdeaRulezzz ing-boot-dependencies".substringBefore("IntellijIdeaRulezzz "))
+        assertEquals("org.springframework.boot:spr", "org.springframework.boot:sprIntellijIdeaRulezzz ing-boot-dependencies".substringBefore("IntellijIdeaRulezzz "))
     }
 
     @Test
@@ -54,10 +54,10 @@ class ParseResultTest {
                 "1.3.0.M5",
                 "1.3.0.M1"
         )
-        versions.sortWith(kotlin.Comparator { o1, o2 ->
+        versions.sortWith { o1, o2 ->
             compareVersion(o1, o2)
-        })
-        Assert.assertEquals(arrayListOf(
+        }
+        assertEquals(arrayListOf(
                 "1.3.0",
                 "1.3.0.SNAPSHOTS",
                 "1.3.0.ALPHA",
@@ -88,10 +88,10 @@ class ParseResultTest {
                         "Camden.SR7",
                         "Finchley.M2"
         )
-        versions.sortWith(kotlin.Comparator { o1, o2 ->
+        versions.sortWith { o1, o2 ->
             compareVersion(o2, o1)
-        })
-        Assert.assertEquals(arrayListOf(
+        }
+        assertEquals(arrayListOf(
                 "Finchley.M2",
                 "Finchley",
                 "Edgware.M1",
@@ -106,7 +106,7 @@ class ParseResultTest {
     @Test
     fun mavenRegex() {
 
-        regex.findAll(File(this::class.java.getResource("/result.json").path).readText()).forEach {
+        regex.findAll(File(this::class.java.getResource("/result.json")?.path ?: "").readText()).forEach {
             val artifactInfo = ArtifactInfo(it.groupValues[1], it.groupValues[2], it.groupValues[3], "mavenCentral", "Apache")
             Assert.assertTrue(artifactInfo.version.isNotBlank())
             Assert.assertTrue(artifactInfo.artifactId.isNotBlank())
@@ -124,9 +124,9 @@ class ParseResultTest {
 
     @Test
     fun testkotlinRegex() {
-        assertEquals("org.jetbrains.kotlin.jvm", "kotlin(\"jvm\", \"1.1.4\")".replace(GradleKtsPluginsCompletionContributor.kotlinRegex, "${GradleKtsPluginsCompletionContributor.kotlinPrefix}$1"))
-        assertEquals("org.jetbrains.kotlin.jvm", "kotlin(\"jvm\") version (\"IntellijIdeaRulezzz\$\")".replace(GradleKtsPluginsCompletionContributor.kotlinRegex, "${GradleKtsPluginsCompletionContributor.kotlinPrefix}$1"))
-        assertEquals("org.jetbrains.kotlin.jvm", "kotlin(\"jvm\") version \"IntellijIdeaRulezzz\$\"".replace(GradleKtsPluginsCompletionContributor.kotlinRegex, "${GradleKtsPluginsCompletionContributor.kotlinPrefix}$1"))
+        assertEquals("org.jetbrains.kotlin.jvm", "kotlin(\"jvm\", \"1.1.4\")".replace(GradleKtsPluginsCompletionContributor.Util.kotlinRegex, "${GradleKtsPluginsCompletionContributor.KOTLIN_PREFIX}$1"))
+        assertEquals("org.jetbrains.kotlin.jvm", "kotlin(\"jvm\") version (\"IntellijIdeaRulezzz\$\")".replace(GradleKtsPluginsCompletionContributor.Util.kotlinRegex, "${GradleKtsPluginsCompletionContributor.KOTLIN_PREFIX}$1"))
+        assertEquals("org.jetbrains.kotlin.jvm", "kotlin(\"jvm\") version \"IntellijIdeaRulezzz\$\"".replace(GradleKtsPluginsCompletionContributor.Util.kotlinRegex, "${GradleKtsPluginsCompletionContributor.KOTLIN_PREFIX}$1"))
     }
 
 }

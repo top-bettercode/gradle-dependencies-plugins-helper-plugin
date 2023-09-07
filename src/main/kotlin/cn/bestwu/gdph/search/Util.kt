@@ -16,8 +16,8 @@
 
 package cn.bestwu.gdph.search
 
+import cn.bestwu.gdph.browseNotification
 import cn.bestwu.gdph.show
-import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import groovy.json.JsonSlurper
@@ -58,7 +58,7 @@ private fun getResponse(connection: HttpURLConnection, project: Project): InputS
         return connection.inputStream
     } catch (e: Exception) {
         val url = connection.url.toString()
-        show(project, "<a href='$url'>$url</a>", "Request timeout", NotificationType.WARNING, NotificationListener.URL_OPENING_LISTENER)
+        browseNotification(project, "Request timeout", url)
         return null
     }
 }
@@ -69,7 +69,7 @@ internal fun getResponseText(connection: HttpURLConnection, project: Project): S
         return stream.bufferedReader().readText()
     } catch (e: Exception) {
         val url = connection.url.toString()
-        show(project, "<a href='$url'>$url</a>", "Request timeout", NotificationType.WARNING, NotificationListener.URL_OPENING_LISTENER)
+        browseNotification(project, "Request timeout", url)
         return null
     }
 }
@@ -80,7 +80,7 @@ internal fun getResponseJson(connection: HttpURLConnection, project: Project): A
         return JsonSlurper().parse(stream)
     } catch (e: Exception) {
         val url = connection.url.toString()
-        show(project, "<a href='$url'>$url</a>", "Request timeout", NotificationType.WARNING, NotificationListener.URL_OPENING_LISTENER)
+        browseNotification(project, "Request timeout", url)
         return null
     }
 }
@@ -93,9 +93,9 @@ internal fun getAliRepos(): List<String> {
             val inputStream = connection.inputStream
             val jsonResult = JsonSlurper().parse(inputStream)
             @Suppress("UNCHECKED_CAST")
-            return   ((jsonResult as Map<*, *>)["object"] as List<Map<*, *>>).map { it["repoId"].toString() }
+            return ((jsonResult as Map<*, *>)["object"] as List<Map<*, *>>).map { it["repoId"].toString() }
         }
-    } catch (e: Exception) {
+    } catch (_: Exception) {
     }
     return emptyList()
 }
@@ -137,13 +137,13 @@ fun compareVersion(version1: String, version2: String): Int {
             return 1
         var v2 = toIntOrNull2
                 ?: versionTails.indexOf(
-                    version2s[i].replace(versionTailRegex, "$1").uppercase(Locale.getDefault())
+                        version2s[i].replace(versionTailRegex, "$1").uppercase(Locale.getDefault())
                 )
         var v1 = toIntOrNull1
                 ?: versionTails.indexOf(
-                    version1s[i].replace(versionTailRegex, "$1").uppercase(Locale.getDefault())
+                        version1s[i].replace(versionTailRegex, "$1").uppercase(Locale.getDefault())
                 )
-        if (v1 != -1 && v1 == v2 && toIntOrNull1 == null && toIntOrNull2 == null) {
+        if (v1 != -1 && v1 == v2 && toIntOrNull1 == null) {
             v2 = version2s[i].replace(versionTailRegex, "$2").toIntOrNull() ?: 0
             v1 = version1s[i].replace(versionTailRegex, "$2").toIntOrNull() ?: 0
         }

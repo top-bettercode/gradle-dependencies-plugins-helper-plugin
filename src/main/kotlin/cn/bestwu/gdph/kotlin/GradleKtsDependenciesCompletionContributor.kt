@@ -23,8 +23,6 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.icons.AllIcons
-import com.intellij.notification.NotificationListener
-import com.intellij.notification.NotificationType
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiElementPattern
@@ -41,7 +39,7 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
         // group:name:version notation
         // e.g.:
         //    compile('junit:junit:4.11')
-        extend(CompletionType.SMART, IN_METHOD_DEPENDENCY_NOTATION, object : CompletionProvider<CompletionParameters>() {
+        extend(CompletionType.SMART, Util.IN_METHOD_DEPENDENCY_NOTATION, object : CompletionProvider<CompletionParameters>() {
             override fun addCompletions(params: CompletionParameters,
                                         context: ProcessingContext,
                                         result: CompletionResultSet) {
@@ -67,9 +65,9 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                             isKotlin = true
                             if ("(" != parent.prevSibling.text) {
                                 isVersion = true
-                                SearchParam(kotlinGroup, pText.replace(GradleKtsPluginsCompletionContributor.kotlinRegex, "$kotlinArtifactPrefix$1").trim(), fg = true, fa = true)
+                                SearchParam(KOTLIN_GROUP, pText.replace(GradleKtsPluginsCompletionContributor.Util.kotlinRegex, "$KOTLIN_ARTIFACT_PREFIX$1").trim(), fg = true, fa = true)
                             } else {
-                                SearchParam(kotlinGroup, "$kotlinArtifactPrefix$prefix", fg = true, fa = false)
+                                SearchParam(KOTLIN_GROUP, "$KOTLIN_ARTIFACT_PREFIX$prefix", fg = true, fa = false)
                             }
                         } else
                             toSearchParam(prefix)
@@ -80,12 +78,12 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                     GradleArtifactSearcher.search(searchParam, params.position.project)
                 }
                 if (searchResult.isEmpty()) {
-                    show(params.position.project, iSearchParam.docUrl, "No dependencies found", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
+                    browseNotification(params.position.project, iSearchParam.docText, iSearchParam.docUrl, "No dependencies found")
                 }
                 if (isKotlin) {
                     if (!isVersion)
                         searchResult.forEach { it.version = "" }
-                    searchResult = searchResult.filter { it.gav.startsWith(kotlinPrefix) }.toSet()
+                    searchResult = searchResult.filter { it.gav.startsWith(KOTLIN_PREFIX) }.toSet()
                 }
                 var completionResultSet = if (isVersion) result.withRelevanceSorter(
                         CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("gradleDependencyWeigher") {
@@ -96,7 +94,7 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                 ) else result.withRelevanceSorter(
                         CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("gradleDependencyWeigher") {
                             override fun weigh(element: LookupElement): Comparable<*> {
-                                return VersionComparator(searchResult.indexOfFirst { it.gav == (if (isKotlin) kotlinPrefix + element.lookupString else element.lookupString) })
+                                return VersionComparator(searchResult.indexOfFirst { it.gav == (if (isKotlin) KOTLIN_PREFIX + element.lookupString else element.lookupString) })
                             }
                         })
                 )
@@ -109,7 +107,7 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                                 if (isVersion)
                                     LookupElementBuilder.create(it.version).withPresentableText(it.version).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.repoType, repoIcon, true).withInsertHandler(insertHandler)
                                 else
-                                    LookupElementBuilder.create(it.gav.substringAfter(kotlinPrefix)).withPresentableText(it.gav).withTailText(it.className).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.repoType, repoIcon, true).withInsertHandler(insertHandler)
+                                    LookupElementBuilder.create(it.gav.substringAfter(KOTLIN_PREFIX)).withPresentableText(it.gav).withTailText(it.className).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.repoType, repoIcon, true).withInsertHandler(insertHandler)
                             } else
                                 LookupElementBuilder.create("${it.gav}${if (it.artifactId.isBlank()) ":" else ""}").withPresentableText(it.gav).withTailText(it.className).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.repoType, repoIcon, true).withInsertHandler(insertHandler)
                     completionResultSet.addElement(lookupElementBuilder)
@@ -120,12 +118,7 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
 
     override fun duringCompletion(context: CompletionInitializationContext) = contributorDuringCompletion(context)
 
-    companion object {
-        private const val DEPENDENCIES_SCRIPT_BLOCK = "dependencies"
-        const val kotlinPrefix = "org.jetbrains.kotlin:kotlin-"
-        const val kotlinArtifactPrefix = "kotlin-"
-        const val kotlinGroup = "org.jetbrains.kotlin"
-
+    object Util {
         private val DEPENDENCIES_CALL_PATTERN = PlatformPatterns.psiElement()
                 .inside(true, PlatformPatterns.psiElement(KtCallExpression::class.java).with(
                         object : PatternCondition<KtCallExpression>("withInvokedExpressionText") {
@@ -140,11 +133,18 @@ class GradleKtsDependenciesCompletionContributor : CompletionContributor() {
                                 return DEPENDENCIES_SCRIPT_BLOCK == grExpression.text || "imports" == grExpression.text
                             }
                         }))
-
         val IN_METHOD_DEPENDENCY_NOTATION: PsiElementPattern.Capture<PsiElement> = PlatformPatterns.psiElement()
                 .withParent(KtLiteralStringTemplateEntry::class.java)
                 .and(PlatformPatterns.psiElement().inFile(PlatformPatterns.psiFile().withName(StandardPatterns.string().endsWith(".gradle.kts"))))
                 .and(DEPENDENCIES_CALL_PATTERN)
+    }
+
+    companion object {
+        private const val DEPENDENCIES_SCRIPT_BLOCK = "dependencies"
+        const val KOTLIN_PREFIX = "org.jetbrains.kotlin:kotlin-"
+        const val KOTLIN_ARTIFACT_PREFIX = "kotlin-"
+        const val KOTLIN_GROUP = "org.jetbrains.kotlin"
+
     }
 }
 

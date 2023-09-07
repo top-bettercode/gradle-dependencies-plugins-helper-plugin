@@ -15,7 +15,7 @@ java {
 
 intellij {
     version.set("2022.2.4")
-    plugins.set(listOf("java", "Groovy", "gradle", "Kotlin", "junit"))
+    plugins.set(listOf("java", "Groovy", "gradle", "Kotlin"))
     intellij.updateSinceUntilBuild.set(false)
 }
 

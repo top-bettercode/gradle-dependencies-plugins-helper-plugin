@@ -22,8 +22,6 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.icons.AllIcons
-import com.intellij.notification.NotificationListener
-import com.intellij.notification.NotificationType
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.PlatformPatterns.psiElement
@@ -49,7 +47,7 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
         //    compile group: 'com.google.code.guice', name: 'guice', version: '1.0'
         //    runtime([group:'junit', name:'junit-dep', version:'4.7'])
         //    compile(group:'junit', name:'junit-dep', version:'4.7')
-        extend(CompletionType.SMART, IN_MAP_DEPENDENCY_NOTATION, object : CompletionProvider<CompletionParameters>() {
+        extend(CompletionType.SMART, Util.IN_MAP_DEPENDENCY_NOTATION, object : CompletionProvider<CompletionParameters>() {
             override fun addCompletions(params: CompletionParameters,
                                         context: ProcessingContext,
                                         result: CompletionResultSet) {
@@ -62,25 +60,27 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                 val searchParam: SearchParam = when (parent.labelName) {
                     GROUP_LABEL -> SearchParam(searchText, "", fg = false, fa = false)
                     NAME_LABEL -> {
-                        val groupId = findNamedArgumentValue(parent.parent as GrNamedArgumentsOwner, GROUP_LABEL)
+                        val groupId = Util.findNamedArgumentValue(parent.parent as GrNamedArgumentsOwner, GROUP_LABEL)
                                 ?: return
                         SearchParam(groupId, searchText, fg = groupId.isNotBlank(), fa = false)
                     }
+
                     VERSION_LABEL -> {
                         val namedArgumentsOwner = parent.parent as GrNamedArgumentsOwner
-                        val groupId = findNamedArgumentValue(namedArgumentsOwner, GROUP_LABEL)
+                        val groupId = Util.findNamedArgumentValue(namedArgumentsOwner, GROUP_LABEL)
                                 ?: return
-                        val artifactId = findNamedArgumentValue(namedArgumentsOwner, NAME_LABEL)
+                        val artifactId = Util.findNamedArgumentValue(namedArgumentsOwner, NAME_LABEL)
                                 ?: return
                         SearchParam(groupId, artifactId, fg = groupId.isNotBlank(), fa = artifactId.isNotBlank())
                     }
+
                     else -> return
                 }
                 if (searchParam.toId().length < 2)
                     return
                 val searchResult = GradleArtifactSearcher.search(searchParam, params.position.project)
                 if (searchResult.isEmpty()) {
-                    show(params.position.project, searchParam.docUrl, "No dependencies found", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
+                    browseNotification(params.position.project, searchParam.docText, searchParam.docUrl, "No dependencies found")
                 }
 
                 var completionResultSet = result
@@ -90,11 +90,13 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                             completionResultSet.addElement(LookupElementBuilder.create(it.groupId).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.repoType, repoIcon, true).withInsertHandler(insertHandler))
                         }
                     }
+
                     NAME_LABEL -> {
                         searchResult.forEach {
                             completionResultSet.addElement(LookupElementBuilder.create(it.artifactId).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.repoType, repoIcon, true).withInsertHandler(insertHandler))
                         }
                     }
+
                     VERSION_LABEL -> {
                         completionResultSet = result.withRelevanceSorter(
                                 CompletionSorter.emptySorter().weigh(object : LookupElementWeigher("gradleDependencyWeigher") {
@@ -107,6 +109,7 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                             completionResultSet.addElement(LookupElementBuilder.create(it.version).withIcon(AllIcons.Nodes.PpLib).withTypeText(it.repoType, repoIcon, true).withInsertHandler(insertHandler))
                         }
                     }
+
                     else -> return
                 }
 
@@ -118,7 +121,7 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
         // e.g.:
         //    compile 'junit:junit:4.11'
         //    compile('junit:junit:4.11')
-        extend(CompletionType.SMART, IN_METHOD_DEPENDENCY_NOTATION, object : CompletionProvider<CompletionParameters>() {
+        extend(CompletionType.SMART, Util.IN_METHOD_DEPENDENCY_NOTATION, object : CompletionProvider<CompletionParameters>() {
             override fun addCompletions(params: CompletionParameters,
                                         context: ProcessingContext,
                                         result: CompletionResultSet) {
@@ -149,7 +152,7 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                     GradleArtifactSearcher.search(searchParam, params.position.project)
                 }
                 if (searchResult.isEmpty()) {
-                    show(params.position.project, iSearchParam.docUrl, "No dependencies found", NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
+                    browseNotification(params.position.project, iSearchParam.docText, iSearchParam.docUrl, "No dependencies found")
                 }
 
                 var completionResultSet = result.withRelevanceSorter(
@@ -171,15 +174,11 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
 
     override fun duringCompletion(context: CompletionInitializationContext) = contributorDuringCompletion(context)
 
-    companion object {
-        private const val GROUP_LABEL = "group"
-        private const val NAME_LABEL = "name"
-        private const val VERSION_LABEL = "version"
-        private const val DEPENDENCIES_SCRIPT_BLOCK = "dependencies"
+    object Util {
         private val GRADLE_FILE_PATTERN: ElementPattern<PsiElement> = psiElement()
                 .inFile(psiFile().withName(string().endsWith('.' + GradleConstants.EXTENSION)))
 
-        private fun findNamedArgumentValue(namedArgumentsOwner: GrNamedArgumentsOwner?, label: String): String? {
+        fun findNamedArgumentValue(namedArgumentsOwner: GrNamedArgumentsOwner?, label: String): String? {
             val namedArgument = namedArgumentsOwner?.findNamedArgument(label) ?: return null
             return (namedArgument.expression as? GrLiteralImpl)?.value?.toString()?.trim()
         }
@@ -198,17 +197,23 @@ class GradleDependenciesCompletionContributor : CompletionContributor() {
                                 return DEPENDENCIES_SCRIPT_BLOCK == grExpression.text || "imports" == grExpression.text
                             }
                         }))
-
         val IN_MAP_DEPENDENCY_NOTATION: PsiElementPattern.Capture<PsiElement> = psiElement()
                 .and(GRADLE_FILE_PATTERN)
                 .withParent(GrLiteral::class.java)
                 .withSuperParent(2, psiElement(GrNamedArgument::class.java))
                 .and(DEPENDENCIES_CALL_PATTERN)
-
         val IN_METHOD_DEPENDENCY_NOTATION: PsiElementPattern.Capture<PsiElement> = psiElement()
                 .and(GRADLE_FILE_PATTERN)
                 .withParent(GrLiteral::class.java)
                 .and(DEPENDENCIES_CALL_PATTERN)
+    }
+
+    companion object {
+        private const val GROUP_LABEL = "group"
+        private const val NAME_LABEL = "name"
+        private const val VERSION_LABEL = "version"
+        private const val DEPENDENCIES_SCRIPT_BLOCK = "dependencies"
+
     }
 
 

@@ -23,7 +23,10 @@ import com.intellij.codeInsight.completion.CompletionInitializationContext
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.notification.*
+import com.intellij.notification.BrowseNotificationAction
+import com.intellij.notification.NotificationGroup
+import com.intellij.notification.NotificationType
+import com.intellij.notification.Notifications
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
 import com.intellij.util.ReflectionUtil
@@ -35,21 +38,26 @@ internal fun trim(dependency: String) = removeQuotes(dependency).trim('(', ')')
 val quot = URLEncoder.encode("\"", "UTF-8")!!
 
 internal var repoIcon = IconLoader.getIcon(
-    "/icons/repo.png",
-    ReflectionUtil.getGrandCallerClass()!!
+        "/icons/repo.png",
+        ReflectionUtil.getGrandCallerClass()!!
 )
 
+internal fun browseNotification(project: Project, text: String, url: String, title: String = "") {
+    val notificationGroup = NotificationGroup.findRegisteredGroup("GradleDependencies")!!
+    val notification = notificationGroup.createNotification(title, "", NotificationType.WARNING)
+    notification.addAction(BrowseNotificationAction(text, url))
+    Notifications.Bus.notify(notification, project)
+}
+
+
 internal fun show(
-    project: Project,
-    content: String,
-    title: String = "",
-    type: NotificationType = NotificationType.INFORMATION,
-    listener: NotificationListener? = null
+        project: Project,
+        content: String,
+        title: String = "",
+        type: NotificationType = NotificationType.INFORMATION
 ) {
-    val notification =  Notification("GradleDependencies", title, content, type)
-    if (listener != null) {
-        notification.setListener(listener)
-    }
+    val notificationGroup = NotificationGroup.findRegisteredGroup("GradleDependencies")!!
+    val notification = notificationGroup.createNotification(title, content, type)
     Notifications.Bus.notify(notification, project)
 }
 
@@ -87,7 +95,7 @@ internal var insertHandler: InsertHandler<LookupElement> = InsertHandler { conte
             context.document.replaceString(text.indexOf('#'), idEnd, "")
         return@InsertHandler
     }
-    while (idEnd < text.length && !stopChars.contains(text[idEnd])) {
+    while (!stopChars.contains(text[idEnd])) {
         idEnd++
         if (idEnd == text.length || '\n' == text[idEnd]) {
             return@InsertHandler

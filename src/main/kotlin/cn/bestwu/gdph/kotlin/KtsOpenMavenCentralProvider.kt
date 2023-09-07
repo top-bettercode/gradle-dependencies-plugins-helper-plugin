@@ -51,8 +51,8 @@ class KtsOpenMavenCentralProvider : AbstractGDPHProvider() {
                 parentText.contains("version") -> searchText =
                     if (parentText.startsWith("kotlin")) {
                         parentText.replace(
-                            GradleKtsPluginsCompletionContributor.kotlinRegex,
-                            "${GradleKtsPluginsCompletionContributor.kotlinPrefix}$1"
+                                GradleKtsPluginsCompletionContributor.Util.kotlinRegex,
+                            "${GradleKtsPluginsCompletionContributor.KOTLIN_PREFIX}$1"
                         ).trim()
                     } else {
                         parentText.replace(AbstractGradlePluginsCompletionContributor.versionRegex, "$1")
@@ -60,12 +60,12 @@ class KtsOpenMavenCentralProvider : AbstractGDPHProvider() {
                     }
                 parentText.startsWith("kotlin") -> {
                     searchText = searchText.replace("^(.*?)\".*$".toRegex(), "$1")
-                    searchText = "${GradleKtsPluginsCompletionContributor.kotlinPrefix}$searchText"
+                    searchText = "${GradleKtsPluginsCompletionContributor.KOTLIN_PREFIX}$searchText"
                 }
                 parent.parent.parent.text.startsWith("kotlin") -> {
                     searchText =
                         trim(element.parent.parent.text).replace("^(.*?)\".*$".toRegex(), "$1")
-                    searchText = "${GradleKtsPluginsCompletionContributor.kotlinPrefix}$searchText"
+                    searchText = "${GradleKtsPluginsCompletionContributor.KOTLIN_PREFIX}$searchText"
                 }
             }
         }
@@ -82,7 +82,7 @@ class KtsOpenMavenCentralProvider : AbstractGDPHProvider() {
                 "kotlin"
             )
         ) {
-            dependency = "${GradleKtsDependenciesCompletionContributor.kotlinPrefix}$dependency"
+            dependency = "${GradleKtsDependenciesCompletionContributor.KOTLIN_PREFIX}$dependency"
         }
 
         return dependenciesDoc(dependency)

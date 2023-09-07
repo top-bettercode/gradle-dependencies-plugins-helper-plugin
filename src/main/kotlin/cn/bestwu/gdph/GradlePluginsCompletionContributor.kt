@@ -23,8 +23,6 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.icons.AllIcons
-import com.intellij.notification.NotificationListener
-import com.intellij.notification.NotificationType
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.StandardPatterns.string
@@ -39,18 +37,18 @@ class GradlePluginsCompletionContributor : AbstractGradlePluginsCompletionContri
 
     init {
         extend(
-            CompletionType.SMART,
-            psiElement(PsiElement::class.java)
-                .and(
-                    psiElement().inFile(
-                        PlatformPatterns.psiFile().withName(string().endsWith(".gradle"))
-                    )
-                )
-                .withParent(GrLiteral::class.java)
-                .withAncestor(
-                    10, psiElement(GrMethodCallExpressionImpl::class.java)
-                        .withText(string().startsWith(pluginsExtension))
-                ), CompletionPluginsCompletionProvider()
+                CompletionType.SMART,
+                psiElement(PsiElement::class.java)
+                        .and(
+                                psiElement().inFile(
+                                        PlatformPatterns.psiFile().withName(string().endsWith(".gradle"))
+                                )
+                        )
+                        .withParent(GrLiteral::class.java)
+                        .withAncestor(
+                                10, psiElement(GrMethodCallExpressionImpl::class.java)
+                                .withText(string().startsWith(pluginsExtension))
+                        ), CompletionPluginsCompletionProvider()
         )
 
     }
@@ -58,9 +56,9 @@ class GradlePluginsCompletionContributor : AbstractGradlePluginsCompletionContri
 
     private class CompletionPluginsCompletionProvider : CompletionProvider<CompletionParameters>() {
         override fun addCompletions(
-            params: CompletionParameters,
-            context: ProcessingContext,
-            result: CompletionResultSet
+                params: CompletionParameters,
+                context: ProcessingContext,
+                result: CompletionResultSet
         ) {
             try {
                 val parent = params.position.parent?.parent?.parent
@@ -72,7 +70,7 @@ class GradlePluginsCompletionContributor : AbstractGradlePluginsCompletionContri
                     text.replace(versionRegex, "$1")
                 } else {
                     allText =
-                        text.replace(idRegex, "$1").substringBefore("IntellijIdeaRulezzz ").trim()
+                            text.replace(idRegex, "$1").substringBefore("IntellijIdeaRulezzz ").trim()
                     allText.substringBeforeLast(".")
                 }
                 val searchResult: List<String>
@@ -85,27 +83,21 @@ class GradlePluginsCompletionContributor : AbstractGradlePluginsCompletionContri
                         return
                     }
                     searchResult =
-                        searchResultFix(GradlePluginsSearcher.searchPlugins(searchText), allText)
+                            searchResultFix(GradlePluginsSearcher.searchPlugins(searchText), allText)
                 }
 
 
                 searchResult.forEach {
                     val lookupElementBuilder = if (isVersion) LookupElementBuilder.create(it)
-                        .withIcon(AllIcons.Nodes.PpLib)
-                        .withInsertHandler(insertHandler) else LookupElementBuilder.create(it)
-                        .withPresentableText(it.replace(GradlePluginsSearcher.splitRule, ":"))
-                        .withIcon(AllIcons.Nodes.PpLib).withInsertHandler(insertHandler)
+                            .withIcon(AllIcons.Nodes.PpLib)
+                            .withInsertHandler(insertHandler) else LookupElementBuilder.create(it)
+                            .withPresentableText(it.replace(GradlePluginsSearcher.splitRule, ":"))
+                            .withIcon(AllIcons.Nodes.PpLib).withInsertHandler(insertHandler)
                     completionResultSet.addElement(lookupElementBuilder)
                 }
             } catch (e: SocketTimeoutException) {
                 val url = "https://plugins.gradle.org/search"
-                show(
-                    params.position.project,
-                    "<a href='$url'>$url</a>",
-                    "Request timeout",
-                    NotificationType.WARNING,
-                    NotificationListener.URL_OPENING_LISTENER
-                )
+                browseNotification(params.position.project, "Request timeout", url)
             }
         }
     }

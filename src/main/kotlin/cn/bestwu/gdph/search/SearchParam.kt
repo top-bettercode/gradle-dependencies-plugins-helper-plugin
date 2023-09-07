@@ -26,11 +26,13 @@ import cn.bestwu.gdph.split
  */
 interface ISearchParam {
     val docUrl: String
+    val docText: String
     val src: String
 }
 
 class ClassNameSearchParam(override val src: String) : ISearchParam {
-    override val docUrl: String
+    final override val docUrl: String
+    final override val docText: String
     val k: String
     val q: String
 
@@ -39,17 +41,22 @@ class ClassNameSearchParam(override val src: String) : ISearchParam {
             src.startsWith("c:", true) -> {
                 k = "c"
                 q = src.substringAfter("c:").trim()
-                docUrl = "<a href='https://search.maven.org/#search|gav|1|c:$quot$q$quot'>search in mavenCentral</a>"
+                docUrl = "https://search.maven.org/#search|gav|1|c:$quot$q$quot"
+                docText = "search in mavenCentral"
             }
+
             src.startsWith("fc:", true) -> {
                 k = "fc"
                 q = src.substringAfter("fc:").trim()
-                docUrl = "<a href='https://search.maven.org/#search|gav|1|fc:$quot$q$quot'>search in mavenCentral</a>"
+                docUrl = "https://search.maven.org/#search|gav|1|fc:$quot$q$quot"
+                docText = "search in mavenCentral"
             }
+
             else -> {
                 k = ""
                 q = ""
                 docUrl = ""
+                docText = ""
             }
         }
     }
@@ -63,7 +70,8 @@ class ClassNameSearchParam(override val src: String) : ISearchParam {
 
 class SearchParam(val groupId: String, val artifactId: String, val fg: Boolean, val fa: Boolean, src: String = "") : ISearchParam {
     override val src: String = if (src.isBlank()) "$groupId${if (fg) ":" else ""}${artifactId.ifBlank { "" }}${if (fa) ":" else ""}" else src.trim()
-    override val docUrl: String
+    final override val docUrl: String
+    final override val docText: String
 
     private fun fullQuery(fullname: Boolean, name: String) = if (fullname) name else "*$name*"
     private fun halfQuery(fullname: Boolean, name: String) = if (fullname) name else "$name*"
@@ -100,7 +108,8 @@ class SearchParam(val groupId: String, val artifactId: String, val fg: Boolean, 
     }
 
     init {
-        docUrl =  "<a href='https://search.maven.org/solrsearch/select?q=${toMq()}'>search in mavenCentral</a>"
+        docUrl = "https://search.maven.org/solrsearch/select?q=${toMq()}"
+        docText = "search in mavenCentral"
     }
 }
 
@@ -113,6 +122,7 @@ fun toSearchParam(src: String): SearchParam {
             val fa = src.count { it == ':' } > 1 && artifactId.isNotBlank()
             SearchParam(groupId, artifactId, groupId.isNotBlank(), fa)
         }
+
         src.contains(":") -> SearchParam(src.trim(), "", fg = true, fa = false)
         else -> SearchParam("", "", fg = false, fa = false, src = src.trim())
     }
