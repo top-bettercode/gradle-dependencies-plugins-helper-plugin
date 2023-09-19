@@ -23,7 +23,7 @@ import com.intellij.openapi.project.Project
 import groovy.json.JsonSlurper
 import java.io.InputStream
 import java.net.HttpURLConnection
-import java.net.URL
+import java.net.URI
 import java.util.*
 
 /**
@@ -34,7 +34,7 @@ import java.util.*
 val regex = Regex("\\{\"id\":\"(.*?):(.*?):(.*?)\",")
 
 fun getConnection(spec: String, requestProperties: Map<String, List<String>> = mapOf()): HttpURLConnection {
-    val url = URL(spec)
+    val url = URI(spec).toURL()
     val httpURLConnection = url.openConnection() as HttpURLConnection
     httpURLConnection.connectTimeout = 4000
     httpURLConnection.readTimeout = 4000
