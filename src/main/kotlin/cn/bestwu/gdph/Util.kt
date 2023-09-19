@@ -42,7 +42,7 @@ internal var repoIcon = IconLoader.getIcon(
         ReflectionUtil.getGrandCallerClass()!!
 )
 
-internal fun browseNotification(project: Project, text: String, url: String, title: String = "") {
+internal fun browseNotification(project: Project, text: String, url: String, title: String = text) {
     val notificationGroup = NotificationGroup.findRegisteredGroup("GradleDependencies")!!
     val notification = notificationGroup.createNotification(title, "", NotificationType.WARNING)
     notification.addAction(BrowseNotificationAction(text, url))
