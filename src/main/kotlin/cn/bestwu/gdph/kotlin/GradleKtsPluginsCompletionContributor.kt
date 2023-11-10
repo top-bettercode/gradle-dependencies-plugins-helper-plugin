@@ -55,7 +55,7 @@ class GradleKtsPluginsCompletionContributor : AbstractGradlePluginsCompletionCon
                         .withParent(KtLiteralStringTemplateEntry::class.java)
                         .withAncestor(
                                 15, PlatformPatterns.psiElement(KtCallExpression::class.java)
-                                .withText(StandardPatterns.string().startsWith(pluginsExtension))
+                                .withText(StandardPatterns.string().startsWith(PLUGINS_EXTENSION))
                         ), CompletionPluginsCompletionProvider()
         )
     }
@@ -116,7 +116,7 @@ class GradleKtsPluginsCompletionContributor : AbstractGradlePluginsCompletionCon
                                 LookupElementBuilder.create(it.substringAfter(KOTLIN_PREFIX))
                                         .withPresentableText(
                                                 it.replace(
-                                                        GradlePluginsSearcher.splitRule,
+                                                        GradlePluginsSearcher.SPLIT_RULE,
                                                         ":"
                                                 )
                                         ).withIcon(AllIcons.Nodes.PpLib).withInsertHandler(insertHandler)
@@ -125,7 +125,7 @@ class GradleKtsPluginsCompletionContributor : AbstractGradlePluginsCompletionCon
                                         .withIcon(AllIcons.Nodes.PpLib)
                                         .withInsertHandler(insertHandler) else LookupElementBuilder.create(
                                         it
-                                ).withPresentableText(it.replace(GradlePluginsSearcher.splitRule, ":"))
+                                ).withPresentableText(it.replace(GradlePluginsSearcher.SPLIT_RULE, ":"))
                                         .withIcon(AllIcons.Nodes.PpLib).withInsertHandler(insertHandler)
                             }
                     completionResultSet.addElement(lookupElementBuilder)

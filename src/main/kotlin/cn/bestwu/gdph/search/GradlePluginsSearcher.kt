@@ -21,7 +21,7 @@ import org.jsoup.Jsoup
 object GradlePluginsSearcher {
     private val pluginsCaches = HashMap<String, List<String>>()
     private val pluginVersionsCaches = HashMap<String, List<String>>()
-    const val splitRule = "#"
+    const val SPLIT_RULE = "#"
 
     fun searchPlugins(text: String, page: Int = 0): List<String> {
         var result = pluginsCaches[text]
@@ -37,7 +37,7 @@ object GradlePluginsSearcher {
             if (pluginId.isBlank()) {
                 return@mapNotNull null
             }
-            pluginId + splitRule + it.select(".latest-version").text()
+            pluginId + SPLIT_RULE + it.select(".latest-version").text()
         }
         if (result.isNotEmpty()) {
             pluginsCaches[text] = result

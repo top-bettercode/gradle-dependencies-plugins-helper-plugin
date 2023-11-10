@@ -31,8 +31,8 @@ interface ISearchParam {
 }
 
 class ClassNameSearchParam(override val src: String) : ISearchParam {
-    final override val docUrl: String
-    final override val docText: String
+    override val docUrl: String
+    override val docText: String
     val k: String
     val q: String
 
@@ -70,8 +70,8 @@ class ClassNameSearchParam(override val src: String) : ISearchParam {
 
 class SearchParam(val groupId: String, val artifactId: String, val fg: Boolean, val fa: Boolean, src: String = "") : ISearchParam {
     override val src: String = if (src.isBlank()) "$groupId${if (fg) ":" else ""}${artifactId.ifBlank { "" }}${if (fa) ":" else ""}" else src.trim()
-    final override val docUrl: String
-    final override val docText: String
+    override val docUrl: String
+    override val docText: String
 
     private fun fullQuery(fullname: Boolean, name: String) = if (fullname) name else "*$name*"
     private fun halfQuery(fullname: Boolean, name: String) = if (fullname) name else "$name*"

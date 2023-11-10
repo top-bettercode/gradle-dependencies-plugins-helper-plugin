@@ -50,7 +50,7 @@ class PluginsCompletionTest : CodeInsightTestBase() {
     fun testStdPluginId() {
         completionCheckResult(gradleFileName, """plugins {
     id 'intellij$caret'
-}""", pluginsAfter, "org.jetbrains.intellij${GradlePluginsSearcher.splitRule}")
+}""", pluginsAfter, "org.jetbrains.intellij${GradlePluginsSearcher.SPLIT_RULE}")
     }
 
     fun testStdPluginVersion() {
@@ -63,7 +63,7 @@ class PluginsCompletionTest : CodeInsightTestBase() {
     fun testKtsPluginId() {
         completionCheckResult(gradleKtsFileName, """plugins {
     id("intellij$caret")
-}""", pluginsKtsAfter, "org.jetbrains.intellij${GradlePluginsSearcher.splitRule}")
+}""", pluginsKtsAfter, "org.jetbrains.intellij${GradlePluginsSearcher.SPLIT_RULE}")
     }
 
     fun testKtsPluginVersion() {
@@ -76,7 +76,7 @@ class PluginsCompletionTest : CodeInsightTestBase() {
     fun testKtsKotlinPluginId() {
         completionCheckResult(gradleKtsFileName, """plugins {
     kotlin("$caret")
-}""", pluginsKtsKotlinAfter, "jvm${GradlePluginsSearcher.splitRule}")
+}""", pluginsKtsKotlinAfter, "jvm${GradlePluginsSearcher.SPLIT_RULE}")
     }
 
     fun testKtsKotlinPluginVersion() {

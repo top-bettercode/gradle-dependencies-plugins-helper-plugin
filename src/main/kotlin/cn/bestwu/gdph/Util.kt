@@ -103,7 +103,7 @@ internal var insertHandler: InsertHandler<LookupElement> = InsertHandler { conte
     }
     val quote = text[idEnd]
     var lookupString = text.substring(context.startOffset, context.tailOffset)
-    val list = lookupString.split(GradlePluginsSearcher.splitRule)
+    val list = lookupString.split(GradlePluginsSearcher.SPLIT_RULE)
     if (list.size == 2) {
         lookupString = list[0]
 

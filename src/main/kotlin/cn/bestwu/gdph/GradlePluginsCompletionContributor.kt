@@ -47,7 +47,7 @@ class GradlePluginsCompletionContributor : AbstractGradlePluginsCompletionContri
                         .withParent(GrLiteral::class.java)
                         .withAncestor(
                                 10, psiElement(GrMethodCallExpressionImpl::class.java)
-                                .withText(string().startsWith(pluginsExtension))
+                                .withText(string().startsWith(PLUGINS_EXTENSION))
                         ), CompletionPluginsCompletionProvider()
         )
 
@@ -91,7 +91,7 @@ class GradlePluginsCompletionContributor : AbstractGradlePluginsCompletionContri
                     val lookupElementBuilder = if (isVersion) LookupElementBuilder.create(it)
                             .withIcon(AllIcons.Nodes.PpLib)
                             .withInsertHandler(insertHandler) else LookupElementBuilder.create(it)
-                            .withPresentableText(it.replace(GradlePluginsSearcher.splitRule, ":"))
+                            .withPresentableText(it.replace(GradlePluginsSearcher.SPLIT_RULE, ":"))
                             .withIcon(AllIcons.Nodes.PpLib).withInsertHandler(insertHandler)
                     completionResultSet.addElement(lookupElementBuilder)
                 }

@@ -25,7 +25,7 @@ import com.intellij.codeInsight.lookup.LookupElementWeigher
 
 abstract class AbstractGradlePluginsCompletionContributor : CompletionContributor() {
     companion object {
-        const val pluginsExtension = "plugins"
+        const val PLUGINS_EXTENSION = "plugins"
         val versionRegex = "^id *\\(? *[\"'](.*)[\"'] *\\)? *version.*$".toRegex()
         val idRegex = "^id *\\(? *[\"'](.*)[\"'] *\\)?.*$".toRegex()
 

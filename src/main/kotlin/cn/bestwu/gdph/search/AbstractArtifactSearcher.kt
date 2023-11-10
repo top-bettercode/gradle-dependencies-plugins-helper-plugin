@@ -27,7 +27,6 @@ import java.util.*
 abstract class AbstractArtifactSearcher {
     companion object {
         internal val artifactsCaches = HashMap<String, Collection<ArtifactInfo>>()
-        internal const val jcenterKey = "jcenter:"
     }
 
     abstract val cache: Boolean

@@ -114,7 +114,7 @@ object ArtifactorySearcher : AbstractArtifactSearcher() {
             version = ""
         }
         val owner = "artifactory"
-        return ArtifactInfo(groupId, artifactId, version, "$repo${if (owner.isNotBlank() && !(repo == "jcenter" && owner == "bintray")) " by $owner" else ""}", "${Settings.getInstance().nexusSearchUrl}/$repo", true, className)
+        return ArtifactInfo(groupId, artifactId, version, "$repo${if (owner.isNotBlank()) " by $owner" else ""}", "${Settings.getInstance().nexusSearchUrl}/$repo", true, className)
     }
 
     override fun handleEmptyResultByClassName(searchParam: ClassNameSearchParam, project: Project): Collection<ArtifactInfo> {
