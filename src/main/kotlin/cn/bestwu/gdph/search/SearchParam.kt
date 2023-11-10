@@ -96,7 +96,11 @@ class SearchParam(val groupId: String, val artifactId: String, val fg: Boolean, 
     /**
      * maven center params
      */
-    fun toMq() = if (groupId.isBlank()) "a:$src" else "g:$groupId${if (artifactId.isBlank()) "*" else "+AND+a:$artifactId*"}"
+    fun toMq() = if (groupId.isBlank()) src else "g:$groupId${if (fg) "" else "*"}${
+        if (artifactId.isBlank()) {
+            ""
+        } else "+AND+a:$artifactId${if (fa) "" else "*"}"
+    }"
 
     /**
      * nexus params

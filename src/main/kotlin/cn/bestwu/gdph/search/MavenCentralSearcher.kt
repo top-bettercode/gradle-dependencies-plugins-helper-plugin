@@ -39,17 +39,16 @@ object MavenCentralSearcher : AbstractArtifactSearcher() {
         val url = "https://search.maven.org/solrsearch/select?q=${searchParam.toMq()}&rows=50&core=gav&wt=json"
         val connection = getConnection(url)
         val text = getResponseText(connection, project) ?: return emptySet()
-        val result= TreeSet<ArtifactInfo>()
+        val result = TreeSet<ArtifactInfo>()
         regex.findAll(text).forEach {
-            if (searchParam.fg && it.groupValues[1] != searchParam.groupId)
-                return@forEach
-            val artifactInfo = artifactInfo(groupId = it.groupValues[1], artifactId = if (searchParam.artifactId.isBlank() && !searchParam.fg && searchParam.groupId.isNotBlank() && searchParam.groupId != it.groupValues[1]) "" else it.groupValues[2])
-            if (artifactInfo.id == searchParam.toId() && artifactInfo.artifactId.isNotBlank()) {
-                artifactInfo.version = it.groupValues[3]
-                result.add(artifactInfo)
-            } else if (!searchParam.fa) {
-                result.add(artifactInfo)
+            val groupId = it.groupValues[1]
+            val artifactId = it.groupValues[2]
+            val version = it.groupValues[3]
+            val artifactInfo = artifactInfo(groupId = groupId, artifactId = if (searchParam.groupId.isNotBlank() && searchParam.artifactId.isBlank() && !searchParam.fg && groupId != searchParam.groupId) "" else artifactId)
+            if (artifactInfo.id == searchParam.toId()) {
+                artifactInfo.version = version
             }
+            result.add(artifactInfo)
         }
         return result
     }
@@ -58,9 +57,12 @@ object MavenCentralSearcher : AbstractArtifactSearcher() {
         val url = "https://search.maven.org/solrsearch/select?q=${searchParam.k}:$quot${searchParam.q}$quot&core=gav&rows=1000&wt=json"
         val connection = getConnection(url)
         val text = getResponseText(connection, project) ?: return emptySet()
-        val result= TreeSet<ArtifactInfo>()
+        val result = TreeSet<ArtifactInfo>()
         regex.findAll(text).forEach {
-            val artifactInfo = artifactInfo(it.groupValues[1], it.groupValues[2], it.groupValues[3],className = "")
+            val groupId = it.groupValues[1]
+            val artifactId = it.groupValues[2]
+            val version = it.groupValues[3]
+            val artifactInfo = artifactInfo(groupId = groupId, artifactId = artifactId, version = version, className = "")
             result.addArtifactInfo(artifactInfo)
         }
         return result
