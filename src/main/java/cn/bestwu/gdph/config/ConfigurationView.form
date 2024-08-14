@@ -29,7 +29,6 @@
             </constraints>
             <properties>
               <actionCommand value="Use Nexus2 Search"/>
-              <label value="Use Nexus2 Repository Search"/>
               <selected value="false"/>
               <text value="Use Nexus2 Repository Search"/>
             </properties>
@@ -78,7 +77,6 @@
             </constraints>
             <properties>
               <actionCommand value="Use Nexus2 Search"/>
-              <label value="Use Artifactory Repository Search"/>
               <selected value="false"/>
               <text value="Use Artifactory Repository Search"/>
             </properties>
@@ -179,7 +177,6 @@
             </constraints>
             <properties>
               <actionCommand value="Use Nexus2 Search"/>
-              <label value="Use AliRepo Search"/>
               <selected value="false"/>
               <text value="Use AliRepo Search"/>
             </properties>

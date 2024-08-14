@@ -2,7 +2,7 @@
 .gradle
 /build/
 !gradle/wrapper/gradle-wrapper.jar
-
+.intellijPlatform
 ### STS ###
 .apt_generated
 .classpath

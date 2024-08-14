@@ -7,8 +7,9 @@
   <depends>com.intellij.modules.platform</depends>
   <depends>com.intellij.modules.lang</depends>
   <depends>com.intellij.modules.java</depends>
+  <depends>org.intellij.groovy</depends>
   <depends>com.intellij.gradle</depends>
-  <depends optional="true" config-file="kotlin.xml">org.jetbrains.kotlin</depends>
+  <depends>org.jetbrains.kotlin</depends>
 
   <description><![CDATA[
     This is an IntelliJ IDEA plugin for searching dependencies/plugins from mavenCentral/GradlePlugins inside Gradle projects.
@@ -34,6 +35,9 @@
     </ul>
     ]]></description>
 
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <supportsKotlinPluginMode supportsK2="true" />
+  </extensions>
   <extensions defaultExtensionNs="com.intellij">
     <notificationGroup
       id="GradleDependencies"
@@ -47,6 +51,16 @@
       implementationClass="cn.bestwu.gdph.GradlePluginsCompletionContributor"
       order="first"/>
 
+    <completion.contributor language="kotlin"
+      implementationClass="cn.bestwu.gdph.kotlin.GradleKtsDependenciesCompletionContributor"
+      order="first"/>
+    <completion.contributor language="kotlin"
+      implementationClass="cn.bestwu.gdph.kotlin.GradleKtsPluginsCompletionContributor"
+      order="first"/>
+
+    <documentationProvider
+      implementation="cn.bestwu.gdph.kotlin.KtsOpenMavenCentralProvider"
+      order="first"/>
 
     <documentationProvider implementation="cn.bestwu.gdph.OpenMavenCentralProvider"
       order="first"/>

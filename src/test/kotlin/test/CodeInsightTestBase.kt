@@ -24,7 +24,6 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
-import junit.framework.TestCase
 
 /**
  *
@@ -77,12 +76,12 @@ abstract class CodeInsightTestBase : LightJavaCodeInsightFixtureTestCase() {
 
     private fun selectLookupItem(selectItem: String): String {
         val lookupElements = myFixture.lookupElements
-        TestCase.assertNotNull("Lookup is empty", lookupElements)
+        assertNotNull("Lookup is empty", lookupElements)
         val toSelect: LookupElement? = lookupElements!!.firstOrNull {
             println(it.lookupString)
             it.lookupString.startsWith(selectItem)
         }
-        TestCase.assertNotNull("$selectItem not found in lookup", toSelect)
+        assertNotNull("$selectItem not found in lookup", toSelect)
         myFixture.lookup.currentItem = toSelect
         myFixture.type(Lookup.NORMAL_SELECT_CHAR)
         return toSelect!!.lookupString.split("[#:]".toRegex()).last()
