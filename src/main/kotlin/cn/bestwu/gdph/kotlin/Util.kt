@@ -19,7 +19,6 @@ package cn.bestwu.gdph.kotlin
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
-import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiFileFactory
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.ReflectionUtil
@@ -50,7 +49,8 @@ object KotlinScriptFileType : LanguageFileType(KotlinLanguage.INSTANCE) {
     }
 
     override fun getIcon(): Icon {
-        return IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_file.png",
+        return IconLoader.getIcon(
+            "/org/jetbrains/kotlin/idea/icons/kotlin_file.png",
             ReflectionUtil.getGrandCallerClass()!!
         )
     }
@@ -73,7 +73,13 @@ class KtsPsiElementFactory(val project: Project) {
     private fun createKtFile(text: String): KtFile {
         val stamp = System.currentTimeMillis()
         val factory = PsiFileFactory.getInstance(project)
-        return factory.createFileFromText("DUMMY__1234567890_DUMMYYYYYY___.${KotlinScriptFileType.extension}", KotlinScriptFileType, text, stamp, false) as KtFile
+        return factory.createFileFromText(
+            "DUMMY__1234567890_DUMMYYYYYY___.${KotlinScriptFileType.extension}",
+            KotlinScriptFileType,
+            text,
+            stamp,
+            false
+        ) as KtFile
     }
 
 }
