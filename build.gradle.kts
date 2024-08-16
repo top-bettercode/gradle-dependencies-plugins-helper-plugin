@@ -21,23 +21,6 @@ java {
 }
 
 tasks {
-    buildSearchableOptions {
-        enabled = false
-    }
-
-    patchPluginXml {
-        pluginVersion.set("${project.version}")
-        sinceBuild.set("242.20224")
-        changeNotes.set(
-            """
-    <b>${project.version}</b><br/><br/>
-    <ul>
-      <li>Adaptation to version 2024.2.</li>
-    </ul>
-"""
-        )
-    }
-
     compileKotlin {
         compilerOptions {
             apiVersion.set(KotlinVersion.KOTLIN_2_0)
@@ -53,11 +36,6 @@ tasks {
             jvmTarget.set(JvmTarget.JVM_17)
         }
     }
-
-    publishPlugin {
-        token.set(project.findProperty("intellij.publish.token") as String)
-        channels.set(listOf("stable"))
-    }
 }
 
 repositories {
@@ -67,6 +45,7 @@ repositories {
 
     intellijPlatform {
         defaultRepositories()
+//        jetbrainsRuntime()
     }
 }
 
@@ -81,6 +60,7 @@ dependencies {
         bundledPlugin("com.intellij.gradle")
         bundledPlugin("org.jetbrains.kotlin")
 
+//        jetbrainsRuntime()
         instrumentationTools()
         pluginVerifier()
         testFramework(TestFrameworkType.Bundled)
@@ -90,6 +70,31 @@ dependencies {
 }
 
 intellijPlatform {
+    buildSearchableOptions.set(false)
+    publishing {
+        token.set(project.findProperty("intellij.publish.token") as String)
+        channels.set(listOf("stable"))
+    }
+
+    pluginConfiguration {
+        id.set("cn.bestwu.gdph")
+        name.set("Gradle Dependencies And Plugins Helper")
+        version.set("${project.version}")
+        vendor {
+            name.set("Peter Wu")
+            email.set("piterwu@outlook.com")
+            url.set("https://github.com/top-bettercode/gradle-dependencies-plugins-helper-plugin")
+        }
+        ideaVersion.sinceBuild.set("242.20224")
+        changeNotes.set(
+            """
+        <b>${project.version}</b><br/><br/>
+        <ul>
+          <li>Adaptation to version 2024.2.</li>
+        </ul>
+    """
+        )
+    }
     pluginVerification {
         ides {
             ide(IntelliJPlatformType.IntellijIdeaUltimate, "2024.2.0.1")
