@@ -16,15 +16,26 @@
 
 package cn.bestwu.gdph.config
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.Storage
 
 @com.intellij.openapi.components.State(
-        name = "GDPHSettings",
-        storages = [(Storage("gdph.settings.xml"))]
+    name = "GDPHSettings",
+    storages = [(Storage("gdph.settings.xml"))]
 )
-class Settings(var useAli: Boolean = Settings.useAli, var aliRepo: String = Settings.aliRepo, var useNexus: Boolean = Settings.useNexus, var nexusSearchUrl: String = Settings.nexusSearchUrl, var useArtifactory: Boolean = Settings.useArtifactory, var artifactoryUrl: String = Settings.artifactoryUrl, var artiRepos: String = Settings.artiRepos, var artifactoryUsername: String = Settings.artifactoryUsername, var artifactoryPassword: String = Settings.artifactoryPassword) : PersistentStateComponent<Settings> {
+class Settings(
+    var useAli: Boolean = Settings.useAli,
+    var aliRepo: String = Settings.aliRepo,
+    var useNexus: Boolean = Settings.useNexus,
+    var nexusSearchUrl: String = Settings.nexusSearchUrl,
+    var useArtifactory: Boolean = Settings.useArtifactory,
+    var artifactoryUrl: String = Settings.artifactoryUrl,
+    var artiRepos: String = Settings.artiRepos,
+    var artifactoryUsername: String = Settings.artifactoryUsername,
+    var artifactoryPassword: String = Settings.artifactoryPassword
+) : PersistentStateComponent<Settings>, Disposable {
 
     override fun loadState(state: Settings) {
         this.useAli = state.useAli
@@ -40,6 +51,10 @@ class Settings(var useAli: Boolean = Settings.useAli, var aliRepo: String = Sett
 
     override fun getState(): Settings {
         return this
+    }
+
+    override fun dispose() {
+
     }
 
     companion object {

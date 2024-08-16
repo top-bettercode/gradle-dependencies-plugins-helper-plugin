@@ -16,13 +16,14 @@
 
 package cn.bestwu.gdph.config
 
+import com.intellij.openapi.extensions.BaseExtensionPointName
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ConfigurationException
 import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
 
 
-class GDPHConfigurable : Configurable {
+class GDPHConfigurable : Configurable, Configurable.WithEpDependencies {
 
     private var view: ConfigurationView? = null
 
@@ -95,5 +96,9 @@ class GDPHConfigurable : Configurable {
 
     override fun disposeUIResources() {
         view = null
+    }
+
+    override fun getDependencies(): MutableCollection<BaseExtensionPointName<*>> {
+        return mutableListOf()
     }
 }

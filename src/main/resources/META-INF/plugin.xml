@@ -67,4 +67,10 @@
       serviceImplementation="cn.bestwu.gdph.config.Settings"/>
 
   </extensions>
+  <applicationListeners>
+    <listener
+      class="cn.bestwu.gdph.MyDynamicPluginListener"
+      topic="com.intellij.ide.plugins.DynamicPluginListener"/>
+  </applicationListeners>
+
 </idea-plugin>
