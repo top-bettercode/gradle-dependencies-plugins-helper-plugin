@@ -1,6 +1,3 @@
-import org.gradle.kotlin.dsl.compileKotlin
-import org.gradle.kotlin.dsl.compileTestKotlin
-import org.gradle.kotlin.dsl.implementation
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.intellij.platform.gradle.models.ProductRelease
@@ -53,7 +50,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
     intellijPlatform {
-        intellijIdeaCommunity("2024.2")
+        intellijIdeaCommunity("2022.3.3")
 
         bundledPlugin("com.intellij.java")
         bundledPlugin("org.intellij.groovy")
@@ -85,7 +82,7 @@ intellijPlatform {
             email.set("piterwu@outlook.com")
             url.set("https://github.com/top-bettercode/gradle-dependencies-plugins-helper-plugin")
         }
-        ideaVersion.sinceBuild.set("242.20224")
+        ideaVersion.sinceBuild.set("223.8836.41")
         changeNotes.set(
             """
         <b>${project.version}</b><br/><br/>
@@ -97,14 +94,20 @@ intellijPlatform {
     }
     pluginVerification {
         ides {
-            ide(IntelliJPlatformType.IntellijIdeaUltimate, "2024.2.0.1")
+            ide(IntelliJPlatformType.IntellijIdeaUltimate, "2022.3.3")
             recommended()
             select {
                 types.set(listOf(IntelliJPlatformType.IntellijIdeaUltimate))
                 channels.set(listOf(ProductRelease.Channel.RELEASE))
-                sinceBuild.set("242.20224")
+                sinceBuild.set("223.8836.41")
                 untilBuild.set("242.*")
             }
         }
+    }
+}
+
+tasks {
+    runIde {
+        jvmArgs("-Didea.kotlin.plugin.use.k2=true")
     }
 }
