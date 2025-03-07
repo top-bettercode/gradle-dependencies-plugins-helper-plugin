@@ -82,7 +82,8 @@ intellijPlatform {
             email.set("piterwu@outlook.com")
             url.set("https://github.com/top-bettercode/gradle-dependencies-plugins-helper-plugin")
         }
-        ideaVersion.sinceBuild.set("223.8836.41")
+        ideaVersion.sinceBuild.set("IC-223.8836.41")
+        ideaVersion.untilBuild.set("IC-243.*")
         changeNotes.set(
             """
         <b>${project.version}</b><br/><br/>
@@ -94,13 +95,19 @@ intellijPlatform {
     }
     pluginVerification {
         ides {
-            ide(IntelliJPlatformType.IntellijIdeaUltimate, "2022.3.3")
             recommended()
+            ide(IntelliJPlatformType.IntellijIdeaCommunity, "2022.3.3")
+            ide(IntelliJPlatformType.IntellijIdeaUltimate, "2022.3.3")
             select {
-                types.set(listOf(IntelliJPlatformType.IntellijIdeaUltimate))
+                types.set(
+                    listOf(
+                        IntelliJPlatformType.IntellijIdeaCommunity,
+                        IntelliJPlatformType.IntellijIdeaUltimate
+                    )
+                )
                 channels.set(listOf(ProductRelease.Channel.RELEASE))
-                sinceBuild.set("223.8836.41")
-                untilBuild.set("242.*")
+                sinceBuild.set("IC-223.8836.41")
+                untilBuild.set("IC-243.*")
             }
         }
     }
