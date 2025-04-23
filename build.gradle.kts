@@ -83,7 +83,7 @@ intellijPlatform {
             url.set("https://github.com/top-bettercode/gradle-dependencies-plugins-helper-plugin")
         }
         ideaVersion.sinceBuild.set("IC-223.8836.41")
-        ideaVersion.untilBuild.set("IC-243.*")
+        ideaVersion.untilBuild.set(provider { null })
         changeNotes.set(
             """
         <b>${project.version}</b><br/><br/>
@@ -107,7 +107,6 @@ intellijPlatform {
                 )
                 channels.set(listOf(ProductRelease.Channel.RELEASE))
                 sinceBuild.set("IC-223.8836.41")
-                untilBuild.set("IC-243.*")
             }
         }
     }
