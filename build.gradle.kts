@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "cn.bestwu"
-version = "0.1.11"
+version = "0.1.12"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -82,7 +82,7 @@ intellijPlatform {
             email.set("piterwu@outlook.com")
             url.set("https://github.com/top-bettercode/gradle-dependencies-plugins-helper-plugin")
         }
-        ideaVersion.sinceBuild.set("IC-223.8836.41")
+        ideaVersion.sinceBuild.set("223.8836.41")
         ideaVersion.untilBuild.set(provider { null })
         changeNotes.set(
             """
@@ -106,7 +106,7 @@ intellijPlatform {
                     )
                 )
                 channels.set(listOf(ProductRelease.Channel.RELEASE))
-                sinceBuild.set("IC-223.8836.41")
+                sinceBuild.set("223.8836.41")
             }
         }
     }
