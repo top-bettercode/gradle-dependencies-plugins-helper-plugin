@@ -29,11 +29,11 @@ class GDPHConfigurable : Configurable, Configurable.WithEpDependencies {
 
     @Nls
     override fun getDisplayName(): String {
-        return "Gradle Dependencies And Plugins Helper"
+        return "Gradle Dependencies Helper"
     }
 
     override fun getHelpTopic(): String {
-        return "Configure the default settings for the Gradle Dependencies And Plugins Helper"
+        return "Configure the default settings for the Gradle Dependencies Helper"
     }
 
     override fun createComponent(): JComponent? {

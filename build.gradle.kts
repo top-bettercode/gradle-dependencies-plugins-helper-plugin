@@ -75,7 +75,7 @@ intellijPlatform {
 
     pluginConfiguration {
         id.set("cn.bestwu.gdph")
-        name.set("Gradle Dependencies And Plugins Helper")
+        name.set("Gradle Dependencies Helper")
         version.set("${project.version}")
         vendor {
             name.set("Peter Wu")

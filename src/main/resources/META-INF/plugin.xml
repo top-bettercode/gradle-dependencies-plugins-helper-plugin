@@ -62,7 +62,7 @@
 
     <applicationConfigurable id="bestwu.gdph"
       instance="cn.bestwu.gdph.config.GDPHConfigurable"
-      displayName="Gradle Dependencies And Plugins Helper"/>
+      displayName="Gradle Dependencies Helper"/>
     <applicationService
       serviceImplementation="cn.bestwu.gdph.config.Settings"/>
 
